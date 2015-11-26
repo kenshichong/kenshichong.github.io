@@ -1,0 +1,999 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>在思想上打造编译器 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="在思想上打造编译器
+To understand a program you must become both the machine and the program.
+
+前言：最近在学习编译原理课程，觉得还是挺有体系的，就讲了一个很基本的东西——如何构造一款编译器，这也是本人的第一篇blog，写的不好的地方请自动屏蔽，有相关概念不懂的请去google，不喜欢讲概念。。。可能不是那么干，权当给自己总">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在思想上打造编译器">
+<meta property="og:url" content="https://kenshichong.github.io/2015/11/25/在思想上打造编译器/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="在思想上打造编译器
+To understand a program you must become both the machine and the program.
+
+前言：最近在学习编译原理课程，觉得还是挺有体系的，就讲了一个很基本的东西——如何构造一款编译器，这也是本人的第一篇blog，写的不好的地方请自动屏蔽，有相关概念不懂的请去google，不喜欢讲概念。。。可能不是那么干，权当给自己总">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/1.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/2.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/3.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/4.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/5.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/6.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/7.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/8.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/9.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/10.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/11.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/12.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/13.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/14.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/15.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/16.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/17.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/18.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/19.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/20.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/21.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/22.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/23.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/24.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/25.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/26.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/27.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/28.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/29.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/30.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/31.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/32.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/33.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/34.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/35.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/36.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/37.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/38.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/39.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/40.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/41.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/42.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/43.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/44.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/45.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/46.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/47.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/48.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/49.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/50.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/51.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/52.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/53.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/54.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/55.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/56.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/57.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/58.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/59.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/60.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/61.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/62.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/63.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/64.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/65.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/66.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/67.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/68.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/69.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/70.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/71.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/72.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/73.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/74.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/75.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/76.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/77.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/78.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/79.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/80.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/81.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/82.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/83.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/84.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/85.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/86.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/87.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/88.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/89.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/90.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/91.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/92.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/93.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/94.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/95.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/96.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/97.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/98.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/99.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/100.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/101.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/102.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/103.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/104.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/105.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/106.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/107.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/108.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/109.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/110.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/111.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/112.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/113.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/114.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/115.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/116.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/117.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/118.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/119.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/120.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/121.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/122.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/123.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/124.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/125.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/126.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/127.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/128.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/129.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/130.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/131.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/132.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/133.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/134.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/135.PNG">
+<meta property="og:image" content="https://kenshichong.github.io/img/在思想上打造编译器/136.PNG">
+<meta property="og:updated_time" content="2015-11-26T07:08:56.764Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在思想上打造编译器">
+<meta name="twitter:description" content="在思想上打造编译器
+To understand a program you must become both the machine and the program.
+
+前言：最近在学习编译原理课程，觉得还是挺有体系的，就讲了一个很基本的东西——如何构造一款编译器，这也是本人的第一篇blog，写的不好的地方请自动屏蔽，有相关概念不懂的请去google，不喜欢讲概念。。。可能不是那么干，权当给自己总">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/25/在思想上打造编译器/" title="在思想上打造编译器" itemprop="url">在思想上打造编译器</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-25T15:08:58.000Z" itemprop="datePublished"> 发表于 2015-11-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#在思想上打造编译器"><span class="toc-number">1.</span> <span class="toc-text">在思想上打造编译器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景知识"><span class="toc-number">1.1.</span> <span class="toc-text">背景知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正片"><span class="toc-number">1.2.</span> <span class="toc-text">正片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#词法分析器"><span class="toc-number">1.3.</span> <span class="toc-text">词法分析器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语法分析器"><span class="toc-number">1.4.</span> <span class="toc-text">语法分析器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语义分析与中间代码生成器"><span class="toc-number">1.5.</span> <span class="toc-text">语义分析与中间代码生成器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后的工作——代码生成器"><span class="toc-number">1.6.</span> <span class="toc-text">最后的工作——代码生成器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结——口胡"><span class="toc-number">1.7.</span> <span class="toc-text">总结——口胡</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="在思想上打造编译器">在思想上打造编译器</h1><blockquote>
+<p>To understand a program you must become both the machine and the program.</p>
+</blockquote>
+<p>前言：最近在学习编译原理课程，觉得还是挺有体系的，就讲了一个很基本的东西——如何构造一款编译器，这也是本人的第一篇blog，写的不好的地方请自动屏蔽，有相关概念不懂的请去google，不喜欢讲概念。。。可能不是那么干，权当给自己总结复习用了。。。</p>
+<h2 id="背景知识">背景知识</h2><p>先口胡下。。。<br>作为程序员赖以生存的程序，其实就是一定字符集上的字符串，描述了我们人类想让计算机去怎样处理数据的一个过程。如果没有编译器，我们写的这一堆堆字符串对计算机来说就等同于垃圾，因为它根本看不懂。是编译器实现了我们写的代码与计算机的一个交互，把我们能够理解的高级语言转化为计算机能够看懂的二进制数据，也就是说编译器干的事情就是将我们输入的我们自以为计算机能看懂的一大串字符串翻译成计算机能够真正看懂的二进制数据，并按照我们需要的那样去执行。</p>
+<p>程序由语法和语义两部分组成，而语法由词法规则和语法规则构成。词法规则是单词符号的形成规则，词法规则用来识别哪一个或几个字符可以构成一个单词符号，词法规则是词法分析器的主体，词法分析器正是根据词法规则将字符合起来的字符串识别成具有独立意义的单词符号。举个最简单的例子，比如说你输入”fuck you!”这个字符串，计算机看不懂啊，它还以为你在骂他，这时候计算机就会派出编译器，编译器会派出词法分析器，词法分析器就会去将”fuck you!”读入，然后跟它里面预先定义好的词法规则去匹配，匹配不上就报错，如果匹配上的话，他就会报告说”fuck是一个单词，类型码(供语法分析器使用)是xxx，you也是一个单词，类型码是xxx，！也是一个单词，类型码是xxx。”，然后他将这些类型码传给语法分析器，然后语法分析器识别，根据这些类型码的组合与自己里面预先置好的语法规则相匹配，匹配不上就报错，匹配上的话，他会报告说”这是一个合法的语法单位，是一个句子”，然后再去匹配相应的语义规则，然后编译器才知道这句话是在跟计算机问好(一般语法和语义的匹配采用一遍扫描翻译的模式)，然后报告计算机”这个人在跟你问好”，计算机知道过后根据此信息做出相应的反馈，比如跟你也问个好”fuck you,too”之类的，其实我们人就是一个高级计算机，也有编译器的功能。有输入，有输出，当别人向我们输入这句话的时候，我们的大脑会向我们输出”哦，别人在跟我问好-_-“</p>
+<p>扯到这里，不得不强行扯到文法，所谓文法，指描述语言的语法结构的形式规则，通俗点来说，就是一堆东西按照一定顺序排列后我们又能把他叫做另一种什么东西，以便于我们更好的去进行下一步的工作，是语法规则的一个概括和抽象。举个例子，&lt;句子&gt; → &lt;主语&gt;&lt;谓语&gt;&lt;间接宾语&gt;&lt;直接宾语&gt;，这是一个语法规则，它规定了什么东西可以组成句子，同样的，对于主语，他又会规定什么东西可以组成主语，就这样将这个东西直至细分成词法分析器分析后的单词符号的类型码，这一条条的规则组合起来构成的一个有意义的东西就是文法，像上面的例子就是一个”句子”的文法。扯到文法，又不得不扯到上下文无关文法，我本身对于这种概念性的东西是非常反感的，但没办法，学术圈就是这个样子，把一些浅显易懂的东西非得强行扯上一大堆你看不懂的概念啊，符号啊给包装起来。。。不传播这些言论，接着说上下文无关文法，</p>
+<blockquote>
+<p>一个上下文无关文法G是一个四元式</p>
+<p> G=(VT，VN，S，P)，其中</p>
+<p>VT：终结符集合(非空)</p>
+<p>VN：非终结符集合(非空)，且VT∩VN=∅</p>
+<p>S：文法的开始符号，S∈VN</p>
+<p>P：产生式集合(有限)，每个产生式形式为</p>
+<p>P→a， P∈VN，a∈(VT∪VN)*</p>
+<p>开始符S至少必须在某个产生式的左部出现一次</p>
+</blockquote>
+<p>下面解释一下，终结符就是语法分析器的原始输入，即类型符号；非终结符就是可以进一步扩展的，比如上面的主语；开始符号指上面的句子，即一个文法定义的起点；对于每一条语法规则，叫做产生式，是终结符和非终结符按照一定的顺序组合起来可以被规约成另一个非终结符的规则。</p>
+<p>文法毕竟是一个抽象的概念，是对语言的一个抽象，由文法可以产生语言，下面给出语言的定义</p>
+<blockquote>
+<p>假定G是一个文法，S 是它的开始符号。如果S可以经过0步或若干步推出(这里的推出是指按照产生式进行非终结符到终结符的一步步的代换)α，则α称是一个句型。仅含终结符号的句型是一个句子。文法G所产生的句子的全体是一个语言，将它记为 L(G)。</p>
+</blockquote>
+<p>之所以介绍文法和语言的概念，是因为文法是语法分析器的一个重要的组成部分，一个输入的句子正是根据文法才能够被判断为该句子是否合法。到这里，我们要具备能够根据文法写出相应语言以及根据语言写出文法的能力(这里我们能够写出的文法都是一些有规律的很简单的文法，一些文法是很难写出的)，还有根据推导过程画出相应语法树的能力。所谓语法树，就是把你从文法推导具体句子时的过程一步步体现出来的一种树状结构。</p>
+<p>如果一个文法存在某个句子对应两颗不同的语法树，则说这个文法是二义的，就是说一个句子根据这个文法有两种不同的推导过程可以推出。二义性问题是不可判定问题，即不存在一个算法，它能在有限步骤内，确切地判定一个文法是否是二义的，我们只能找到一组无二义文法的充分条件。这里为什么又冒出来一个二义性文法的概念呢，不是说好不多扯概念的吗？？？没办法，下面要用到，这里的背景知识尽量把下面要用到的概念提前说清，以便下文在搭建打造编译器的框架时能够不被相关概念给卡住。这里扯二义性文法，是因为我们下面在打造编译器时所用到的文法是无二义性的，就算是有二义性，我们也会通过一些人为的手段去调整成看上去无二义的，因为如果一个具体的句子，有两种不同的过程可以被编译器识别，那编译器该选用那个过程去识别，编译器很为难的。。。</p>
+<hr>
+<p>口胡了这么久，终于来到了期待已久的正片环节。。。</p>
+<hr>
+<h2 id="正片">正片</h2><p><img src="/img/在思想上打造编译器/1.PNG" alt=""></p>
+<p>这就是我们的编译器的总体框架了，下面我们就要一步步的去在思想上打造我们的编译器了，呵呵呵呵。。。</p>
+<h2 id="词法分析器">词法分析器</h2><p>首先就是词法分析器了。词法分析的任务就是从左至右逐个字符地对源程序进行扫描，产生一个个单词符号，词法分析器又称扫描器。这里有必要讨论下词法分析器的输入输出，输入就是你能看懂的代码，输出是单词符号。单词符号包括</p>
+<ul>
+<li>基本字：如 begin，repeat</li>
+<li>标识符——表示各种名字：如变量名、数组名和过程名</li>
+<li>常数：各种类型的常数</li>
+<li>运算符：+，-，*，/，</li>
+<li>界符：逗号、分号、括号和空白</li>
+</ul>
+<p>等等。。。</p>
+<p>方便起见，单词符号的表示形式是：(单词种别，单词自身的值)，这里的单词种别通常用整数编码表示，这里用整数编码也是为了方便，他就是建立了一种映射关系，比如1对应begin基本字，2对应运算符’+’，那么我词法分析器输出1的时候，我就知道我输入了一个begin基本字，以此类推。单词自身的值是为了区别在整数编码相同的情况下如何区分不同的东西，比如我规定常数的单词种别是4，那么当我输入1和输入2的时候，词法分析器识别的结果是单词种别都是4，那么我怎么区分，这时单词自身的值就起到区分的效果(当然，这个值后面也用很多用处)。对于常数，单词自身的值就记为他的二进制表示，那么1-&gt;(4,1)，2-&gt;(4,10)，这时就显而易见了。</p>
+<p>当然，这种映射关系是你自己可以定义的，你可以一词一种，也可以多词一种，随你喜欢去定制，只要你的语法分析器的接口能够按照这种映射关系去识别。</p>
+<p>我们打算用c语言去写词法分析器，至于c语言的词法分析器是什么，我们不讨论这种鸡生蛋的问题，我们如果用代码去实现词法分析器的话，那么很容易想到的是该代码的大致框架就是读取输入，识别出是什么东西，然后输出对应的种别编码，就是很简单的if语句，这种格式化的代码我们如果手写就太费劲了，那么如何去自动生成呢，自动生成需要借助状态转换图，至于状态转换图的相关理论请自行google，下面直接po一张很简单的词法分析器的状态转换图(这一眼就看懂)，又叫有限自动机。</p>
+<p><img src="/img/在思想上打造编译器/2.PNG" alt=""></p>
+<p>有了状态转换图，就能实现自动生成代码了，具体实现方法是：</p>
+<ol>
+<li>对不含回路的分叉结点 ，可用一个CASE语句或一组IF-THEN-ELSE语句实现</li>
+<li>对含回路的状态结点，可对应一段由WHILE结构和IF语句构成的程序.</li>
+<li>终态结点表示识别出某种单词符号，因此，对应语句为<br>RETURN (C，VAL)，其中，C为单词种别，VAL为单词自身值</li>
+</ol>
+<p>具体代码请自行脑补。当然这么做是有前提条件的，前提是：</p>
+<blockquote>
+<p>所有基本字都是保留字;用户不能用它们作自己的标识符；</p>
+<p>基本字作为特殊的标识符来处理，使用保留字表；</p>
+<p>如果基本字、标识符和常数(或标号)之间没有确定的运算符或界符作间隔，则必须使用一个空白符作间隔</p>
+</blockquote>
+<p>假设我们能够根据语言的相关定义，画出其对应的状态转换图的话，然后转换为相应的数据结构存储在计算机中，那么计算机就可以根据此状态转换图对应的数据结构去自动生成格式化程序代码，这些格式化代码就组成了一个很基本很简单的词法分析器，那么现在的问题就是如何画出这种状态转换图，或者说如何实现这种状态转换图对应的数据结构，这时又需要正规式的概念</p>
+<p>正规式类似于正则表达式，有了正规式，我们就可以实现正规式到有限自动机的转化，其中的原理后面再谈。先说正规式，有正则表达式基础的，正规式应该很好懂，就是一个对字符串的匹配规则，我们所实现的编译器的语言是一个正规集，正规集可以用正规式表示，比如语言中，关键字的正规式是他本身，因为它需要确切匹配，标识符的正规式可以用letter(letter|digit)<em> 这种形式来表示，而数字的正规式可以用digit(digit)</em>这种形式来表示。有了这些理论，下面我们来捋一捋现在我们词法分析器的实现框架(这里是怎么去产生一个词法分析器，输入是该词法分析器的要求，即你规定哪些是关键字，哪些是标识符等等，输出是一个词法分析器)，即一个生成一个词法分析器的程序的实现思路:</p>
+<ol>
+<li>根据我们想实现的语言(正规集)写出相应的能够识别正规集的正规式，并给每个正规式确定相应的种别编码，即输入我们的要求；</li>
+<li>该程序将正规式转换为有限自动机的对应数据结构存储起来；</li>
+<li>该程序读取有限自动机对应的数据结构生成词法分析器的格式化代码；</li>
+</ol>
+<p>上面的每一步都是理论上可以实现的，至于相关的具体代码，自行脑补，别忘了我们的题目——在思想上打造编译器。。。</p>
+<p>对于第一步，根据要求写正规式(正则表达式),不难；对于第二步，下面马上要谈；对于第三步，对于具体代码实现，我们可以这样，先讨论有限自动机对应的数据结构的代码实现，可以这样建数据结构，该数据结构有以下的字段：当前状态字段；读取的下一个字符以及当前状态在读入该字符的前提下所到达的下一状态的字段。有了该数据结构的话，代码可以这样写，建一个当前状态变量，将当前状态变量赋值为初始状态，新建一个文本，用于存储词法分析器的源代码，然后写一个循环，该循环的功能是读取当前状态，查找数据结构中当前状态的位置，然后根据此数据结构中存储的信息以及上面所说的自动生成代码的方法去向文本中输出相应的语句代码，这个循环的代码说到这已经很好写了，自行脑补吧。。。这样，实现了这三步的话，我们就写出了一个可以产生词法分析器的程序，只要我们给出相应的输入(正规式)即可。</p>
+<hr>
+<p>好，下面要去实现第二步了，将正规式转换为有限自动机。。。</p>
+<hr>
+<p>正规式我们已经了解，现在来看下有限自动机。有限自动机分为确定有限自动机(DFA)和非确定有限自动机(NFA)，两者的区别是：</p>
+<blockquote>
+<p>NFA可以有多个初态</p>
+<p>NFA弧上的标记可以是Σ*中的一个字(甚至可以是一个正规式)，而不一定是单个字符；</p>
+<p>NFA同一个字可能出现在同状态射出的多条弧上</p>
+</blockquote>
+<p>可以看出，DFA是NFA的特例，但是上文第三步中我们用于自动生成格式化代码的有限自动机是DFA，但是NFA的话更容易在正规式的基础上被构造出来(因为NFA的可操作空间更大)，但是西班SONA(不用担心)，NFA和DFA是可以等价的相互转化的。</p>
+<p>对于DFA向NFA的转化跟我们的问题关系不大，且转化出来的NFA不唯一，所以在这不讨论，只讨论NFA向DFA的等价转化，这一步又叫做NFA的确定化，对于任意的NFA，确定化的具体步骤为：</p>
+<ol>
+<li><p>改造：</p>
+<p> 1) 引进新的初态结点X和终态结点Y，X,Y∉S，</p>
+<pre><code>从X到S0中任意状态结点连一条<span class="function"><span class="title">yipuxilong</span><span class="params">(这个符号不会打，应该是这样读的，自行脑补吧，呵呵)</span></span>箭弧， 从F中任意状态结点连一条yipuxilong箭弧到Y。
+</code></pre><p> 2）<img src="/img/在思想上打造编译器/3.PNG" alt=""></p>
+</li>
+</ol>
+<pre><code><span class="number">3</span>)逐步把这个图转变为每条弧只标记为Σ上的一个字符或yipuxilong，最后得到一个NFA;
+</code></pre><p>2.对改造后的NFA采用子集法进行进一步确定化，这里的子集法涉及到I的yipuxilong闭包的概念，自行google，这里直接给步骤：</p>
+<p><img src="/img/在思想上打造编译器/4.PNG" alt=""></p>
+<p>不难看出，在图中的I列，处于同一个yipuxilong闭包的状态可以用一个大的状态去统一，统一过后会得到一个DFA，很明显这个DFA与该NFA是等价的(这里不做证明)。到这里，我们还差一步就可以在思想上打造出我们的词法分析器了，这一步就是正规式和NFA的相互等价转化。</p>
+<p>我们首先要明确一点，NFA和正规式是等价的，其证明过程也是其相互转化的算法。还记得上面的三条规则吗？上面的三条规则可以用来应用于正规式→NFA的等价转化，而上面的三条规则反过来就可以应用于NFA→正规式的等价转化，较简单，自行脑补。。。</p>
+<p>到这，我们已然基本实现了一个简单的词法分析器，该词法分析器的框架为：</p>
+<p><img src="/img/在思想上打造编译器/5.PNG" alt=""></p>
+<p>总结下：</p>
+<p>对于一门程序语言，我们如果想要设打造对应该语言的词法分析器的话，那么该语言每一个具有独立意义的符号(类似于现实语言的单词)的整体就可以看做上图中的正规集，我们可以对正规集进行抽象概括，用正规式去表示正规集，写出这样的正规式应该对于程序员来说不是问题，好像只有正规式是我们自己写的，其他的步骤都是程序自动实现的，恩，就是这样。有了正规式后，产生词法分析器的程序就可以根据正规式生成NFA，算法上面有介绍，具体代码自行脑补；生成完NFA后，程序又会将NFA确定化为DFA，算法上有，代码自行脑补；有了DFA后，程序就可以去格式化的输出词法分析器的源代码了，拿到生成的源代码编译后就可以得到一个词法分析器的程序了。。。</p>
+<p>人是追求完美的动物，对于NFA确定化生成的DFA，并不是最简的，也就是说可能存在状态冗余，即存在等价状态。所谓等价状态，指如果从状态s出发能读出某个字α而停止于终态，那么同样，从t出发也能读出α而停止于终态；反之亦然，则称s与t等价。对于等价的状态，我们是有必要去除的，这一步又叫做DFA的最小化，算法我直接截图了。。。懒。。。</p>
+<p><img src="/img/在思想上打造编译器/6.PNG" alt=""><br><img src="/img/在思想上打造编译器/7.PNG" alt=""><br><img src="/img/在思想上打造编译器/8.PNG" alt=""><br><img src="/img/在思想上打造编译器/9.PNG" alt=""></p>
+<p>好了，到这，我们已经完成了在思想上打造词法分析器的目标，给自己鼓下掌吧。。。</p>
+<p>其实，上面介绍的东西只是在实现词法分析器上面提供了理论的可行性，上面的很多算法和思想都很是经典和值得借鉴的。但如果真按照上面的理论去自己手工打造一款词法分析器的话，我真心佩服，但是写出来的程序有多粗糙暂且不论，好不好用还真不敢保证。不用担心，前人种树，后人乘凉，懒有懒的办法，FLEX帮助你自动产生一款可以自己定制的词法分析器，对于FLEX实现生成词法分析器的理论我也不是很了解，不知道跟我上面讲的是不是有类似，欢迎交流。。。它的基本用法是你可以自己定制正规式，还可以自己定制当输入匹配到该正规式时需要执行的代码，了解正则的人已然明白，FLEX是一款强大的字符串处理工具，并且可以给其他程序输出很好的接口。</p>
+<p>词法分析器就介绍到这，下面开始挑战语法分析器。。。</p>
+<hr>
+<h2 id="语法分析器">语法分析器</h2><p>对于我们输入的代码，编译器首先借由词法分析器对输入进行处理后产生单词符号，单词符号作为语法分析器的输入，由语法分析器来进行判断这些单词符号按照这样的顺序呢能否构成一个合法的句子。</p>
+<p>还记得我们前面介绍的上下文无关文法吗？我们要打造的语法分析器正是根据上下文无关文法规定的语法规则来判断一串顺序单词符号是否构成一个合法句子，语法分析器的功能就是按照文法的产生式(语言的语法规则)，识别输入符号串是否为一个句子(合式程序)。</p>
+<p>下面介绍两种语法分析的方法：一是自上而下分析法，二是自下而上分析法<br>。自上而下就是从文法的开始符号开始，一步步根据文法向下推导来检查一个符号串是否匹配；自下而上就是从文法的终结符开始，一步步根据文法向上规约来检查符号串是否匹配。</p>
+<hr>
+<p><strong>自上而下的分析</strong></p>
+<p>并不是说随意给一个文法就能够用来做语法分析器的文法的，有两个问题是语法分析时必须解决的问题，一是文法的左递归性，二是文法的回溯性。文法的左递归性将使自上而下的分析陷入无限循环；文法的回溯性指若一个产生式有多个候选，分析过程中，当一个非终结符用某一个候选匹配成功时，这种匹配可能是暂时的，出错时，不得不“回溯，回溯将会导致语法分析效率的严重下降。针对这两个问题，给出如下解决方法：</p>
+<p><img src="/img/在思想上打造编译器/10.PNG" alt=""></p>
+<p>补充：</p>
+<p>1.不同的排序可能会得到不同的文法，但等价性是显然的；</p>
+<p>2.上面所说的直接左递归性的消除指：</p>
+<p><img src="/img/在思想上打造编译器/11.PNG" alt=""></p>
+<p>现在根据上述算法，我们已经能够消除文法的左递归性了，对于消除了左递归的文法，我们可以借用最简单的递归思想去构造一个语法分析器，即所谓的递归下降分析器，该分析器的特点是：</p>
+<p>分析程序由一组过程组成， 对每一语法变量(非终结符)构造一个相应的子程序，识别对应的语法单位；</p>
+<p>通过子程序间的相互调用实现对输入串的识别。</p>
+<p>但是，可以看出该分析器的效率也是不高，因为递归本身就是一个巨大的消耗，而且他还需要去执行大量的判断语句，所以我们为了实现效率的提升，还是要去消除语法分析过程中的回溯性问题，从而打造出一个更高效率的语法分析器。</p>
+<p>现在我们要去消除回溯。为了消除回溯，前方又是一波理论来袭。。。</p>
+<hr>
+<p>消除回溯必须保证对文法的任何非终结符，当要它去匹配输入串时，能够根据它所面临的输入符号准确地指派它的一个候选去执行任务，并且此候选的工作结果应是确信无疑的，怎么去实现呢？</p>
+<p>理论：</p>
+<p><img src="/img/在思想上打造编译器/12.PNG" alt=""></p>
+<p>可以看出，有了这个集合，我们就可以满足上面的要求，如何构造这个集合呢？首先，我们要解决上图中所说的首符集两两不想交的问题，方法是提取公共左因子：</p>
+<p><img src="/img/在思想上打造编译器/13.PNG" alt=""></p>
+<p>但是我们仅仅是有FIRST集合是不够的，因为有一种情况是没有办法解决的，就是假如我输入符号为a，但a并不在A的所有候选首符集中，但A有yipuxilong且a又在A的后面恰好可以匹配，这时我们可以用yipuxilong去匹配A，然后让a去匹配A后面的，我们不能忽略这种情况，要解决这种情况，我们需要借助另外一个集合，即FOLLOW集合</p>
+<p><img src="/img/在思想上打造编译器/14.PNG" alt=""></p>
+<p>如果有了这两个集合那么我们就可以去消除回溯了，结合前面的消除左递归，我们来总结一下构造不带回溯的自上而下分析的文法条件：</p>
+<p><img src="/img/在思想上打造编译器/15.PNG" alt=""></p>
+<p>对于LL(1)文法的分析算法：</p>
+<p><img src="/img/在思想上打造编译器/16.PNG" alt=""></p>
+<p>下面的问题就转移到了如何去构造满足条件文法的FIRST和FOLLOW集合，不罗嗦，直接上图：</p>
+<p><img src="/img/在思想上打造编译器/17.PNG" alt=""><br><img src="/img/在思想上打造编译器/18.PNG" alt=""></p>
+<p>补充：循环应用上述规则，直至所有的FIRST都不再改变<br><img src="/img/在思想上打造编译器/19.PNG" alt=""></p>
+<p>有了FIRST和FOLLOW集合，为了使分析程序的构造更加方便，我们引入分析表：</p>
+<p><img src="/img/在思想上打造编译器/20.PNG" alt=""></p>
+<p>可以看出，他其实是对分析算法的一个整合，分析过程中，下一步要干什么直接查表即可。有了预测分析表，我们的分析程序进一步简化：</p>
+<p><img src="/img/在思想上打造编译器/21.PNG" alt=""><br><img src="/img/在思想上打造编译器/22.PNG" alt=""></p>
+<p>到这里，自上而下的语法分析方法就算写完了，总结下：<br>对于一个给定的文法，首先消除左递归；然后提取公共左因子；然后构造FIRST和FOLLOW集合；然后构造分析表；有了分析表这种数据结构，就可以根据语法分析算法去自上而下的进行语法分析了。上述每一步的具体代码组合起来就是具备自上而下语法分析功能的预测分析程序，即语法分析器。</p>
+<hr>
+<p><strong>自下而上的分析</strong><br>自下而上的分析的基本思想就是从输入串开始，逐步进行规约，直至规约到文法的开始符号，也就是从语法数的末端开始来构造语法树。这里所谓的规约指根据文法的产生式规则，把产生式的右部替换成左部符号。体现在程序上就是用一个寄存符号的先进后出栈，把输入符号一个一个地移进到栈里，当栈顶形成某个产生式的候选式时，即把栈顶的这一部分替换成(归约为)该产生式的左部符号。可见，自下而上的思想并不难，难的是如何识别可规约串以及在何时进行规约。和自上而下一样，介绍两种自下而上的分析方法，一种是算符优先分析算法，另一种是LR分析法</p>
+<p><em>算符优先分析算法</em></p>
+<p>所谓算符优先分析法就是定义算符(终结符)之间的某种优先关系，借助于这种关系寻找“可归约串”和进行归约。</p>
+<p>对于上一句话，首先要明白什么是算符文法。</p>
+<p>算符文法指一个文法，如果它的任一产生式的右部都不含两个相继(并列)的非终结符，即不含如下形式的产生式右部：<br>…QR… ，即不存在两个并列的非终结符，则我们称该文法为算符文法。</p>
+<p>其次要知道什么是优先关系</p>
+<p>定义任何两个可能相继出现的终结符a与b的三种优先关系</p>
+<p>a 《 b：a的优先级低于b</p>
+<p>a  = b：a的优先级等于b</p>
+<p>a  》b：a的优先级高于b</p>
+<p>这里的优先关系是有顺序的，即a》b并不意味着b《a</p>
+<p><img src="/img/在思想上打造编译器/23.PNG" alt=""></p>
+<p>上面一幅图给出了优先关系的计算方法以及算符优先文法的定义，还是要补充一下，之所以引入优先关系的概念，是因为我们在判断如何进行规约时，优先关系能够给我们提供一个标准，那就是先规约优先级高的终结符，这也是算符优先分析的精髓所在</p>
+<p>既然要用到终结符之间的优先关系，方便起见，把算符的优先关系绘制成一<br>张表，称为优先关系表</p>
+<p><img src="/img/在思想上打造编译器/24.PNG" alt=""><br><img src="/img/在思想上打造编译器/25.PNG" alt=""></p>
+<p>现在的问题就转移到了如何去构造每个非终结符的FIRSTVT和LASTVT集合了，不罗嗦，直接上图：</p>
+<p><img src="/img/在思想上打造编译器/26.PNG" alt=""></p>
+<p>伪代码实现为：</p>
+<p><img src="/img/在思想上打造编译器/27.PNG" alt=""></p>
+<p>那么，LASTVT为：</p>
+<p><img src="/img/在思想上打造编译器/28.PNG" alt=""></p>
+<p>伪代码的实现类似于FIRSTVT</p>
+<p>那么，算符优先关系表的构造流程就是：首先计算非终结符的FIRSTVT和LASTVT，然后根据下面的算法去构造优先关系表：</p>
+<p><img src="/img/在思想上打造编译器/29.PNG" alt=""><br><img src="/img/在思想上打造编译器/30.PNG" alt=""></p>
+<p>有了优先关系表后，我们来看如何进行规约。我们知道，优先关系表代表着终结符在某种情况下的规约顺序，即两个终结符存在时先规约谁的问题，这里为了描述这个规约顺序方便，我们引入最左素短语的概念。</p>
+<p>一个文法G的句型的素短语是指这样一个短语，它至少含有一个终结符，并且，除它自身之外不再含任何更小的素短语。最左素短语是指处于句型最左边的那个素短语。</p>
+<p>最左素短语的特征为：</p>
+<p><img src="/img/在思想上打造编译器/31.PNG" alt=""></p>
+<p>这里我们只需要把握住最左素短语的特征即可，根据最左素短语的特征，我们知道，对于输入串，第一个规约的一定是最左素短语，然后接着查找规约后的最左素短语，再规约，一直这样循环下去，直至规约到文法的开始符号。那么，现在的问题就变为如何去找到一个串的最左素短语，这个问题只要根据最左素短语的特征结合我们前面建立的优先关系表就很好解决了。解决算法的描述为：</p>
+<p>对于一个输入串，从左往右遍历，借用一个栈，先找到满足条件ai》ai+1的两个终结符(这里先找aj-1《aj不方便，因为另外两个条件不一定与这个条件相匹配，因为你想如果找到一个满足aj-1《aj的串的话，再接着找如果再找着满足aj-1《aj的串的话，我们就得把原来的放弃掉，直至找到满足大于关系的，与其这样，不如直接找最左素短语的末尾，然后往前找，这样就方便了)，把不满足条件的所有符号都压入栈中，找到满足大于条件的相邻终结符后，同样也把他压入栈中，然后在栈中从后往前遍历，碰到相等的掠过去，直至找到满足小于关系的两个相邻终结符，然后就找到了所谓的最左素短语，然后就可以规约了，然后重复，直至规约到文法的开始符号，上伪代码：</p>
+<p><img src="/img/在思想上打造编译器/32.PNG" alt=""></p>
+<p>对于这个算法需要注意的一点是：</p>
+<p>在上述算法的第11行中，我们并没有指出应把所找到的最左素短语规约到哪一个非终结符号”N”,N是指那样一个产生式的左部符号，此产生式的右部和s[j+1]…s[k]构成如下意义对应关系：自左至右，终结符对终结符，非终结符对非终结符，而且对应的终结符相同，对非终结符只要求顺序关系，不要求一一对应。</p>
+<p>在实际实现算符优先分析算法时，一般不采用优先关系表，而是采用优先函数，这样做以来可以便于比较运算，二来可以节省空间，但是缺点是原先不存在优先关系的两个终结符，由于与自然数对应，变成可比较的了。</p>
+<p><img src="/img/在思想上打造编译器/33.PNG" alt=""><br><img src="/img/在思想上打造编译器/34.PNG" alt=""></p>
+<p>优先函数与优先表的作用是一样的</p>
+<p>这样，我们可以根据以上的东西打造出针对算符文法的语法分析器，这个语法分析器有一定的局限性。</p>
+<hr>
+<p>介绍完了算符优先分析，下面介绍另外一种自下而上的分析方法——LR分析法</p>
+<p><em>LR分析法</em></p>
+<p>LR分析法的关键在于LR分析表，该分析表的作用是指示下一步应该做什么，上图：</p>
+<p><img src="/img/在思想上打造编译器/35.PNG" alt=""></p>
+<p>有了这张表之后，就可以让计算机自动的去匹配了，那么现在的问题就转化成了如何去构造这张表。</p>
+<p>这里引入前缀和活前缀的概念：</p>
+<p><img src="/img/在思想上打造编译器/36.PNG" alt=""></p>
+<p>这里的规范句型指规范推导推出来的句型，而规范推导指按照产生式的从文法符号开始的推导，句柄是指我们要规约的单位，活前缀是句型的前面的组成部分，LR分析的关键就在于借助一个符号栈，在往符号栈中读入的时候，保证符号栈内部始终是活前缀，当栈中组成句柄时就进行规约。为了达到这个目的，我们引入项目的概念，直接上图：</p>
+<p><img src="/img/在思想上打造编译器/37.PNG" alt=""></p>
+<p>引入这个概念后，再结合前面所说的活前缀，我们可以构造识别文法的所有活前缀的NFA方法，</p>
+<p><img src="/img/在思想上打造编译器/38.PNG" alt=""></p>
+<p>确定化之后的DFA大致为：</p>
+<p><img src="/img/在思想上打造编译器/39.PNG" alt=""></p>
+<p>这是LR分析表的原型，用这个DFA其实已经可以完成LR分析，方便起见，我们把它化成表的形式，算法是：</p>
+<p><img src="/img/在思想上打造编译器/40.PNG" alt=""></p>
+<p>其实，看了上面的表的形式，再结合这个DFA，即使不用算法也能够把表构造出来吧。。。</p>
+<p>有了LR分析表，上面已经介绍了如何根据这个表去对一个串进行LR分析，那么我们可以根据以上的思想去打造出一个语法分析器，而且这个语法分析器的应用范围较广泛</p>
+<p>介绍一款语法分析器生成工具——YACC(Bison)，是一个用来生成编译器的编译器，常与FLEX结合使用。</p>
+<hr>
+<p>呼。。。语法分析就到这了，写了也有将近一星期了。。。下面要进入语义分析的部分了，距离我们最后的编译器还有很长一段路要走。。。</p>
+<hr>
+<h2 id="语义分析与中间代码生成器">语义分析与中间代码生成器</h2><p>仅仅拥有此法分析器和语法分析器，我们的编译器还尚未完全，因为他仅仅能够识别一个串是否是一个合法的句子，但并不能知道这个句子到底有什么含义，从而无法正确的指导cpu应该怎样做，做什么。为了解决这个问题，就需要编译器的另一个模块——语义分析与中间代码生成器。</p>
+<p>为了下文的平铺直叙，强行引入以下概念：</p>
+<p>属性文法：在上下文无关文法的基础上，为每个文法符号（终结符或非终结符）配备若干相关的“值”（称为属性），属性代表与文法符号相关信息，如类型、值、代码序列、符号表内容等，属性是可以进行计算和传递的。</p>
+<p>语义规则：对于文法的每个产生式都配备了一组属性的计算规则。所谓的语义分析就是根据产生式的属性计算规则以及产生式中每个符号的属性去一步步的计算其余相关符号的属性，最终得到整个句子的具体意义。</p>
+<p>属性分为综合属性和继承属性。综合属性：“自下而上”传递信息；继承属性：“自上而下”传递信息。终结符只有综合属性，由词法分析器提供；非终结符既可有综合属性也可有继承属性，文法开始符号的所有继承属性作为属性计算前的初始值。由这些可以看出，想要计算综合属性，需要知道他所有依赖儿子的属性；而继承属性，需要知道它依赖的父亲或兄弟的属性。在语法树中，一个结点的综合属性的值由其子结点和它本身的属性值确定，使用自底向上的方法在每一个结点处使用语义规则计算综合属性的值；在语法树中，一个结点的继承属性由其父结点、其兄弟结点和其本身的某些属性确定</p>
+<p>语法制导翻译法：由源程序的语法结构所驱动的处理办法就是语法制导翻译法</p>
+<p>翻译：对输入符号串的翻译也就是根据语义规则进行计算的结果</p>
+<p>强行引入这些概念后，下面开始口胡：由语法分析，不管是自上而下的还是自下而上的，我们都可以构造对应输入串的语法树出来，那么我们的属性文法的计算就可以基于这棵语法树进行。在语法树的基础上进行属性计算的方法有：依赖图法和树遍历法。</p>
+<p><em>依赖图法</em></p>
+<p><img src="/img/在思想上打造编译器/41.PNG" alt=""></p>
+<p>建立依赖图的算法：</p>
+<p><img src="/img/在思想上打造编译器/42.PNG" alt=""></p>
+<p>有了依赖图，我们就可以得到计算语义规则的顺序，为什么这么说？你想，所谓的依赖图，就是指若要知道某个符号的属性需要先知道哪些属性，这样一层层的问下去就会知道若要计算所有符号的属性，需要最先知道的符号的属性，从而确定了语义规则的计算顺序，然后就可以进行语义计算了，流程图为：输入串→语法树→依赖图→语义计算顺序，这就是依赖图法计算属性</p>
+<p><em>树遍历法</em></p>
+<p>树遍历是指遍历语法树计算属性，所以还是根据语法分析建立起来的语法树去按照某种次序去计算属性，算法为：</p>
+<p><img src="/img/在思想上打造编译器/43.PNG" alt=""></p>
+<hr>
+<p>可以看出，不管是依赖图法还是树遍历法，都需要预先建立好语法树，然后在根据这个语法树做文章，这其实是对输入串进行了两次或两次以上的扫描的，是不是感觉有点浪费呢。为了更高的追求，特推出一遍扫描的处理方法，即在进行语法分析进行建立语法树的同时就将各符号的属性计算出来，达到一遍扫描不仅建立语法树，而且建立语义树的目的。</p>
+<p>我们注意到，对于综合属性和继承属性，两者的计算是有很大区别的，所以，我们区别对待。</p>
+<p>我们首先来看一种比较简单的情况——只含有综合属性。只含有综合属性的属性文法称为S-属性文法。对于这种属性文法，它的一遍扫描较易实现，综合属性可以在分析输入符号串的同时由自下而上的分析器来计算，分析器可以保存与栈中文法符号有关的综合属性值，每当进行归约时，新的属性值就由栈中正在归约的产生式右边符号的属性值来计算。即在进行规约操作时，计算规约到的符号的综合属性，因为此时由自下而上的分析可以知道，它所依赖的所有属性此时都是已知的了，所以可以进行计算。</p>
+<p>我们对这种情况进行一个扩充，即介绍L-属性文法：</p>
+<p><img src="/img/在思想上打造编译器/44.PNG" alt=""></p>
+<p>那么，我们如何去翻译这种文法呢？在对某种属性文法进行翻译的时候，我们仅仅知道语义规则是不够的，就像前面的依赖图法和树遍历法一样，二者都是通过某种途径去确立了语义规则的计算顺序，从而使得翻译能够顺利进行，一遍扫描也是如此，在应用语义规则的时候，我们得知道何时应用语义规则，由此就构成了翻译模式的概念。语义规则：给出了属性计算的定义，没有属性计算的次序等实现细节；翻译模式：给出了使用语义规则进行计算的次序，这样就可把某些实现细节表示出来。为了体现在何时何地进行语义规则的计算，我们规定在翻译模式中，和文法符号相关的属性和语义规则（这里我们也称语义动作），用花括号{ }括起来，插入到产生式右部的合适位置上。</p>
+<p>这样，在一遍扫描中，我们就得设计出文法的翻译模式出来，以达到一边扫描的目的。设计翻译模式时，必须保证当某个动作引用一个属性时它必须是有定义的。而L-属性文法本身就能确保每个动作不会引用尚未计算出来的属性，而且可以看出，L-属性文法适合自上而下的分析，并且插入在产生式右边的动作是在处于相同位置上的符号被展开（匹配成功）时执行的。但是经过前面的语法分析的介绍，我们知道左递归对自顶向下造成的问题，所以为了构造不带回溯的自顶向下语法分析，必须消除文法中的左递归，但是在与此同时，当消除一个翻译模式的基本文法的左递归时同时考虑属性。下面给出解决这个问题的一般方法：</p>
+<p><img src="/img/在思想上打造编译器/45.PNG" alt=""></p>
+<p>现在我们已经能够消除文法的左递归且不改变语义。一边扫描是指在语法分析的同时去实现语义的分析，还记得前面的递归下降分析程序吗？它是我们进行语法分析的一种较为简单的程序实现，那么我们如何在这个程序中嵌入语义分析，使之成为一个翻译器呢？给出以下算法：</p>
+<p><img src="/img/在思想上打造编译器/46.PNG" alt=""><br><img src="/img/在思想上打造编译器/47.PNG" alt=""></p>
+<p>由此，可以构造出一个完整的递归下降翻译器。</p>
+<p>那么，翻译器知道了该句子的语义后，他怎么去指导CPU去完成相应的运转呢？我们知道CPU只认识机器指令，那么，很自然的想到，翻译器可以根据相关的语义去产生相对应的机器指令去指导CPU工作。但这太不方便了，这样做会有很多限制，优化啊，移植啊什么乱七八糟的都会受限。这时，就引入了中间代码的概念，独立于机器，复杂性界于源语言和目标语言之间的语言。引入中间语言便于进行与机器无关的代码优化工作 ；易于移植；使编译程序的结构在逻辑上更为简单明确等。列举几种中间语言：后缀式又称逆波兰表示；图表示： 比如DAG、抽象语法树；三地址代码：三元式，四元式，间接三元式。对于后缀式和图表示由于后面所用不多，就不做介绍了。着重介绍三地址代码，先来个直观的展示：</p>
+<p><img src="/img/在思想上打造编译器/48.PNG" alt=""></p>
+<p>四元式：一个带有四个域的记录结构，这四个域分别称为op, arg1, arg2及result；</p>
+<p>三元式：三个域：op、arg1和arg2；引用临时变量(中间结果)：通过计算该值的语句的位置</p>
+<p>间接三元式：三元式表+间接码表组成。间接码表是一张指示器表，按运算的先后次序列出有关三元式在三元式表中的位置，这相较于三元式方便优化并且节省空间。</p>
+<p>有了上面所铺设的理论，我们来看一些具体的高级语言的结构怎么被翻译成中间代码的。。。</p>
+<hr>
+<p><em>赋值语句的翻译</em></p>
+<p><img src="/img/在思想上打造编译器/49.PNG" alt=""></p>
+<p>先看属性文法(只给出语义规则)：</p>
+<p><img src="/img/在思想上打造编译器/50.PNG" alt=""></p>
+<p>再看翻译模式：</p>
+<p><img src="/img/在思想上打造编译器/51.PNG" alt=""><br><img src="/img/在思想上打造编译器/52.PNG" alt=""></p>
+<p>可以看出，根据现有知识，写出此文法的语义规则很简单，根据文法及语义规则写出此翻译模式也不难，可以说，对于赋值语句的翻译是较为简单的。</p>
+<hr>
+<p><em>数组元素的引用的翻译</em><br>对于数组元素的引用，其核心问题就是数组元素地址计算的问题。</p>
+<p><img src="/img/在思想上打造编译器/53.PNG" alt=""></p>
+<p>这里有必要说明一下为什么采用这种相对地址计算公式。按正常人的想法，数组元素的地址计算公式应该是base+((i1-low1)xn2+i2-low2)x w这种很正常的地址计算公式，可以很明显的证明这两种公式是等价的，只是表现形式不同，那为什么要进行这种转换呢，有什么便利性吗？</p>
+<p>你想，如果采用这种正常的地址计算公式的话，一遍扫描是没有办法计算出数组元素的相对地址的，因为在一边扫描的过程中，对于(i1-low1)        x nk x nk-1 x …n1，这个k值在不扫描到最后是没办法确定的，所以如果采用这种计算公式的话，需要回溯或回写，导致一遍扫描的目的无法达到，但是采用上图那种转换后的公式的话就可以达到一遍扫描后就可以得到地址的目的。可以这样理解：对于不变部分，它是在声明该数组时就可以确定的，而对于可变部分，当我们扫描到i1时，我们计算i1n2，当我们扫描到i2时，我们计算(i1n2+i2)n3，扫描到哪，计算到哪，然后依此类推，就可以当我们扫描到最后的ik时，我们就得到了该数组元素的相对地址了。</p>
+<p>下面就介绍结合组数元素的赋值语句的翻译：</p>
+<p><img src="/img/在思想上打造编译器/54.PNG" alt=""><br><img src="/img/在思想上打造编译器/55.PNG" alt=""><br><img src="/img/在思想上打造编译器/56.PNG" alt=""><br><img src="/img/在思想上打造编译器/57.PNG" alt=""><br><img src="/img/在思想上打造编译器/58.PNG" alt=""><br><img src="/img/在思想上打造编译器/59.PNG" alt=""><br><img src="/img/在思想上打造编译器/60.PNG" alt=""></p>
+<p>其中，对于产生式E→E1 ＋E2，我们还需考虑类型转换的问题，直接来看考虑类型转换问题的语义动作的改进(前面好像提到过类型转换的事)：</p>
+<p><img src="/img/在思想上打造编译器/61.PNG" alt=""><br><img src="/img/在思想上打造编译器/62.PNG" alt=""></p>
+<p>有了赋值语句翻译的基础，我们再来个难点的——布尔表达式的翻译</p>
+<hr>
+<p><em>布尔表达式的翻译</em></p>
+<p>布尔表达式的两个基本作用：用于逻辑演算，计算逻辑值；用于控制语句的条件式。产生布尔表达式的文法并不难写，这里直接给出：</p>
+<p>产生布尔表达式的文法：E → E or E | E and E | not E | (E) | i rop i | i</p>
+<p>对于布尔表达式的翻译，我们首先要考虑优化问题，在翻译时是否要采用优化，将决定两种不同的翻译模式。这里所说的优化是指当布尔表达式已经足够去判断true或false时，不再进行接下去的计算，所以优化后：</p>
+<p>把A or B解释成      if A then true else B</p>
+<p>把A and B解释成  if A then B else false</p>
+<p>把not A解释成    if A then false else true</p>
+<p>这也是现今绝大多数语言所采用的方法，所以下面的针对布尔表达式的翻译模式是针对优化的翻译模式，且翻译出来的中间代码普遍采用四元式的形式，特此说明。</p>
+<p>当布尔表达式用于逻辑运算时，即针对布尔表达式的数值表示进行翻译时，较为简单：</p>
+<p><img src="/img/在思想上打造编译器/63.PNG" alt=""><br><img src="/img/在思想上打造编译器/64.PNG" alt=""></p>
+<p>当布尔表达式作为条件控制语句时，需要考虑的东西相对就较多一些，这时需要把整个布尔表达式当做一个整体来判断，该整体影响外界的只有两种情况，即当这个布尔表达式true时怎么样，当这个布尔表达式false时怎么样，为了说明方便起见，结合四元式的形式，我们赋予这种作为条件控制语句的布尔表达式两种出口：真出口和假出口。举个例子：</p>
+<p><img src="/img/在思想上打造编译器/65.PNG" alt=""></p>
+<p>由此我们来看具体的语义规则：</p>
+<p><img src="/img/在思想上打造编译器/66.PNG" alt=""><br><img src="/img/在思想上打造编译器/67.PNG" alt=""><br><img src="/img/在思想上打造编译器/68.PNG" alt=""><br><img src="/img/在思想上打造编译器/69.PNG" alt=""><br><img src="/img/在思想上打造编译器/70.PNG" alt=""></p>
+<p>这些语义规则把我们所想要表达的该语句的具体意义已经很好的体现了出来，下面我们来看具体的翻译模式。最简单的一种翻译就是：为给定的输入串构造一棵语法树，遍历语法树，进行语义规则中规定的翻译，但这需要两遍或多遍扫描，效率低，我们不喜欢，我们追求一遍扫描的翻译模式。</p>
+<hr>
+<p>我们做如下约定<br><img src="/img/在思想上打造编译器/71.PNG" alt=""></p>
+<p>我们考虑一下，一遍扫描的翻译的最大困难是什么？就是产生跳转四元式时，它的转移地址无法立即知道，需要以后扫描到特定位置时才能回过头来确定。为了解决这个问题，我们把这个未完成的四元式地址作为E的语义值保存,待机“回填”。为此，引入以下概念：</p>
+<p><img src="/img/在思想上打造编译器/72.PNG" alt=""><br><img src="/img/在思想上打造编译器/73.PNG" alt=""></p>
+<p>由此，我们可以构造出翻译模式：</p>
+<p><img src="/img/在思想上打造编译器/74.PNG" alt=""><br><img src="/img/在思想上打造编译器/75.PNG" alt=""><br><img src="/img/在思想上打造编译器/76.PNG" alt=""><br><img src="/img/在思想上打造编译器/77.PNG" alt=""><br><img src="/img/在思想上打造编译器/78.PNG" alt=""></p>
+<p>补充：作为整个布尔表达式的“真”“假”出口(转移目标)仍待回填(这是翻译包括他的整体时做的事情)</p>
+<hr>
+<p>有了布尔表达式翻译的基础，我们再来看控制语句的翻译，这里我们直接设计一遍扫描的翻译模式：</p>
+<p><img src="/img/在思想上打造编译器/79.PNG" alt=""></p>
+<p>老规矩，先看语义规则：</p>
+<p><img src="/img/在思想上打造编译器/80.PNG" alt=""><br><img src="/img/在思想上打造编译器/81.PNG" alt=""><br><img src="/img/在思想上打造编译器/82.PNG" alt=""></p>
+<p>有了前面的基础，可以说知道文法后，这个语义规则很容易写出，那么，我们来构造翻译模式吧，树遍历的那种翻译模式就不说了，直接来一遍扫描的。</p>
+<p>为了便于“回填”，我们引入yipuxilong，作为属性计算的中转，便于传递属性，因此需要等价改写产生式，改写后首先来看if语句的翻译模式，没啥好说的，直接看：</p>
+<p><img src="/img/在思想上打造编译器/83.PNG" alt=""></p>
+<p>从此翻译模式可以看出M，N非终结符的引入是为了记录当前所在位置，从而便于“回填”我们前面所介绍的真出口或假出口，至于回填哪个出口，还需要根据当前产生式的逻辑决定。如法炮制，对于while控制语句：</p>
+<p><img src="/img/在思想上打造编译器/84.PNG" alt=""></p>
+<p>这种借用中间符号便于以后回填的思想很有用，可以灵活应用于其他语句的翻译</p>
+<hr>
+<p><em>标号与goto语句的翻译</em></p>
+<p>对于goto语句，我们知道分两种情况：</p>
+<p><img src="/img/在思想上打造编译器/85.PNG" alt=""></p>
+<p>对于向后转移的情况，没什么好说的，当编译程序遇到这个goto语句时，L必是已定义了的，通过对L查找符号表获得他的定义地址p，从而编译程序可立即产生出相应于这个goto L的四元式(j,-,-,p)。</p>
+<p>但是对于向前转移的情况，也就是说，当遇到goto语句，标号L尚未定义，那么，若L是第一次出现，则把他填进符号表中并标记上“未定义”。由于L尚未定义，所以对goto L我们只能产生一个不完全的四元式(j,-,-,-)，它的转移目标需待L定义时在回填回去，在这种情况下，就必须把所有那些以L为转移目标的四元式的地址都记录下来，以便遇到L时回填。可以采用链式结构，建链的方法是：若第一次遇到goto L中的标号尚未在符号表中出现，则把L填入表中，置L为“未定义”，产生不完全四元式，并把该四元式的地址记录在符号表中；当再次遇到goto L时，若L还未定义，在产生一个不完全四元式，只不过该四元式的跳转地址是上一个goto L四元式的地址，然后符号表中L处记录的地址改为新产生的四元式的地址，也就是把符号表中记录的不完全四元式的地址当做链表头，在回填的时候，依据该链表头，边向后索引边回填，直至末尾(末尾的不完全四元式的跳转地址为0作为末尾标志)。如图：</p>
+<p><img src="/img/在思想上打造编译器/86.PNG" alt=""></p>
+<p>具体的伪代码就自行脑补吧。。。</p>
+<hr>
+<p><em>case语句的翻译</em></p>
+<p>对于case语句，较简单，没啥说的，直接上图吧：</p>
+<p><img src="/img/在思想上打造编译器/87.PNG" alt=""><br><img src="/img/在思想上打造编译器/88.PNG" alt=""></p>
+<hr>
+<p><em>过程调用的翻译</em></p>
+<p>对于过程调用，需要注意的就是在传参的时候，不管是传值还是传引用，都要保证过程调用有参数可用，这点自己把握，实现方法很多，例如可以借助一个中间结构等等，上图：</p>
+<p><img src="/img/在思想上打造编译器/89.PNG" alt=""></p>
+<hr>
+<p>到这，喘口气吧，我们已经把打造一个编译器所需要的主要功能都介绍完毕了。理下思路吧(口胡ing)。。。</p>
+<p>所谓编译器，是指针对一门人们设计的程序语言所架设的一个人与计算机沟通的桥梁。我们人类把我们的思想以及我们想要让计算机干的事情，通过程序语言的形式精简概括的表达出来，我们认为计算机是可以懂我们的意思，其实如果没有编译器，计算机根本不知道我们是啥意思，他只知道输入了一大堆东西，然后就没有然后了。而有了编译器，编译器就可以将程序语言转换成计算机能够唯一读懂的机器码(中间代码距离机器码仅一步之遥，只需要建立一个映射关系即可)，然后计算机就可以按照我们人类所预想的那样去工作(当然，这需要我们把编译器打造成能够按照我们的意思去翻译的一个程序)。</p>
+<p>注意，编译器是针对语言而来的，不同的语言对应不同的编译器。如果我们想在思想上打造一款全新的编译器，那么我们首先要从设计一门新的语言开始。假设我自己设计的语言只有赋值、控制、布尔表达式、过程调用的功能，那么，对于这个我们自己设计的程序设计语言，我们可以很轻易的将其抽象成文法的形式，并赋予我们想要赋予的语义(可以自己定制，你可以实现与当今流行的语言同样的语法形式，当完全不同的语义，只要你开心就好)，有了文法和相应的语义，那么我们现在可以针对我们自己设计的语言去设计一款匹配的编译器了，对于文法中的每个符号，不管是终结符还是非终结符，我们都可以设计出相对应的正规式，根据正规式，然后根据我们前面介绍的词法分析器的构造方法，我们可以打造出识别此输入的词法分析器，词法分析器会将输入识别为文法中相对应的单词符号，这些单词符号又会被语法分析器接收，当做语法分析器的输入，去进行相应的语法分析，结合我们前面介绍的一遍扫描的翻译模式，我们知道语法分析器、语义分析器以及中间代码产生器是可以结合在一起来工作的，也就是说在语法分析的同时就会进行语义的计算(如果能够正确匹配的话)并根据翻译模式产生相应的中间代码，有了中间代码就相当于有了机器码，这些机器码组成了所谓的程序，此时编译器就完成了它的工作，然后计算机就可以拿着这些机器码去运行了。也就是说，我们已经可以在理论上自己设计属于我们自己的程序语言并打造出相对应的编译器了，虽然很low就是了。</p>
+<hr>
+<p>现在我们的编译器已经初具规模，接下来要做的就是一些打磨和善后工作了，可能不是那么的系统(这扯一点，那扯一点)，这些工作同样重要，它意味着我们又可以向完美迈进一步- _ -…</p>
+<hr>
+<p><strong>善后工作1——符号表</strong></p>
+<p>还记得之前所说的符号表吗，我们总是提及它却不曾较为系统的阐释它，现在我们要善后了，较为详细的来介绍下符号表，其实这里介绍的符号表只是一种较为正常的实现，你也可以根据自己的需要去打造自己的符号表，还是那句话：你开心就好- _ -</p>
+<p>符号表的基本结构就是包含两栏：名字栏，也称主栏，关键字栏；信息栏，记录相应的不同属性，分为若干子栏。符号表的作用就是我们将信息存储在里面，当我们需要的时候，我们就查找它将信息提取出来，对于符号表的具体组织，具体存什么东西，看你需要，你开心就好。。。对于符号表的存储和查找，涉及数据结构和算法，怎么存省空间，怎么查速度快等问题这里不做探讨。</p>
+<p>这里，符号表就讨论到这。可能有人要骂娘了，这TM不是什么也没说吗，别急，对于符号表，他就是你所想的那样，你想要怎么实现就怎么实现，抽象的说，符号表就是一个信息的载体，它可以存储信息，然后在你要用的时候提供相应的信息。</p>
+<p><strong>善后工作2——参数传递</strong></p>
+<p>下面我们来讨论下参数传递的问题。我们知道，参数分为形参和实参，参数传递的方式有以下4种，分别会达到不同的效果。</p>
+<p><img src="/img/在思想上打造编译器/90.PNG" alt=""><br><img src="/img/在思想上打造编译器/91.PNG" alt=""><br><img src="/img/在思想上打造编译器/92.PNG" alt=""><br><img src="/img/在思想上打造编译器/93.PNG" alt=""></p>
+<p>说的很详细，就不在多啰嗦什么了。。。</p>
+<p><strong>善后工作3——嵌套过程语言的栈式实现</strong></p>
+<p>我们知道，有些程序是允许嵌套定义的，即允许过程定义的嵌套，如PASCAL，PL语言。嵌套定义时遵循最近嵌套原则。</p>
+<p><img src="/img/在思想上打造编译器/94.PNG" alt=""></p>
+<p>对于嵌套定义，需要解决的问题就是非局部名字的访问的实现，结合前面所说的最近嵌套原则，当访问一个变量时，我们需要知道，距离该变量最近的定义是什么，如果在最内层找不到的话，则向外层查找，直至找到，并引用距离该变量层数最近的定义，若找到最外层都没找到的话，则报错。那么，如何在程序中实现这个查找的过程呢？我们提供一种方法：</p>
+<p>引入如下概念：</p>
+<p><img src="/img/在思想上打造编译器/95.PNG" alt=""><br><img src="/img/在思想上打造编译器/96.PNG" alt=""></p>
+<p>有了活动记录和静态连以及动态链的概念，我们就可以实现访问非局部名字的访问的实现，上个例子：有如下程序：</p>
+<p><img src="/img/在思想上打造编译器/97.PNG" alt=""><br><img src="/img/在思想上打造编译器/98.PNG" alt=""></p>
+<p>由这个程序，我们可以知道，程序的嵌套定义以及调用过程，程序的调用过程为：主程序P→过程S→过程Q→过程R→过程R，紧扣静态链和动态链的概念的意义，我们来看几种情况下非局部名字的访问的实现，也就是要找到最先定义名字的活动记录，因为找到了相应的活动记录，就可以找到相应的名字：</p>
+<p><img src="/img/在思想上打造编译器/99.PNG" alt=""><br><img src="/img/在思想上打造编译器/100.PNG" alt=""><br><img src="/img/在思想上打造编译器/101.PNG" alt=""></p>
+<p>解决了上面的三种情况，我们就可以找到任何情况下非局部名字最先定义所在的活动记录，从而引用。最后送一张完整的图：</p>
+<p><img src="/img/在思想上打造编译器/102.PNG" alt=""></p>
+<p><strong>善后工作4——优化</strong></p>
+<p>我们这里的优化是对中间代码的优化，指对程序进行各种等价变换，使得从变换后的程序出发，能生成更有效的目标代码。优化分为：局部优化、循环优化和全局优化。优化包括删除多余运算(或称删除公用子表达式)、合并已知量、复写传播、删除无用赋值、代码外提、强度消弱、变换循环控制条件等等</p>
+<p>我们首先介绍局部优化。。。</p>
+<p><em>局部优化</em></p>
+<p>对于局部优化，我们引入以下概念：</p>
+<p><img src="/img/在思想上打造编译器/103.PNG" alt=""></p>
+<p>这里所说的局部优化指局限于基本块范围内的优化。那么现在我们如果想做局部优化，我们就要能够将一连串的中间代码划分成一个个的基本块，对于一个基本块，要确定的就是他的入口和出口。下面我们给出如何划分程序的基本块，中间代码以四元式为例：</p>
+<p><img src="/img/在思想上打造编译器/104.PNG" alt=""><br><img src="/img/在思想上打造编译器/105.PNG" alt=""></p>
+<p>将程序划分为基本块后，为了将基本块之间的关系展示出来，给出流图的概念：</p>
+<p><img src="/img/在思想上打造编译器/106.PNG" alt=""></p>
+<p>由此，一长串的四元式就变成了有一定顺序和结构的流图。回归正题，我们接着来看基本块的优化，对于基本块的优化，我们要借助一种数据结构——DAG(无循环有向图)</p>
+<p><img src="/img/在思想上打造编译器/107.PNG" alt=""></p>
+<p>首先，我们根据基本块建立该基本块对应的DAG，DAG是和基本块等价的，然后就可以根据DAG进行优化了。在建立基本块对应的等价DAG时，我们就可以进行优化，删除一些多余的重复的东西。给出建立DAG的算法</p>
+<p><img src="/img/在思想上打造编译器/108.PNG" alt=""><br><img src="/img/在思想上打造编译器/109.PNG" alt=""><br><img src="/img/在思想上打造编译器/110.PNG" alt=""><br><img src="/img/在思想上打造编译器/111.PNG" alt=""><br><img src="/img/在思想上打造编译器/112.PNG" alt=""><br><img src="/img/在思想上打造编译器/113.PNG" alt=""></p>
+<p>建立DAG时，我们要遵循的原则就是能重用的节点就重用，能不建立新的节点就不建。这步优化已经可以删除很多多余的重复的东西，但是是针对一遍代码执行的优化。对于基本块的优化，我们还必须去考虑一个问题——循环的优化，对于循环的优化是优化的关键，对循环中的代码，我们可以实行：</p>
+<blockquote>
+<p>代码外提<br>强度消弱<br>删除归纳变量(变换循环控制条件)<br>循环展开<br>循环合并</p>
+</blockquote>
+<p>我们一步步的看，对于代码外提，外提的代码需要满足一定的条件，我们引入以下概念：</p>
+<p><img src="/img/在思想上打造编译器/114.PNG" alt=""></p>
+<p>由此可以看出，我们如果想要进行代码外提的优化，我们需要查找循环的不变运算，给出查找循环不变运算的算法：</p>
+<p><img src="/img/在思想上打造编译器/115.PNG" alt=""></p>
+<p>有了循环不变运算，我们就已具备了代码外提的前提，下面给出代码外提算法：</p>
+<p><img src="/img/在思想上打造编译器/116.PNG" alt=""><br><img src="/img/在思想上打造编译器/117.PNG" alt=""></p>
+<p>将一些能够外提的代码外提后，我们再来考虑循环内部的代码，内部代码的优化，我们可以进行强度消弱。所谓强度消弱指把程序中执行时间较长的运算转换为执行时间较短的运算，强度消弱后可以很自然的进行归纳变量的删除，所以我们把这两步合并到一块给出算法。首先给出归纳变量的定义：</p>
+<p><img src="/img/在思想上打造编译器/118.PNG" alt=""></p>
+<p>给出算法：</p>
+<p><img src="/img/在思想上打造编译器/119.PNG" alt=""><br><img src="/img/在思想上打造编译器/120.PNG" alt=""></p>
+<p>对于强度消弱，啰嗦几句：强度消弱通常是对与循环控制变量有线性关系的变量赋值进行；经过强度消弱后，循环中可能出现一些新的无用赋值；对于消弱下标变量地址计算的强度非常有效</p>
+<p>谈到优化工作，简单介绍下编译器GCC的优化开关：</p>
+<p><img src="/img/在思想上打造编译器/121.PNG" alt=""></p>
+<p>优化就到这。。。</p>
+<h2 id="最后的工作——代码生成器">最后的工作——代码生成器</h2><p>有了前面生成的优化后的中间代码，我们的编译器打造还差最后一步，就是根据中间代码生成目标代码，目标代码是真正计算机可以读懂的代码，目标代码里直接写出对硬件的操作，从而指导硬件工作。</p>
+<p>目标代码的三种形式：</p>
+<p>绝对指令代码：能够立即执行的机器语言代码，所有地址已经定位</p>
+<p>可重新定位指令代码：待装配的机器语言模块，执行时，由连接装配程序把它们和某些运行程序连接起来，转换成能执行的机器语言代码</p>
+<p>汇编指令代码：尚须经过汇编程序汇编，转换成可执行的机器语言代码</p>
+<p>通常，汇编语言和中间代码的界定并不是那么明显，这里不撕逼，还有前面所说的中间代码到机器指令的映射关系并不准确，这里更正一下。。。中间代码生成目标代码的过程中，还有很多我们值得考虑的问题，比如：</p>
+<p>如何使生成的目标代码较短； 如何充分利用计算机的寄存器，减少目标代码中访问存贮单元的次数； 如何充分利用计算机的指令系统的特点等等。。。</p>
+<p>下面我们就来看在考虑上述问题的情况下，代码生成器怎么构造，这里说明一下，对于目标代码，我们采用汇编语言。首先，我们要知道，代码生成器的输入包括源程序的中间表示，以及符号表中的信息，然后输出就是指导硬件如何工作的目标代码。学习过汇编的都知道，汇编涉及对硬件的直接操作，但我们知道硬件资源总是有限的，那么我们如何在目标代码的层次上去更好的利用这些硬件资源呢？这就是我们接下来要讨论的问题。</p>
+<p>首先，我们考虑寄存器的分配问题，我们抽象出一台计算机出来，该计算机具有以下特征：</p>
+<blockquote>
+<p>具有多个通用寄存器，他们既可以作为累加器，也可以作为变址器</p>
+<p>运算必须在某个寄存器中进行</p>
+<p>含有四种类型的指令形式</p>
+</blockquote>
+<p>我们抽象的目的是为了让计算机兼容我们的目标语言(汇编),以方便我们下面的讨论，这也符合一定的实际。</p>
+<p>假设不考虑目标代码的执行效率，目标代码的生成是很简单的。给个例子(以类汇编语言为例)：</p>
+<p><img src="/img/在思想上打造编译器/122.PNG" alt=""></p>
+<p>可以看出，生成的目标代码存取操作很多，我们都知道计算机的访存操作是很耗时间的，所以我们应当在一个基本块的范围内考虑如何充分利用寄存器，减少访存操作。充分利用要遵循以下原则：</p>
+<blockquote>
+<p>尽可能留：在生成计算某变量值的目标代码时，尽可能让该变量保留在寄存器中</p>
+<p>尽可能用：后续的目标代码尽可能引用变量在寄存器中的值，而不访问内存</p>
+<p>及时腾空：在离开基本块时，把存在寄存器中的现行的值放到主存中</p>
+</blockquote>
+<p>为了能够这样做代码生成器必须了解一些信息。我们引入待用信息、寄存器描述数组和变量地址描述数组用以记录代码生成时所需收集的信息：</p>
+<p><img src="/img/在思想上打造编译器/123.PNG" alt=""><br><img src="/img/在思想上打造编译器/124.PNG" alt=""></p>
+<p>那么如何生成符号的待用信息表呢？这里我们需维护两个数据结构，一是我们想要得到的待用信息表，需要注意的是我们最后想要得到的是针对四元式中各个变量的待用信息；二是我们建立信息表所需要用到的信息链，下面给出算法：</p>
+<p><img src="/img/在思想上打造编译器/125.PNG" alt=""><br><img src="/img/在思想上打造编译器/126.PNG" alt=""></p>
+<p>这里需要注意的一点就是上述步骤2中的顺序是不可颠倒的。基本块中各个四元式的符号的待用和活跃信息将为我们在处理某个具体的四元式时如何分配寄存器带来方便，再给出如何分配寄存器时，我们还需引入以下概念：</p>
+<p><img src="/img/在思想上打造编译器/127.PNG" alt=""><br><img src="/img/在思想上打造编译器/128.PNG" alt=""></p>
+<p>有了这些概念，我们来看针对某个具体的四元式(该四元式携带着该四元式每个符号的待用和活跃信息)如何实施寄存器的分配，给出具体的算法：</p>
+<p><img src="/img/在思想上打造编译器/129.PNG" alt=""><br><img src="/img/在思想上打造编译器/130.PNG" alt=""><br><img src="/img/在思想上打造编译器/131.PNG" alt=""><br><img src="/img/在思想上打造编译器/132.PNG" alt=""></p>
+<p>到这，我们已经可以针对某个具体的四元式给出它的寄存器分配方案，那么我们来看最终的代码生成算法吧：</p>
+<p><img src="/img/在思想上打造编译器/133.PNG" alt=""><br><img src="/img/在思想上打造编译器/134.PNG" alt=""><br><img src="/img/在思想上打造编译器/135.PNG" alt=""></p>
+<p>到这，属于编译器的最后一个部分——代码生成器也就在理论上打造完成了。。。</p>
+<hr>
+<h2 id="总结——口胡">总结——口胡</h2><p>一路走来，让我们来整体回顾一下打造编译器的整体流程：</p>
+<p>所谓编译器，是指针对一门人们设计的程序语言所架设的一个人与计算机沟通的桥梁。我们人类把我们的思想以及我们想要让计算机干的事情，通过程序语言的形式精简概括的表达出来，我们认为计算机是可以懂我们的意思，其实如果没有编译器，计算机根本不知道我们是啥意思，他只知道输入了一大堆东西，然后就没有然后了。而有了编译器，编译器就可以将程序语言转换成计算机能够唯一读懂的机器码(中间代码距离机器码仅一步之遥，只需要建立一个映射关系即可)，然后计算机就可以按照我们人类所预想的那样去工作(当然，这需要我们把编译器打造成能够按照我们的意思去翻译的一个程序)。</p>
+<p>注意，编译器是针对语言而来的，不同的语言对应不同的编译器。如果我们想在思想上打造一款全新的编译器，那么我们首先要从设计一门新的语言开始。假设我自己设计的语言只有赋值、控制、布尔表达式、过程调用的功能，那么，对于这个我们自己设计的程序设计语言，我们可以很轻易的将其抽象成文法的形式，并赋予我们想要赋予的语义(可以自己定制，你可以实现与当今流行的语言同样的语法形式，当完全不同的语义，只要你开心就好)，有了文法和相应的语义，那么我们现在可以针对我们自己设计的语言去设计一款匹配的编译器了，对于文法中的每个符号，不管是终结符还是非终结符，我们都可以设计出相对应的正规式，根据正规式，然后根据我们前面介绍的词法分析器的构造方法，我们可以打造出识别此输入的词法分析器，词法分析器会将输入识别为文法中相对应的单词符号，这些单词符号又会被语法分析器接收，当做语法分析器的输入，去进行相应的语法分析，结合我们前面介绍的一遍扫描的翻译模式，我们知道语法分析器、语义分析器以及中间代码产生器是可以结合在一起来工作的，也就是说在语法分析的同时就会进行语义的计算(如果能够正确匹配的话)并根据翻译模式产生相应的中间代码，有了中间代码后，可以根据DAG等理论对中间代码进行一系列的优化，拿到优化后的中间代码，我们就要着手准备最终的目标代码了，这时，编译器的最后一个组成部分——代码生成器就会发挥作用了，代码生成器会根据具体的四元式结构生成具有一定运行效率的目标代码，目标代码等价于机器代码，这些机器码组成了所谓的程序，此时编译器就完成了它的工作，然后计算机就可以拿着这些机器码去运行了。也就是说，我们已经可以在理论上自己设计属于我们自己的程序语言并打造出相对应的编译器了，虽然很low就是了。。。</p>
+<p>最后，附一张总体框架图用以完美收官：</p>
+<p><img src="/img/在思想上打造编译器/136.PNG" alt=""></p>
+<p>不敢自称程序员的小菜比第一次写blog，写了大概两个星期吧，算是自己比较用心的写的一篇总结了，肯定会有很多不足，欢迎多多交流指正，如果有人看的话，呵呵。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/reverse-related/">reverse related</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/编译原理/">编译原理</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://kenshichong.github.io/2015/11/25/在思想上打造编译器/" data-title="在思想上打造编译器 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/11/26/hello-world/" title="Hello World">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Hello World</span>
+</a>
+</div>
+
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#在思想上打造编译器"><span class="toc-number">1.</span> <span class="toc-text">在思想上打造编译器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#背景知识"><span class="toc-number">1.1.</span> <span class="toc-text">背景知识</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#正片"><span class="toc-number">1.2.</span> <span class="toc-text">正片</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#词法分析器"><span class="toc-number">1.3.</span> <span class="toc-text">词法分析器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语法分析器"><span class="toc-number">1.4.</span> <span class="toc-text">语法分析器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语义分析与中间代码生成器"><span class="toc-number">1.5.</span> <span class="toc-text">语义分析与中间代码生成器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后的工作——代码生成器"><span class="toc-number">1.6.</span> <span class="toc-text">最后的工作——代码生成器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结——口胡"><span class="toc-number">1.7.</span> <span class="toc-text">总结——口胡</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
