@@ -3,9 +3,9 @@
   <title><![CDATA[Dung Beetle]]></title>
   <subtitle><![CDATA[Be a machine]]></subtitle>
   <link href="/atom.xml" rel="self"/>
-  <link href="https://kenshichong.github.io/"/>
+  <link href="http://kenshichong.github.io/"/>
   <updated>2015-11-26T06:38:16.907Z</updated>
-  <id>https://kenshichong.github.io/</id>
+  <id>http://kenshichong.github.io/</id>
   
   <author>
     <name><![CDATA[kenshichong]]></name>
@@ -16,8 +16,8 @@
   
   <entry>
     <title><![CDATA[Hello World]]></title>
-    <link href="https://kenshichong.github.io/2015/11/26/hello-world/"/>
-    <id>https://kenshichong.github.io/2015/11/26/hello-world/</id>
+    <link href="http://kenshichong.github.io/2015/11/26/hello-world/"/>
+    <id>http://kenshichong.github.io/2015/11/26/hello-world/</id>
     <published>2015-11-26T06:38:16.907Z</published>
     <updated>2015-11-26T06:38:16.907Z</updated>
     <content type="html"><![CDATA[<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
@@ -38,8 +38,8 @@
   
   <entry>
     <title><![CDATA[在思想上打造编译器]]></title>
-    <link href="https://kenshichong.github.io/2015/11/25/%E5%9C%A8%E6%80%9D%E6%83%B3%E4%B8%8A%E6%89%93%E9%80%A0%E7%BC%96%E8%AF%91%E5%99%A8/"/>
-    <id>https://kenshichong.github.io/2015/11/25/在思想上打造编译器/</id>
+    <link href="http://kenshichong.github.io/2015/11/25/%E5%9C%A8%E6%80%9D%E6%83%B3%E4%B8%8A%E6%89%93%E9%80%A0%E7%BC%96%E8%AF%91%E5%99%A8/"/>
+    <id>http://kenshichong.github.io/2015/11/25/在思想上打造编译器/</id>
     <published>2015-11-25T15:08:58.000Z</published>
     <updated>2015-11-26T07:08:56.764Z</updated>
     <content type="html"><![CDATA[<h1 id="在思想上打造编译器">在思想上打造编译器</h1><blockquote>
@@ -443,9 +443,9 @@
 </blockquote>]]>
     </summary>
     
-      <category term="编译原理" scheme="https://kenshichong.github.io/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/"/>
+      <category term="编译原理" scheme="http://kenshichong.github.io/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/"/>
     
-      <category term="reverse related" scheme="https://kenshichong.github.io/categories/reverse-related/"/>
+      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
     
   </entry>
   
