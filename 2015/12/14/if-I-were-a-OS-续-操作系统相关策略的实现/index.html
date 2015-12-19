@@ -1,0 +1,760 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>if-I-were-a-OS(续)-操作系统相关策略的实现 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x01 背景介绍上篇blog简单的分析了linux0.11的启动以及初始化过程，这篇如标题所示，主要讨论OS相关策略的实现，偏理论。。。由于太懒，就不注意排版了，凑和看吧。。。
+0x02 正片不墨迹，直接进入正片。。。
+中断
+中断(狭义)与异常（陷入）的区别:中断: 与正执行指令无关，可以屏蔽；    异常或陷入: 与正执行指令有关，不可屏蔽
+中断寄存器:寄存中断事件的全部触发器。
+中断位:每个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="if-I-were-a-OS(续)-操作系统相关策略的实现">
+<meta property="og:url" content="http://kenshichong.github.io/2015/12/14/if-I-were-a-OS-续-操作系统相关策略的实现/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x01 背景介绍上篇blog简单的分析了linux0.11的启动以及初始化过程，这篇如标题所示，主要讨论OS相关策略的实现，偏理论。。。由于太懒，就不注意排版了，凑和看吧。。。
+0x02 正片不墨迹，直接进入正片。。。
+中断
+中断(狭义)与异常（陷入）的区别:中断: 与正执行指令无关，可以屏蔽；    异常或陷入: 与正执行指令有关，不可屏蔽
+中断寄存器:寄存中断事件的全部触发器。
+中断位:每个">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/6.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/7.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/8.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/9.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/11.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/if-I-were-a-OS-续-操作系统相关策略的实现/12.PNG">
+<meta property="og:updated_time" content="2015-12-19T05:12:20.780Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="if-I-were-a-OS(续)-操作系统相关策略的实现">
+<meta name="twitter:description" content="0x01 背景介绍上篇blog简单的分析了linux0.11的启动以及初始化过程，这篇如标题所示，主要讨论OS相关策略的实现，偏理论。。。由于太懒，就不注意排版了，凑和看吧。。。
+0x02 正片不墨迹，直接进入正片。。。
+中断
+中断(狭义)与异常（陷入）的区别:中断: 与正执行指令无关，可以屏蔽；    异常或陷入: 与正执行指令有关，不可屏蔽
+中断寄存器:寄存中断事件的全部触发器。
+中断位:每个">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/14/if-I-were-a-OS-续-操作系统相关策略的实现/" title="if-I-were-a-OS(续)-操作系统相关策略的实现" itemprop="url">if-I-were-a-OS(续)-操作系统相关策略的实现</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-14T07:24:48.000Z" itemprop="datePublished"> 发表于 2015-12-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_背景介绍"><span class="toc-number">1.</span> <span class="toc-text">0x01 背景介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_正片"><span class="toc-number">2.</span> <span class="toc-text">0x02 正片</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#中断"><span class="toc-number">2.1.</span> <span class="toc-text">中断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作系统运行模型"><span class="toc-number">2.2.</span> <span class="toc-text">操作系统运行模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程"><span class="toc-number">2.3.</span> <span class="toc-text">进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#同步与互斥"><span class="toc-number">2.4.</span> <span class="toc-text">同步与互斥</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程的死锁"><span class="toc-number">2.5.</span> <span class="toc-text">进程的死锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#虚存"><span class="toc-number">2.6.</span> <span class="toc-text">虚存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAT16文件系统"><span class="toc-number">2.7.</span> <span class="toc-text">FAT16文件系统</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="0x01_背景介绍">0x01 背景介绍</h1><p>上篇blog简单的分析了linux0.11的启动以及初始化过程，这篇如标题所示，主要讨论OS相关策略的实现，偏理论。。。由于太懒，就不注意排版了，凑和看吧。。。</p>
+<h1 id="0x02_正片">0x02 正片</h1><p>不墨迹，直接进入正片。。。</p>
+<h2 id="中断">中断</h2><ol>
+<li>中断(狭义)与异常（陷入）的区别:中断: 与正执行指令无关，可以屏蔽；    异常或陷入: 与正执行指令有关，不可屏蔽</li>
+<li>中断寄存器:寄存中断事件的全部触发器。</li>
+<li>中断位:每个触发器称为一个中断位，当发生某个中断事件时相应位被置上。</li>
+<li>中断序号:给中断的一个顺序编号.</li>
+<li>中断响应:由硬件在执行每一条指令的最后时刻判断是否有中断,有则转入操作系统的中断处理程序.</li>
+<li>中断优先级设计原则：从提高资源利用率的角度考虑：高速设备的中断优先级高，慢速设备的中断优先级低。在交互式系统中也可以考虑用户响应满意优先原则。实时系统中，实时设备优先。</li>
+<li>中断屏蔽:指禁止处理机响应中断或禁止中断出现.</li>
+<li>中断屏蔽的软件实现方法:由软件按中断优先级约定，在响应某级中断时置屏蔽寄存器，屏蔽那些同等级和低级的中断</li>
+<li>中断响应：CPU能够在每条机器指令执行周期内的最后时刻扫描中断寄存器，查看是否有中断信号。若无中断信号，CPU继续执行程序的后续指令，否则CPU停止执行当前程序的后续指令，转入操作系统内的中断处理程序。这一过程称为中断响应。</li>
+<li>异常响应：异常（陷入）是在执行指令的时候，由指令本身的原因发生的，CPU中指令的执行逻辑发现了异常（陷入）转入操作系统内的异常（陷入）处理程序。 </li>
+</ol>
+<h2 id="操作系统运行模型">操作系统运行模型</h2><ol>
+<li><p>操作系统三种运行模型:</p>
+<ul>
+<li><p>独立运行的内核:用户程序与核心程序在分离的运行环境中运行,核心程序作为一个独立的特殊执行单位运行，有自己独立的运行栈，用户进程通过中断/陷入机制启动核心程序运行（以请求包方式传递用户请求）。</p>
+</li>
+<li><p>嵌入用户进程执行模式（类函数调用）:操作系统核心程序通过中断/陷入机制启动运行，但运行于被打断进程的核心栈上,内核程序执行并发性好。本课程对操作系统的描述都是基于这种模式，是实用OS所用模式。</p>
+</li>
+<li><p>微内核模式:核心程序只包含中断处理,系统调用总控,进程调度等功能,其他功能由用户态运行的系统进程实现,这种结构开销很大.</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="进程">进程</h2><ol>
+<li><p>PCB(进程控制块，等价于上篇blog所说的任务状态块)含有以下三大类信息：</p>
+<ul>
+<li><p>进程标识信息。如本进程的标识；本进程的产生者标识(父进程标识)；进程所属用户标识。</p>
+</li>
+<li><p>处理机状态信息保存区(栈式结构)。实质就是核心栈。保存进程进入操作系统内核的运行现场信息：通用寄存器：数据、地址寄存器。控制和状态寄存器：如程序计数器(PC)；处理机状态字(PS)*</p>
+</li>
+<li><p>进程控制信息：调度和进程状态信息，用于操作系统调度进程占用处理机的信息。 进程间通讯信息，为支持进程间的通讯相关的消息队列，消息等，这些信息存在接收方的进程控制块中。存储管理信息。包含有描述进程映像存储空间的数据结构。进程所用资源。说明由进程打开，使用的系统资源，如打开的文件等。链接信息，如就绪进程链等</p>
+</li>
+</ul>
+</li>
+<li><p>进程调度方式(进程调度在核心态运行)</p>
+<ul>
+<li><p>非剥夺:只有当处理机上的进程主动放弃处理机（阻塞或结束）时才重新调度。</p>
+</li>
+<li><p>剥夺调度:当进程运行时可以被操作系统系统以某种原则剥夺其处理机。</p>
+</li>
+</ul>
+</li>
+<li><p>引起进程调度因素：</p>
+<ul>
+<li>进程主动放弃处理机时：正在执行的进程执行完毕。操作系统在处理“进程结束”系统调用后应请求重新调度。正在执行的进程发出I/O请求。当操作系统内核驱动启动外设I/O后，在I/O请求没有完成前要将进程变成阻塞状态，应该请求重新调度。正在执行的进程要等待其它进程或系统发出的事件时。如等待另一个进程通讯数据，这时操作系统应将现运行进程挂到等待队列，并且请求重新调度。正在执行的进程暂时得不到所要的系统资源。如要求独占资源，但其被其它进程占用，这时等待的进程应阻塞到等待队列上，并且请求重新调度。</li>
+<li>为支持可剥夺的进程调度方式，有新进程就绪时（这时申请进行进程调度，新进程才可能剥夺老进程）：当中断处理程序处理完中断，如I/O中断引起某个阻塞进程变成就绪状态时，应该申请重新调度。当进程释放独占资源，引起其他等待该资源进程从阻塞状态进入就绪状态时，应该申请重新调度。当某进程发“发送消息”系统调用，导致等待该消息的进程就绪时。其它任何原因引起有进程从其它状态变成就绪状态，如进程被中调选中时。</li>
+<li>为支持可剥夺调度，即使没有新就绪进程,为了让所有就绪进程轮流占用处理机，可在下述情况下申请进行进程调度：当时钟中断发生,时钟中断处理程序调用有关时间片的处理程序，发现正运行进程时间片到，应请求重新调度。以便让其他进程占用处理机。在按进程优先级进行调度的操作系统中，任何原因引起进程的优先级发生变化时，应请求重新调度。如进程通过系统调用自愿改变优先级时或者系统处理时钟中断时，根据各进程等待处理机的时间长短而调整进程的优先级。</li>
+</ul>
+</li>
+<li><p>调度与切换时机:</p>
+<ul>
+<li>当发生引起调度条件，且当前进程无法继续运行下去时（如发生各种进程放弃处理机的条件）可以马上进行调度与切换。</li>
+<li>当中断处理结束或系统调用处理结束返回被中断进程的用户态程序执行前，若申请调度标志置上，即可马上进行进程调度与切换。如果操作系统支持这种情况下运行调度程序，即实现了剥夺方式的调度。</li>
+<li>实时系统还有其他调度与切换时机。如中断处理结束返回系统调用处理时。</li>
+</ul>
+</li>
+<li><p>进程调度算法：</p>
+<ul>
+<li>FCFS:谁先到就绪队列,将处理机分给谁.</li>
+<li>短进程优先:取一个下次所需运行时间最短的进程.(该算法能使平均等待时间最短)</li>
+<li>最高响应比优先法：响应比R定义如下： R =(W+T)/T = 1+W/T （W为等待时间，T为下次所需运行时间）</li>
+<li>优先级调度:选优先级最高的进程占用处理机,（优先级也可动态改变）.</li>
+<li>轮转调度法:以先来后到的次序+时间片轮转.*</li>
+<li>多级反馈队列调度法:设置多条就绪队列,进程被调度执行后,在被剥夺或放弃处理机后而再就绪时可以改变其就绪队列。设计的方法为：以优先级设置多队列.队列中调度采用FCFS+时间片.进程优先级升降原则是:等待CPU过久升,输入输出完成插入就绪队列时升,运行完一个完时间片降…进程最初进入就绪队列以用户初置优先级为参数.*</li>
+</ul>
+</li>
+<li><p>线程：</p>
+<ul>
+<li>轻权进程（Light-Weight Process）的引入：同一作业的不同进程之间会有许多的协作，需要进行数据交换，但进程有自己独立的存储空间，互相不干扰。如果要进行进程间数据交换，则需要通过操作系统相关系统调用进行交换，为了方便进程间交换数据，一种共享存储空间的进程概念应运而生，我们叫它为轻权进程（Light-Weight Process）。</li>
+<li>线程的引入：随着共享内存多CPU计算机的发展，迫切需要加速进程的运行速度，事实上进程中运行的程序也是有可并行执行的语句。因为进程内程序执行的顺序性，不可能实现进程内可并行成分的并行执行。为此，线程的概念呼之欲出。在一个进程中可以包含多个可以并发（并行）执行的线程。系统按进程分配所有除CPU以外的系统资源（如内存，外设，文件等），而程序则依赖于线程运行，系统按线程分配CPU资源。引入线程后，进程概念内涵改变了，进程只作为除CPU以外系统资源的分配单位，不再以进程为单位占用CPU 。</li>
+</ul>
+</li>
+</ol>
+<h2 id="同步与互斥">同步与互斥</h2><ol>
+<li><p>同步关系（亦称直接制约关系）</p>
+<ul>
+<li>指完成同一任务的伙伴进程间，因需要在某位置上协调它们的工作而等待、传递信息所产生的制约关系。按我的理解同步就是咱俩得一块完成才能执行接下来的动作，誰先完成都不行，你先完成你得等我，我完成我也等你，就这么和谐</li>
+</ul>
+</li>
+<li><p>互斥关系（亦称间接制约关系）</p>
+<ul>
+<li>即进程间因相互竞争使用独占型资源（互斥资源）所产生的制约关系。就是这个茅坑我在拉，等我拉完你在拉，憋不住也得憋，因为我不出来你就进不去。你总不能骑我头上拉吧。。。</li>
+</ul>
+</li>
+<li><p>临界段和临界资源问题：</p>
+<ul>
+<li>临界资源（critical resource）：一次仅允许一个进程使用的资源</li>
+<li>临界段（critical section) ：相关进程必须互斥执行的程序段，该程序段实施对临界资源的操作。</li>
+<li>原因：进程间若共享必须独占使用的资源，则往往存在互斥问题，即存在临界段问题</li>
+<li>多说几句：之所以存在这种临界问题，是因为在访问临界资源时，有可能发生进程的调度和切换，因为时钟中断随时可能发生，你没办法确定到底在执行哪条语句的时候发生，这时候，如果被调度的进程接下来执行的语句有对临界资源的操作，那么在切换回原来的进程后，就不能保证该临界资源的独占性了，因为该临界资源很有可能已经被修改，那么在接下来对临界资源的操作很有可能就会发生意想不到的错误，这就是很简单的竞争漏洞，即使用同一个共享资源的进程之间存在一种竞争关系，在可能执行调度的时候，你并不知道谁会取得竞争的胜利(在竞争漏洞中，我们可以通过某些手段让某个对我们有利的进程执行顺序或某些有利的代码段多执行，从而达到某些我们想要达到的目的)，所以说代码的执行顺序就并不确定，导致各种问题的出现。这里，理解临界问题，也要从汇编的层面上去理解，因为一条c对应着一条至多条的汇编。<br>解决办法：在一个多道程序的单处理机系统中，中断会引发多进程并发执行，因为中断处理结束会引起调度程序运行。如果某进程在临界段中发生中断，随着上下文切换，会保存被中断进程寄存器状态，然后调度另外的进程运行，另一个进程如果再进入相关临界段，会修改他们的额共享数据，如果再次执行进程切换，原先进程重新执行时，使用了原来保存的寄存器中的不一致的数据，导致错误，如果程序员意识到中断引起的并发能够导致错误的结果，可考虑在程序执行临界段部分的处理是，屏蔽中断。假设有中断开放指令和中断屏蔽指令，这样，我们可以在一个进程进入他的临界段时，屏蔽中断，然后当该进程结束它的临界段执行时，再开放中断，注意在使用屏蔽中断实现临界段互斥执行应该保证临界段要尽可能短，以确保尽快走出临界段，保证中断相应。</li>
+</ul>
+</li>
+</ol>
+<p>中断屏蔽只能用于单处理机系统，在多处理机共享主存的系统中，需要硬件提供某些特殊指令。例如，在一个存储周期内同时完成对某一主存单元的内容测试和修改；或者一条硬件指令能完成对寄存器和主存单元的内容互换等。利用这些特殊指令可以实现临界段的互斥执行，他们是硬件指令，硬件指令是不会被中断打断执行的。比如：</p>
+<pre><code>- “Test_and_Set”指令（多CPU）该指令功能描述为：
+`<span class="keyword">boolean</span> Test_and_Set（<span class="keyword">boolean</span> &amp;<span class="keyword">target</span>）{Boolean  rv=<span class="keyword">target</span>;
+<span class="keyword">target</span> = <span class="keyword">true</span>；
+<span class="keyword">return</span> rv;
+      }`
+</code></pre><p>注意：从target=true这条语句可以看出，它会不停的进行加锁操作，就算target是false，也会在解锁的瞬间的把target置tru(因为传的是引用)，这样做可以防止在刚执行完这条硬件指令后进行切换时操作的错误。你想，如果OS执行完这条硬件指令后，如果没在硬件指令内部实现解锁瞬间加锁的话，那么这时如果切换，且以target为判断标志的话，切换回来的进行是有权执行临界段操作的，但是如果在硬件指令内部实现解锁瞬间加锁的话，那么就算刚执行完硬件指令就切换也不怕，因为target此时已是true，即意味着加锁，所以如果切换的话，切换的进程是无法进行临界段的操作的，而原来的进程由于执行完硬件指令后判断解锁成功，则可以进行临界段操作，这样就实现了互斥机制，即保证了只有那个拿到解锁授权的进程才能执行临界段操作。再次强调，硬件指令实质上是一条指令，那么，问题可以这样解决：</p>
+<p>利用Test&amp;Set指令实现对互斥资源的加锁与解锁：设Lock为全局布尔变量（初值为false）</p>
+<p><code>do {
+    while(Test_and_Set (lock)) ;//注意这个分号 
+    critical section;
+    lock = false;
+    non-critical section
+}while(1);</code><br>那么，在lock变量原值不为false时，即意味着对临界段加锁了，while(Test_and_Set (lock))；语句会一直循环空操作，直到原值为false(意味着解锁)，才进入临界段，对临界段进行操作。一定要注意，就是硬件指令完成相应功能时不会被中断的，是一部到位的。</p>
+<p>有了上面的基础，我们来看另一种硬件指令的解决方法，即swap指令。该指令功能描述为：</p>
+<p><code>void Swap（boolean  &amp;a, boolean  &amp;b）    {
+    boolean temp=a；
+    a = b；
+    b = temp；
+     }</code><br>利用Swap指令实现对临界区的加锁与解锁：设Lock为全局布尔变量（初值为false），每个进程设一个局部布尔变量Key。</p>
+<p>`do {<br>    key = true;<br>    while(key==ture)<br>       Swap (lock, key);</p>
+<pre><code>critical section;
+<span class="operator"><span class="keyword">lock</span> = <span class="literal">false</span>;</span>
+non-critical section
+</code></pre><p>}while(1);`</p>
+<p>就不在此分析了，分析思想与上面类似，提醒两点：一是swap指令的参数是传引用的；二是一定要注意key变量的局部性以及lock变量的全局性。这里说一下为什么要注意key的局部性问题。试想，假设lock为false(意味着现在临界资源已解锁，可以来个进程访问我了),那么我来了一个进程来访问了，好，由于我先前没有获得许可，所以我必须执行一次swap操作，经过swap操作后，lock和key的值交换，此时的swap有两个意思，一是我这个进程获得了对临界资源的访问许可，二是在我获得许可的同时，我立即上锁，不能让别人访问。好，此时执行完swap操作后，我可以跳出这个循环去尽情的享受临界资源了。注意，重点来了。如果此时OS对该进程说，球都麻袋，我来中断了，我要切换到另一个进程了，当前进程并没有办法，保存现场吧，然后，切换到另一个进程，这时，key的局部性的重要性就体现出来了，如果key是一个局部变量，那么这个被切换回来的进程就可以享受临界资源了(因为while判断的是key)，这就导致了冒名顶替现象的出现，导致原来刚获得权限的那个进程被带了绿帽子，但试想，如果key是局部变量，那就不一样了，key在这个新切换回来的进程这仍然是true，所以它仍跳不出这个while循环，保证了临界资源的互斥性。好吧，又啰嗦了一大堆。</p>
+<p>更好用的来了：信号量。信号量机制可以用来解决互斥与同步问题。抽象描述：信号量机制由“信号量”及“P、V操作”两部分组成，信号量S为一整型变量，只能被两个标准的原语所访问，即P操作和V操作，定义为：</p>
+<p>` P(S): while S≤0<br>                ；空操作<br>          S = S-1 ；</p>
+<p> V(S):S = S＋1；<br>`<br>这里，先强行引入原语的概念。原语是指完成某种功能且不被分割、不被中断执行的操作序列。有时也称原子操作，通常可由硬件来实现完成某种功能的不被分割执行的特性，像前面所述的两条硬件指令，其指令就是由硬件实现的原子操作。原语功能的不被中断执行特性在单处理机时可由软件通过关中断方法实现。原语之所以不能被中断执行，是因为它对变量的操作过程如果被打断，可能会去运行另一个对同一变量的操作过程，从而出现临界段问题。</p>
+<p>P、V操作是两条原语，即保证P、V操作对变量S的访问是互斥操作。</p>
+<p>用屏蔽中断方法实现P（s）和V（s）的原子性：</p>
+<p><code>P（s）{
+        disableInterrupt();    
+        while （s≤0）{ 
+        enableInterrupt();
+        disableInterrupt();    
+        }；
+        s = s - 1；
+        enableInterrupt();
+    }</code></p>
+<p><code>V（s）{
+        disableInterrupt();    
+         s = s +1；
+        enableInterrupt();
+    }</code></p>
+<p>这里还是要在口胡一下，为什么要在while中有开关中断的操作。在P操作中的while循环中开中断的目的是，为了在循环忙等待时能够响应中断，同时也可以有机会运行进程调度程序，以便另一个进入临界段的进程被调度运行以走出相关临界段。而在while中开了之后立即执行关中断的原因是，从汇编层面讲，是为了防止在跳出的瞬间，就是判断语句为false，然后把状态寄存器相关位置位并将要执行jmp，jmp到下面的语句执行s-1操作时，假设刚好这时调度，那么这时s还是1，那么被调度的进程仍能够得到对临界资源的访问权，而在返回原来的进程时，由于跳转判定已经成功，所以原来的进程也拥有临界资源的访问权，这就不能保证临界资源的互斥性了。</p>
+<p>P操作可以理解成不给我钥匙，程序就不能越过我往下执行，V操作可以理解成我发了一个钥匙。</p>
+<p>信号量的应用：</p>
+<p>解决互斥问题：用于n个进程的临界段互斥，n进程共享一个信号量mutex,初值为1，任一进程Pi的结构为：</p>
+<p><code>do{
+ P(mutex)
+  临界段
+V(mutex)
+非临界段
+}while（1）</code></p>
+<p>解决同步问题：有P1、P2 两进程，必须在P1执行完S1语句后，P2才能执行S2。需同步的两进程共享信号量synch，初值为0。则：</p>
+<p><code>P1: 
+    ……
+    S1;
+    V(synch);
+    ……</code></p>
+<p><code>P2: 
+    ……
+    P(synch);
+    S2;
+    ……</code></p>
+<p>看一个复杂点的同步的例子：</p>
+<p><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/1.PNG" alt=""></p>
+<p>解决：</p>
+<p><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/2.PNG" alt=""></p>
+<p>解决临界段问题的有关硬件方法及信号量机制所描述的P，V操作，都存在“忙等待”现象。即如果某一个进程正在执行其临界段，其他欲进入临界段的进程均需在它们的entry code中连续的循环等待(如执行while(condition)；语句等)。这种循环等待方式实现的互斥工具又称为自旋锁。该处理方式下，如果能够很快走出循环，进入临界段(如相关临界段很短，其他进程很快走出临界段)则是可取的；但是如果相关临界段很长，势必使进入临界段的进程可能要长时间循环等待其他进程走出相关临界段，这样会浪费宝贵的处理机时间，其他已经在临界段的进程也不能及时得到处理机运行。</p>
+<p>为克服忙等待，可重新定义P，V操作。在某个进程执行P操作过程中，若发现信号量的状态不允许其立即进入临界段，则P操作应使该进程放弃CPU而进入约定的等待队列(调用系统函数block)，当某个进程执行V操作时，如果在该信号量上有被阻塞的等待进程，则V操作负责将其唤醒(调用系统函数wakeup)。</p>
+<p>对于信号量定义：<br><code>typedef  struct{
+        int  value；
+        struct  process  *L;
+        }semaphore；</code><br>每个信号量定义成一个结构，其中包括一个整形变量value和与该信号量相关的等待状态进程队列L。</p>
+<p>对于P操作的定义：</p>
+<p><code>void P(semaphore S){
+    S.value=S.value –1;
+    If S.value&lt;0 then 
+    {add this process to s.L;
+    block();}
+}</code></p>
+<p>对于V操作的定义：</p>
+<p><code>void V(semaphore S){
+    S.value=S.value +1;
+    If S.value&lt;=0 then 
+    {
+        remove a process P from s.L;
+        wakeup(P);
+    }
+}</code></p>
+<p>进程同步与互斥的例子：</p>
+<p>一、有限缓冲区问题</p>
+<p>问题描述：设有N个缓冲区，一组生产者进程往缓冲区写数据，一组消费者进程从缓冲区取数据，写取以一个缓冲区为单位。</p>
+<p>说明：<br> 将整个缓冲池看作是一个共享数据，对缓冲区的操作必须是互斥操作。<br> 如果N个缓冲区全满，生产者进程必须等待。<br> 如果缓冲区全空，消费者进程必须等待。</p>
+<p>解决方案为：</p>
+<p>设置以下信号量<br>mutex,初值为1，控制互斥访问缓冲池。<br>full，初值为0，表示当前缓冲池中满缓冲区数。<br>empty,初值为N，表示当前缓冲池中空缓冲区数。</p>
+<p>有限缓冲区生产者/消费者进程描述如下：<br>semaphor full,empty,mutex;<br>item nextp,nextc;#item表示消息数据类型<br>full=0; empty=N; mutex=1;#置初值</p>
+<p>生产者代码框架：</p>
+<p><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/3.PNG" alt=""></p>
+<p>消费者代码框架：<br><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/4.PNG" alt=""></p>
+<p>需要注意的是：无论是在生产者还是在消费者进程中，V操作的次序无关紧要，但两个P操作的次序不能颠倒，否则可能导致死锁。我们来想一下为什么？因为当次序颠倒时，意味着一个进程在为获得临界资源的访问权限的情况下，就将临界资源给锁了起来，假设此时它并不能去访问临界资源，则它会一直在这里等待，就算使用优化的P操作，他也会一直阻塞，而且同时也会导致其他进程没办法去使用该资源，也就使得其他进程没法去执行V操作，这样就形成了一个死循环，即一个进程锁住了资源，它要等待别人释放信号量去使用资源，而其他进程都因为资源被锁而无法使用资源，故无法执行V操作，导致大家都在等。</p>
+<p>还有很多例子，就不一一列举了。。。</p>
+<h2 id="进程的死锁">进程的死锁</h2><ol>
+<li><p>死锁定义：<br> 在一个进程集合中，若每个进程都在等待某些事件（指：释放资源）的发生，而这些事件又必须由这个进程集合中的进程来产生，就称该进程集合处于死锁状态。 </p>
+</li>
+<li><p>死锁性质:<br>出现死锁的系统必须同时满足下列四个必要条件<br>互斥：必须存在需要互斥使用的资源<br>占有等待：一定有占有资源而又等待其它资源的进程<br>非剥夺：系统中进程占有的资源未主动释放时不可以剥夺<br>循环等待：存在进程集合{P0, P1, ……, Pn}，Pi等待Pi+1，Pn等待P0 </p>
+</li>
+<li><p>死锁防止：<br>破坏互斥占用条件<br>让资源共享使用（如显示器。但有些资源必须互斥）<br>破坏占有等待条件<br>将进程所要资源一次性分给进程，要么没分到一个资源，要么全部满足（适合廉价资源的分配）<br>进程在下一轮申请资源时，释放所占的所有资源 (用完一个再用下一个)<br>破坏非剥夺条件(用于内存管理、CPU管理等)<br>当进程Pi申请ri类资源时，若有则分配，若没有则剥夺（让出）Pi占有的所有资源；<br>当进程Pi申请ri类资源时，若有则分配，若无则剥夺别的进程所占的ri类资源分配给Pi；或看占用ri类资源的Pk处于什么状态，若处于等资源状态，则剥夺其资源，否则让Pi等待–等于Pi的资源会被剥夺。<br>破坏循环等待条件<br> 采用资源顺序分配方法：给每类资源编号，进程只能按序号由小到大的顺序申请资源，若不满足则拒绝分配。<br>反证：若出现循环等待，则必会有小序号资源序号&gt;大序号资源序号。 </p>
+</li>
+<li><p>死锁避免：银行家算法(自行google)</p>
+</li>
+<li>死锁检测：采用与银行家算法相似的思想，只是将Need换成了Request</li>
+<li>死锁恢复：检测出死锁后的处理：破坏循环等待（杀掉有关进程或删除文件，实质上就是释放资源）</li>
+<li>死锁的综合处理：把系统中的资源分成几大类，整体上采用资源顺序分配法，再对每类资源根据其特点选择最适合的方法。<br>例如：<pre><code>（<span class="number">1</span>）主存、处理机 <span class="comment">--  剥夺法</span>
+（<span class="number">2</span>）辅存        <span class="comment">--   预分配法</span>
+（<span class="number">3</span>）其他        <span class="comment">--   人工检测后处理</span>
+</code></pre></li>
+</ol>
+<p>实用预防死锁方法：设立资源阈值，当资源少于阀值时限制进程申请（如只能用紧急申请方式申请；或不让新进程申请，只让老进程申请），减少申请不到资源的概率。</p>
+<h2 id="虚存">虚存</h2><p>虚存的基本思想：系统为进程提供一个比物理内存大得多的虚拟存储空间。<br>虚拟空间的容量由系统的有效地址长度决定。如地址长度为32，按字节寻址，则虚拟存储空间大小为2^32个字节。</p>
+<p>实现页式虚空间的基本方法是：<br>在页式管理的基础上，仅将进程的一部分页放于主存。<br>程序执行时，如果访问的页不存主存，根据页表项的指示，将其从外存调入主存，如果此时无可用的内存空间，则先淘汰若干页帧。</p>
+<p>为了实现虚存，采用的方法是在外存(磁盘)上开辟一块外存交换区(swap)作为内存的一个暂时的场地，相当于用外存交换区去扩充内存。</p>
+<p>在程序装入时，不必将其全部读入到内存，而只需将当前需要执行的部分页或段读入到内存，就可让程序开始执行。<br>在程序执行过程中，如果需执行的指令或访问的数据尚未在内存（称为缺页或缺段），则由处理器通知操作系统将相应的页或段调入到内存，然后继续执行程序。<br>另一方面，操作系统将内存中暂时不使用的页或段调出保存在外存上，从而腾出空间存放将要装入的程序以及将要调入的页或段――具有请求调入和置换功能，只需程序的一部分在内存就可执行，对于动态链接库也可以请求调入.</p>
+<p>采用虚存时页表项的结构：</p>
+<p><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/5.PNG" alt=""></p>
+<p>对于合法位，当置1时，则可以在内存中根据页帧号直接找到东西，而合法位未置位，即为0时，会引发页故障，然后由页故障中断处理程序根据外存号将所需页面调入内存，并将页帧号回填，并将合法位置1，下面页表的建立会详细谈到。</p>
+<p>采用虚存时页表的建立：</p>
+<p><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/6.PNG" alt=""><br><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/7.PNG" alt=""><br><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/8.PNG" alt=""></p>
+<p>页表是在进程创建时建立的，初始化页表的主要方法是利用父进程页表生成子进程页表，如fork()，这里不多谈，另一种方法是用一个可执行程序文件来初始化页表，我们就来谈谈这第二种。首先我们得知道什么叫swap区。</p>
+<p>外存块号表示页面在外存存放的位置。当一个进程刚被创建用来运行一个程序时，该进程的页面所在的外存即是程序文件所在的外存程序文件所在的外存位置。一般来说，程序文件中包含了程序的二进制目标代码，以及程序所要处理数据的初始值和初值为0的工作区说明，程序在进程的运行过程中，数据的初始值页面被调入主存使用，而且存放初始值的主存单元可能被修改。这时，系统不能将修改过的页面回写到可执行程序文件中，因为执行程序文件中的初始值不能被改变，为此引入了专用的交换区(swap，在外存专门开辟了一块空间当做swap区)用于存放那些可读写的进程页面。只读的进程页面所在的外存的块号，在进程生存周期内是不改变的，都指向执行程序文件所在的外存空间，但上述的可读写的进程页面，其初始值从执行程序文件中获得，一旦修改，回写时则写到外存的交换空间，当再度使用时，则从外存交换空间中取出，这种页面我们叫他“回写swap文件页”。好了，结合swap文件页的姿势，上图所说的用可执行文件初始化页表的流程就容易理解了。</p>
+<h2 id="FAT16文件系统">FAT16文件系统</h2><p>文件系统以FAT16为例，来看下，文件系统是如何将磁盘划分，然后将磁盘布局为一个文件系统的。记得曾经看到过这么一句话，说未格式化的磁盘是一整块，而将磁盘格式化为相应的文件系统后，其实是将磁的一大块，划分成了一个一个的坑，有的坑用来记录其他坑的位置等信息，有的坑专门用来存放东西。有东西要存进磁盘时，按照预先划定好的坑，对坑入座，然后将信息更新到相应的信息坑中，这就是文件系统的作用。这样才使得数据有结构和组织意义。</p>
+<p>当把一部分磁盘空间给格式化为FAT文件系统时，磁盘分区如图：</p>
+<p><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/9.PNG" alt=""></p>
+<p>相关结构的含义：</p>
+<ol>
+<li>引导扇区：主要包含描述分区的各种信息，包括簇的大小，文件分配表FAT的位置等。此外，用于加载操作系统内核的引导程序也存储在引导块中。</li>
+<li>FAT1：FAT是file allocation table的简称。每个簇都有一个FAT表记录项与其对应，记录了簇的分配情况，如果簇已经被分配给文件，则记录文件的后续数据所存簇号。FAT表有一份副本，就是我们看到的FAT2，FAT2与FAT1的 内容通常是即时通步的，也就是说，如果通过正常的系统读/写对FAT1做了修改，则FAT2也同样被更新。FAT文件系统将文件数据存放区分成同等大小的簇，典型的簇的大小介于2KB-32KB之间，在FAT16中，一个簇的大小是32扇区。每个文件根据他的大小可能占有一个或多个簇，这样一个文件就可以由簇链表示。文件并不一定在一个连续的磁盘空间上存储，他们经常是在整个数据区零散分布。文件分配表(FAT)是簇的记录项列表。每个记录项记录了簇的5中信息中的一种。如图：</li>
+</ol>
+<p><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/10.PNG" alt=""></p>
+<ol>
+<li>FAT文件系统根据根目录来寻址其他文件(包括文件夹)，故根目录的位置必须在之前得以确定。FAT文件系统就是根据引导区中存放的分区的相关参数(存放着FAT的首地址)与已经计算好的FAT表(2份)的大小来确定的。格式化以后，根目录的大小和位置其实都已经确定下来了。位置紧随FAT2之后，大小通常为32个扇区。根目录之后便是数据区第2簇。</li>
+<li>FAT文件系统的一个重要思想是把目录(文件夹)当做一个特殊的文件来处理，在FAT16中，虽然根目录地位并不等同于普通的文件或目录，但其组织形式和普通的目录并没有不同。FAT分区中所有的目录/文件的FCB占用32字节，格式为：</li>
+</ol>
+<p><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/11.PNG" alt=""></p>
+<ol>
+<li>在FAT文件系统的文件FCB中，记录了文件名和属于该文件的起始簇编号。该编号用于索引文件分配表记录项，FAT表与FCB的关系如图：</li>
+</ol>
+<p><img src="/img/if-I-were-a-OS-续-操作系统相关策略的实现/12.PNG" alt=""></p>
+<p>这种结构也是一种链式结构，但是与前述的链式结构不同的是，文件数据块的链接是通过FAT记录项链间接链接的，如果FAT表可以缓存于主存，文件数据块搜索可以很快，由于每个簇都要有一个FAT记录项，当分区很大时，FAT表也会很大，FAT表不可能全部放在主存中，这样就会影响文件数据块的搜索速度。</p>
+<ol>
+<li>根文件夹下每一个目录项就是一个FCB</li>
+<li>每一个簇是32扇区，大小是16KB。</li>
+</ol>
+<p>由以上的信息，我们来总结下FAT16文件结构，首先根据引导扇区可以找到FAT的首地址，然后根据事先计算好的FAT表的大小，可以知道根文件夹(根目录)的首地址，根目录占据32个扇区，16KB的空间，每个根目录项就是一个FCB，占32B，这32B存储着该文件/文件夹的信息，且根文件下的FCB存储着指向该文件FAT链的首地址，根据该首地址以及FAT中存储的链式结构，可以找到该文件/文件夹的信息，从而一级级的往下索引，就可以得到整个文件系统了。。。</p>
+<p>if I were a OS就到这了，如果以后遇到有关OS的姿势，会及时补充的。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/reverse-related/">reverse related</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/操作系统/">操作系统</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2015/12/14/if-I-were-a-OS-续-操作系统相关策略的实现/" data-title="if-I-were-a-OS(续)-操作系统相关策略的实现 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/12/16/hello-world/" title="kenshichong的内心独白">
+  <strong>上一篇：</strong><br/>
+  <span>
+  kenshichong的内心独白</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/12/14/手把手教你写最简单的linux系统/"  title="手把手教你写最简单的linux系统">
+ <strong>下一篇：</strong><br/> 
+ <span>手把手教你写最简单的linux系统
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_背景介绍"><span class="toc-number">1.</span> <span class="toc-text">0x01 背景介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_正片"><span class="toc-number">2.</span> <span class="toc-text">0x02 正片</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#中断"><span class="toc-number">2.1.</span> <span class="toc-text">中断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作系统运行模型"><span class="toc-number">2.2.</span> <span class="toc-text">操作系统运行模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程"><span class="toc-number">2.3.</span> <span class="toc-text">进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#同步与互斥"><span class="toc-number">2.4.</span> <span class="toc-text">同步与互斥</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程的死锁"><span class="toc-number">2.5.</span> <span class="toc-text">进程的死锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#虚存"><span class="toc-number">2.6.</span> <span class="toc-text">虚存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAT16文件系统"><span class="toc-number">2.7.</span> <span class="toc-text">FAT16文件系统</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

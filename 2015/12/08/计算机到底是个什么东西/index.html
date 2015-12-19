@@ -1,0 +1,499 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>计算机到底是个什么东西 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="if I were a computer
+
+刚考完试想着接下来能够安心做事情的我心情无疑是十分舒畅的，所以把最近想写的东西趁这段时间都写下来，要不然以后又没时间了。。。
+最近一直在思考计算机到底是个什么东西，它为什么会发展到现在这个模样？它是怎么样实现我们交给他的任务的？这些功能是怎样通过硬件实现的？这个长方形的物体到底是个什么东西？为什么他这么傻逼有这么神奇？
+不得不说，他算是封装与抽象的一个较">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机到底是个什么东西">
+<meta property="og:url" content="http://kenshichong.github.io/2015/12/08/计算机到底是个什么东西/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="if I were a computer
+
+刚考完试想着接下来能够安心做事情的我心情无疑是十分舒畅的，所以把最近想写的东西趁这段时间都写下来，要不然以后又没时间了。。。
+最近一直在思考计算机到底是个什么东西，它为什么会发展到现在这个模样？它是怎么样实现我们交给他的任务的？这些功能是怎样通过硬件实现的？这个长方形的物体到底是个什么东西？为什么他这么傻逼有这么神奇？
+不得不说，他算是封装与抽象的一个较">
+<meta property="og:updated_time" content="2015-12-11T15:42:20.626Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机到底是个什么东西">
+<meta name="twitter:description" content="if I were a computer
+
+刚考完试想着接下来能够安心做事情的我心情无疑是十分舒畅的，所以把最近想写的东西趁这段时间都写下来，要不然以后又没时间了。。。
+最近一直在思考计算机到底是个什么东西，它为什么会发展到现在这个模样？它是怎么样实现我们交给他的任务的？这些功能是怎样通过硬件实现的？这个长方形的物体到底是个什么东西？为什么他这么傻逼有这么神奇？
+不得不说，他算是封装与抽象的一个较">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/08/计算机到底是个什么东西/" title="计算机到底是个什么东西" itemprop="url">计算机到底是个什么东西</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-08T15:19:10.000Z" itemprop="datePublished"> 发表于 2015-12-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<blockquote>
+<p>if I were a computer</p>
+</blockquote>
+<p>刚考完试想着接下来能够安心做事情的我心情无疑是十分舒畅的，所以把最近想写的东西趁这段时间都写下来，要不然以后又没时间了。。。</p>
+<p>最近一直在思考计算机到底是个什么东西，它为什么会发展到现在这个模样？它是怎么样实现我们交给他的任务的？这些功能是怎样通过硬件实现的？这个长方形的物体到底是个什么东西？为什么他这么傻逼有这么神奇？</p>
+<p>不得不说，他算是封装与抽象的一个较完美的结合。</p>
+<p>可以把计算机抽象成一个信息的几何体，它存储着信息，为什么他有存储信息的功能，什么是信息，信息是可以庙会世间万物的一种东西，什么称得上信息，我们把对一个具体事务的描绘当做信息，什么可以用来描绘，语言。为什么会有语言，它是我们人类在发展过程中为了描绘东西所建立起来的一种抽象，可以看成一种映射关系，比如石头这个词，对应着存在于我们身边的那种较硬的物质，我们从出生的那一刻起所接触的所有东西都在帮助我们建立这种映射，然后我们根据一种叫做知识或者前人经验的东西去建立和大家一样的映射，然后我们有了相同的描绘同一个东西的方法，也就是说我们有了共同的语言，我们通过这种共同的语言去交流，去描绘复杂的事务，这些种种构成了信息，信息也可以说是一种抽象，它是对具体事务的一种抽象，信息通过组合，变换，可以构成逻辑，逻辑本质上来说对应着有or没有，比如，没有就是没有，没有不是有，这就是最简单的逻辑，而逻辑可以用来描绘我们想要干的事情。什么可以用来存储信息，古人有云，天地本无极,无极生太极,太极生两仪,两仪生三才,三才生四象,四象生五行，五行生六合，六合生七星，七星生八卦，八卦生九宫，一切归十方。又云，道生一，一生二，二生三，三生无穷。所谓无中生有，有生无穷。无对应0,有对应1，那么01就可以构成全世界，没错，这就是我们的计算机，01正是他的语言，先写到这，有空了接着口胡，估计要到寒假了</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/think-for-fun/">think for fun</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/随想/">随想</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2015/12/08/计算机到底是个什么东西/" data-title="计算机到底是个什么东西 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/12/09/if-I-were-a-OS-linux0-11源码分析/" title="if I were a OS--linux0.11源码分析">
+  <strong>上一篇：</strong><br/>
+  <span>
+  if I were a OS--linux0.11源码分析</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/11/25/在思想上打造编译器/"  title="在思想上打造编译器">
+ <strong>下一篇：</strong><br/> 
+ <span>在思想上打造编译器
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
