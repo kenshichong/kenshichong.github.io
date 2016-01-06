@@ -1,0 +1,565 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>密码初探-玩bin的人怎么能不懂密码呢 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x01 前情提要本文不像前几篇一样，不会这么注重框架性和体系性。本文以及相关的后续blog的目的在于介绍各种你所耳熟能详的几种密码的具体姿势。鉴于朋友说前几篇blog太长，所以这里打算把密码写成一个系列，并且在排版上也会上点心。。。
+0x02 正片说到密码，每个人都有每个人的第一印象。其实在很久以前，人们就有了对信息加密的意识，这里，古典密码不得不提。
+古典密码古典密码的加密体现的是一种代换的思">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码初探-玩bin的人怎么能不懂密码呢">
+<meta property="og:url" content="http://kenshichong.github.io/2015/12/22/密码初探-玩bin的人怎么能不懂密码呢/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x01 前情提要本文不像前几篇一样，不会这么注重框架性和体系性。本文以及相关的后续blog的目的在于介绍各种你所耳熟能详的几种密码的具体姿势。鉴于朋友说前几篇blog太长，所以这里打算把密码写成一个系列，并且在排版上也会上点心。。。
+0x02 正片说到密码，每个人都有每个人的第一印象。其实在很久以前，人们就有了对信息加密的意识，这里，古典密码不得不提。
+古典密码古典密码的加密体现的是一种代换的思">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/6.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/7.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/8.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/9.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/11.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/12.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/13.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/13.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/14.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/15.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/16.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/17.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码初探-玩bin的人怎么能不懂密码呢/18.PNG">
+<meta property="og:updated_time" content="2015-12-25T15:03:56.292Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="密码初探-玩bin的人怎么能不懂密码呢">
+<meta name="twitter:description" content="0x01 前情提要本文不像前几篇一样，不会这么注重框架性和体系性。本文以及相关的后续blog的目的在于介绍各种你所耳熟能详的几种密码的具体姿势。鉴于朋友说前几篇blog太长，所以这里打算把密码写成一个系列，并且在排版上也会上点心。。。
+0x02 正片说到密码，每个人都有每个人的第一印象。其实在很久以前，人们就有了对信息加密的意识，这里，古典密码不得不提。
+古典密码古典密码的加密体现的是一种代换的思">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/22/密码初探-玩bin的人怎么能不懂密码呢/" title="密码初探-玩bin的人怎么能不懂密码呢" itemprop="url">密码初探-玩bin的人怎么能不懂密码呢</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-21T16:24:03.000Z" itemprop="datePublished"> 发表于 2015-12-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_前情提要"><span class="toc-number">1.</span> <span class="toc-text">0x01 前情提要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_正片"><span class="toc-number">2.</span> <span class="toc-text">0x02 正片</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#古典密码"><span class="toc-number">2.1.</span> <span class="toc-text">古典密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#现代密码"><span class="toc-number">2.2.</span> <span class="toc-text">现代密码</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_本篇重点——序列密码"><span class="toc-number">3.</span> <span class="toc-text">0x03 本篇重点——序列密码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#流密码的破解"><span class="toc-number">3.1.</span> <span class="toc-text">流密码的破解</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="0x01_前情提要">0x01 前情提要</h1><p>本文不像前几篇一样，不会这么注重框架性和体系性。本文以及相关的后续blog的目的在于介绍各种你所耳熟能详的几种密码的具体姿势。鉴于朋友说前几篇blog太长，所以这里打算把密码写成一个系列，并且在排版上也会上点心。。。</p>
+<h1 id="0x02_正片">0x02 正片</h1><p>说到密码，每个人都有每个人的第一印象。其实在很久以前，人们就有了对信息加密的意识，这里，古典密码不得不提。</p>
+<h2 id="古典密码">古典密码</h2><p>古典密码的加密体现的是一种代换的思想。包括单表代换密码和多表代换密码，单表代换如经典的恺撒密码，移位变换，仿射变换等。这里简单说一下，恺撒密码，加密时每个字母后移3位，然后mod26，解密时，每个字母前移3位，然后mod26，其中3就是加解密所用的密钥。移位变换是移k位，仿射变换（该图来自百度百科）:</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/1.PNG" alt=""></p>
+<p>上图中的k3是k1的逆元，关于逆元的概念，下面会谈到</p>
+<p>对于多表代换密码，自己懒得写，直接把书上的东西po出来(渣像素，见谅):</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/2.PNG" alt=""></p>
+<p>关于古典密码的介绍就到这，古典密码的代换思想在现代密码中有很多体现。现在我们来看现代密码</p>
+<h2 id="现代密码">现代密码</h2><p>现代密码系统可以用一个看一眼就懂的五元组表示：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/0.PNG" alt=""></p>
+<p>这里主要从密码的体制上来展开对密码的讨论</p>
+<p>密码体制从原理上可以分为两大类，即单钥体制和双钥体制</p>
+<p>单钥体制又称对称密码体制，就是加密密钥和解密密钥相同。对称密码体制按照对明文加密方式的不同，分为序列密码和分组密码。序列密码（stream cipher):又称流密码。序列密码每次通过输出密钥流序列加密(通常是模2加，即异或运算)一位或一字节的明文。如A5、RC4等。分组密码（block cipher):将明文分成固定长度的组，用同一密钥和算法对每一块加密，输出也是固定长度的密文。如DES、IDEA、AES等</p>
+<p>双钥体制又称非对称密码体制，就是加密密钥和解密密钥不相同，从一个很难推出另一个，又称公开密钥体制。</p>
+<p>说了要写一个系列的，所以这篇就主要讲流密码(序列密码)了</p>
+<h1 id="0x03_本篇重点——序列密码">0x03 本篇重点——序列密码</h1><p>序列密码的基本思想是采用一个短的密钥来控制某种算法产生出长的密钥序列，供加、解密使用，利用密钥k产生一个伪随机序列密钥流z=z0z1…，并使用如下规则对明文串x=x0x1x2…加密：y=y0y1y2…= (x0+z0) (x1+z1) …</p>
+<p>过程如图所示：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/3.PNG" alt=""></p>
+<p>根据加密器中记忆元件的存储状态σi 是否依赖于输入的明文字符, 流密码可进一步分成同步和自同步两种。σi 独立于明文字符的叫做同步流密码, 否则叫做自同步流密码。由于自同步流密码的密钥流的产生与明文有关, 因而较难从理论上进行分析，目前大多数研究成果都是关于同步流密码的，因此同步流密码也是我们讨论的重点。</p>
+<p>可见同步流密码的关键是密钥流产生器。目前最为流行和实用的密钥流产生器是通过线性反馈移位寄存器来实现密钥的产生。移位寄存器是流密码产生密钥流的一个主要组成部分。GF(2 )上一个n 级反馈移位<br>寄存器由n 个二元存储器与一个反馈函数f ( a1 , a2 , ⋯ , an )组成，如图：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/4.PNG" alt=""></p>
+<p>每一存储器称为移位寄存器的一级, 在任一时刻, 这些级的内容构成该反馈移位寄存器的状态, 每一状态对应于GF( 2)上的一个n 维向量, 共有2n 种可能的状态。每一时刻的状态可用n 长序列a1 , a2 , ⋯ , an或n 维向量( a1 , a2 , ⋯ , an )表示, 其中ai 是第i 级存储器的内容。初始状态由用户确定, 当第i 个移位时钟脉冲到来时, 每一级存储器ai 都将其内容向下一级ai - 1 传递, 并根据寄存器此时的状态a1 , a2 , ⋯ ,an 计算f ( a1 , a2 , ⋯ , an ) , 作为下一时刻的an 。反馈函数f ( a1 , a2 , ⋯ , an )是n 元布尔函数, 即n 个变元a1 , a2 , ⋯ , an 可以独立地取0 和1 这两个可能的值, 函数中的运算有逻辑与、逻辑或、逻辑补等运算, 最后的函数值也为0 或1。</p>
+<p>其实上面的过程可以形象的想象成鸡下蛋的过程，鸡肚子中存储的蛋的数量是有限的。首先，用户，没错，就是你，你让鸡怀上了鸡所能承受的最多的蛋，然后鸡开始下蛋，并且鸡没下一个蛋(认为产生了一个密钥位)，你或者其他什么东西又会立马使它怀上一个蛋，且这个蛋的产生与这只鸡还没生蛋前的所有肚子里的蛋有关系，至于是什么关系，这是用户，没错，还是你，可以去定义的，这样，鸡就会一直下蛋，相当于一个密钥流产生器。</p>
+<p>如果移位寄存器的反馈函数f ( a1 , a2 , ⋯ , an ) 是a1 , a2 , ⋯ , an 的线性函数, 则称之为线性反馈移位寄存器LFSR( linear feedback shiftregister ) 。这里我们需要注意的是，由于线性反馈寄存器都是按位来计算的，所以这里的线性函数中各个项之间的运算基本上都是模2加，即异或操作。此时f 可写为f ( a1 , a2 , ⋯ , an ) = cn a1 + cn - 1 a2 + ⋯ + c1 an其中常数ci = 0 或1 ,+是模2 加法。ci = 0 或1 可用实际电路的开关的断开和闭合来实现,如图：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/5.PNG" alt=""></p>
+<p>则，输出序列{ at }满足：an + t = cn at + cn - 1 at+ 1 + ⋯ + c1 an + t - 1，线性反馈移位寄存器因其实现简单、速度快、有较为成熟的理论等优点而成为构造密钥流生成器的最重要的部件之一。在线性反馈移位寄存器中总是假定c1 , c2 , ⋯ , cn 中至少有一个不为0 , 否则f ( a1 ,a2 , ⋯ , an )≡0 , 这样的话, 在n 个脉冲后状态必然是00⋯0 , 且这个状态必将一直持续下去。若只有一个系数不为0 , 设仅有cj 不为0 , 实际上是一种延迟装置。一般对于n 级线性反馈移位寄存器, 总是假定cn = 1。线性反馈移位寄存器输出序列的性质完全由其反馈函数决定。n 级线性反馈移位寄存器最多有2n 个不同的状态。若其初始状态为0 , 则其状态恒为0。若其初始状态非0 ,则其后继状态不会为0。因此n 级线性反馈移位寄存器的状态周期小于等于2n - 1。其输出序列的周期与状态周期相等, 也小于等于2n - 1。只要选择合适的反馈函数便可使序列的周期达到最大值2n - 1 , 周期达到最大值的序列称为m 序列。</p>
+<p>流密码的安全性取决于密钥流的安全性, 要求密钥流序列有好的随机性, 以使密码分析者对它无法预测。也就是说, 即使截获其中一段, 也无法推测后面是什么。如果密钥流是周期的, 要完全做到随机性是困难的。严格地说, 这样的序列不可能做随机, 只能要求截获比周期短的一段密钥流时不会泄露更多信息, 这样的序列称为伪随序列。为讨论m 序列的随机性, 先要讨论随机序列的一般特性。</p>
+<p>前方数学高能，先来个分割线压压惊。</p>
+<hr>
+<p>游程：设{ ai } = ( a1 a2 a3 ⋯) 为0、1 序列, 例如00110111 , 其前两个数字是00 , 称为0 的2 游程; 接着是11 , 是1 的2 游程;再下来是0 的1 游程和1 的3 游程。</p>
+<p>自相关函数：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/6.PNG" alt=""></p>
+<p>定义中的和式表示序列{ ai } 与{ ai + τ} ( 序列{ ai }向后平移τ位得到)在一个周期内对应位相同的位数与对应位不同的位数之差。当τ= 0时, R(τ) = 1; 当τ≠0 时, 称R(τ) 为异相自相关函数。这个自相关函数是为了比较序列在经过移位操作后与原序列的相似程度，因为从这个式子的意义出发，ai在移动τ位后，会处在ai+τ的位置上，此时ai+τ位置上的值是ai，而原来ai+τ的位置上是ai+τ，所以这个式子的每一项算的就是移位后，相同位置上的数字是否相同，如果相同，则这一项为1，不同为-1，然后逐项的结果相加。这个自相关函数可以衡量出移位操作前后，序列的相似程度，这样是为了防止通过移位找到序列的一些规律而造成序列的随机性遭到破坏。</p>
+<p>对于序列的随机性，Golomb(我也不知道咋读)这个人提出了他的看法，他认为，一个良好的伪随机序列应当满足如下三个随机性公设(将用到我们上面介绍的游程以及自相关函数的概念)：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/7.PNG" alt=""></p>
+<p>公设①说明{ ai }中0 与1 出现的概率基本上相同, ②说明0 与1 在序列中每一位置上出现的概率相同; ③意味着通过对序列与其平移后的序列做比较, 不能给出其他任何信息。从密码系统的角度看, 一个伪随机序列还应满足下面的条件:</p>
+<blockquote>
+<p>① { ai }的周期相当大。</p>
+<p>② { ai }的确定在计算上是容易的。</p>
+<p>③ 由密文及相应的明文的部分信息, 不能确定整个{ ai }。</p>
+</blockquote>
+<p>而我们研究的m序列就满足上面的3个随机性公设，因为，定理告诉我们，它是满足的：</p>
+<p>定理：GF(2 )上的n 长m 序列{ ai }具有如下性质:</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/8.PNG" alt=""></p>
+<p>我们来看定理的证明：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/9.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/10.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/11.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/12.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/13.PNG" alt=""></p>
+<p>可以看出，m序列很好的满足了3个随机性公设，也就是说它具有良好的伪随机性，也就是说这个序列可以用来做密钥流，所以当我们设计密钥流产生器时，我们可以使密钥的生成去尽量接近m序列。针对密钥流的构造，我们给定初始状态，以及状态转换函数应使接下来的状态尽量具有良好的伪随机性，这是流密码密钥设计的一个原则。</p>
+<h2 id="流密码的破解">流密码的破解</h2><p>有限域GF( 2)上的二元加法流密码是目前最为常用的流密码体制, 设滚动密钥生成器是线性反馈移位寄存器, 产生的密钥是m 序列，它具有良好的伪随机性，那么这时的流密码是不是就不能破解了？并不，我们来看看怎么破，又设Sh 和S h + 1是序列中两个连续的n 长向量，直接上图：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/13.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/14.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/15.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/16.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/17.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/18.PNG" alt=""></p>
+<p>对于流密码的理论部分，就暂时讲到这。。。下篇将流密码在现实中对应的具体算法</p>
+<p>下片预告：流密码在现实中的具体应用—A5算法和RC4算法</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/cryptography/">cryptography</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/密码学/">密码学</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2015/12/22/密码初探-玩bin的人怎么能不懂密码呢/" data-title="密码初探-玩bin的人怎么能不懂密码呢 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/12/26/密码系列2-流密码实战之A5算法/" title="密码系列2-流密码实战之A5算法">
+  <strong>上一篇：</strong><br/>
+  <span>
+  密码系列2-流密码实战之A5算法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/12/16/hello-world/"  title="kenshichong的内心独白">
+ <strong>下一篇：</strong><br/> 
+ <span>kenshichong的内心独白
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_前情提要"><span class="toc-number">1.</span> <span class="toc-text">0x01 前情提要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_正片"><span class="toc-number">2.</span> <span class="toc-text">0x02 正片</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#古典密码"><span class="toc-number">2.1.</span> <span class="toc-text">古典密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#现代密码"><span class="toc-number">2.2.</span> <span class="toc-text">现代密码</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_本篇重点——序列密码"><span class="toc-number">3.</span> <span class="toc-text">0x03 本篇重点——序列密码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#流密码的破解"><span class="toc-number">3.1.</span> <span class="toc-text">流密码的破解</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

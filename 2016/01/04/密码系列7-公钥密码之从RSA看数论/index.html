@@ -1,0 +1,634 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>密码系列7-公钥密码之从RSA看数论 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 背景介绍本篇主要是由RSA算法的流程引入公钥密码体制所需的数论姿势，也就是说，没错，会让你脑袋疼的东西，反正我是脑袋疼。。。
+0x01 RSA流程
+没错，非常简洁的一个算法，流程什么的很容易懂，但是如果细究其中的每一步的细节，那么结果就是-脑子疼。但是，作为共产主义接班人，我们要迎难而上，下面就让我们由简到难来看下其中所涉及到的数论姿势
+0x02 各种脑瓜疼的数论姿势##数论姿势1-如何">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码系列7-公钥密码之从RSA看数论">
+<meta property="og:url" content="http://kenshichong.github.io/2016/01/04/密码系列7-公钥密码之从RSA看数论/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 背景介绍本篇主要是由RSA算法的流程引入公钥密码体制所需的数论姿势，也就是说，没错，会让你脑袋疼的东西，反正我是脑袋疼。。。
+0x01 RSA流程
+没错，非常简洁的一个算法，流程什么的很容易懂，但是如果细究其中的每一步的细节，那么结果就是-脑子疼。但是，作为共产主义接班人，我们要迎难而上，下面就让我们由简到难来看下其中所涉及到的数论姿势
+0x02 各种脑瓜疼的数论姿势##数论姿势1-如何">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/6.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/7.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/8.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/9.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/11.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/12.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/13.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/14.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/15.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/16.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/17.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/18.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/19.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/20.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/21.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/22.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/23.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/24.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/25.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/26.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/27.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/28.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/29.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/30.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/31.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/32.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/32.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/33.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/37.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/37.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/34.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/35.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/38.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/39.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/40.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/41.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/42.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/43.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列7-公钥密码之从RSA看数论/44.PNG">
+<meta property="og:updated_time" content="2016-01-06T12:55:06.103Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="密码系列7-公钥密码之从RSA看数论">
+<meta name="twitter:description" content="0x00 背景介绍本篇主要是由RSA算法的流程引入公钥密码体制所需的数论姿势，也就是说，没错，会让你脑袋疼的东西，反正我是脑袋疼。。。
+0x01 RSA流程
+没错，非常简洁的一个算法，流程什么的很容易懂，但是如果细究其中的每一步的细节，那么结果就是-脑子疼。但是，作为共产主义接班人，我们要迎难而上，下面就让我们由简到难来看下其中所涉及到的数论姿势
+0x02 各种脑瓜疼的数论姿势##数论姿势1-如何">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/04/密码系列7-公钥密码之从RSA看数论/" title="密码系列7-公钥密码之从RSA看数论" itemprop="url">密码系列7-公钥密码之从RSA看数论</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-01-04T08:53:45.000Z" itemprop="datePublished"> 发表于 2016-01-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_背景介绍"><span class="toc-number">1.</span> <span class="toc-text">0x00 背景介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_RSA流程"><span class="toc-number">2.</span> <span class="toc-text">0x01 RSA流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_各种脑瓜疼的数论姿势"><span class="toc-number">3.</span> <span class="toc-text">0x02 各种脑瓜疼的数论姿势</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_背景介绍">0x00 背景介绍</h1><p>本篇主要是由RSA算法的流程引入公钥密码体制所需的数论姿势，也就是说，没错，会让你脑袋疼的东西，反正我是脑袋疼。。。</p>
+<h1 id="0x01_RSA流程">0x01 RSA流程</h1><p><img src="/img/密码系列7-公钥密码之从RSA看数论/0.PNG" alt=""></p>
+<p>没错，非常简洁的一个算法，流程什么的很容易懂，但是如果细究其中的每一步的细节，那么结果就是-脑子疼。但是，作为共产主义接班人，我们要迎难而上，下面就让我们由简到难来看下其中所涉及到的数论姿势</p>
+<h1 id="0x02_各种脑瓜疼的数论姿势">0x02 各种脑瓜疼的数论姿势</h1><p>##数论姿势1-如何求最大公约数(公因子)</p>
+<ol>
+<li>整除：设a, b为整数,  b ≠ 0,如果存在整数c, 使得a=bc,  则称b整除a(记为b | a), 否则称b不整除a</li>
+<li>最大公约数：若d | a1，d | a2，则称d是a1，a2的一个公因数，其中最大的称为最大公因数，记为(a1，a2)。若(a1，a2)=1，则称a1，a2互质(素)，其他公因子一定是最大公因子的因子(可以用反证法证得，若不是，则二者互质，则二者相乘可以得到更大的公因子，矛盾)</li>
+<li>最大公约数的概念不仅仅局限于两个数，最大公约数概念扩展：</li>
+</ol>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/1.PNG" alt=""></p>
+<ol>
+<li>两个数的最大公约数求法：最大公约数必为正整数，且a=bq+r，b≠0=&gt;（a，b)=(b，r)，没错，就是辗转相除法了，通过辗转相除，我们可以很容易快速的求出两个数的最大公约数</li>
+<li>三个及三个以上数的最大公约数：需要的定理：</li>
+</ol>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/2.PNG" alt=""></p>
+<p>下面强行用大白话解释该定理的证明，首先，一方面，因为d|a1，d|a2···d|an-1，还有由(a1，a2···an-1)=dn-1可知前n-1个数的最大公约数是dn-1，同时前n-1个数又可以同时整除d，则由最大公约数的定义(公约数中最大的那个)可知，d&lt;=dn-1，且d|dn-1，而(dn-1，an)=dn，说明dn-1，an的最大公约数是dn，而别忘了d|dn-1且d|an，说明d是dn-1和an的一个公因子，则由其他公因子一定是最大公因子的因子的性质可知，d&lt;=dn这样，对于证明中的一方面，我们就说清了。<br>再来说另一方面，对于(dn-1，an)=dn=&gt;dn|an，dn|dn-1，这没什么好说的，下面的一个推出可以这样理解，dn-1是前n-1个数的最大公约数，说明dn-1是可以被前n-1个数整除的，而dn又是dn-1的一个因子，所以前n-1个数当然也可以整除dn了，这样就推出了前n个数都可以整除dn了，而前n个数的最大公约数是d，所以dn&lt;=d，这样把另一方面的证明也解释通了，一方面结合另一方面，该定理就得到了证明。</p>
+<p>这个定理直接为我们求三个及三个以上数的最大公约数提供了依据，通过计算机，我们可以使用一个递归来达到实现求三个及三个以上数的最大公约数的目的。</p>
+<ol>
+<li>关于最大公约数的一些性质：</li>
+</ol>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/3.PNG" alt=""></p>
+<p>##数论姿势2-最小公倍数##<br>整数a1, a2, ···, ak的公共倍数称为a1, a2, ···, ak的公倍数。a1, a2, ····, ak的正公倍数中的最小的一个叫做a1, a2, ···, ak的最小公倍数，记为[a1, a2, ···, ak]。<br>一些最小公倍数的基本性质：</p>
+<ol>
+<li>[a, 1] = |a|，[a, a] = |a|；</li>
+<li>[a, b] = [b, a]；</li>
+<li>[a1, a2, ···, ak] = [|a1|, |a2| ···, |ak|]；</li>
+<li>若a | b，则[a, b] = |b|。</li>
+<li><img src="/img/密码系列7-公钥密码之从RSA看数论/4.PNG" alt=""></li>
+</ol>
+<p>##数论姿势3-整数模运算和同余概念##<br><img src="/img/密码系列7-公钥密码之从RSA看数论/5.PNG" alt=""></p>
+<p>注意同余的符号，同余的概念非常重要，下面来看关于同余的性质：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/6.PNG" alt=""></p>
+<ol>
+<li>模同余逆元：</li>
+</ol>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/7.PNG" alt=""></p>
+<p>那么如何求模同余逆元呢？需要以下理论技巧：1.我们前面提到的辗转相除法：<img src="/img/密码系列7-公钥密码之从RSA看数论/8.PNG" alt=""><br>2.最大公约数的线性表示：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/9.PNG" alt=""></p>
+<p>解锁了这两个姿势，我们就可以求出模同余逆元了：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/10.PNG" alt=""></p>
+<p>##数论姿势4-欧拉的故事##<br>不得不说，有点佩服这个数学家，虽然他使得我们的学生生活过的并不轻松，但不得不承认他是天才，称之为艺术家不为过。失明过后各种心算，没谁了，我只想说我服。。。<br><strong>欧拉定理</strong><br><img src="/img/密码系列7-公钥密码之从RSA看数论/11.PNG" alt=""><br>利用欧拉定理解题：<br>今天星期三， 313^159天后是星期几?<br>好久没做数学题，所以当时做这个题时是拒绝的，这个题会用到上面的很多同余运算的性质，所以还是有必要做下的。解题过程为：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/12.PNG" alt=""></p>
+<p>让我来解释一下，要想求星期几，由于这个数太大，所以我们要尽量缩小它，当然mod7是很好的选择，因为减去7的倍数会在数字缩小的前提下不影响我们判断是星期几。(7k+5)的159次方展开之后，除了5的159次方外，其余项都是带7的，所以可以不用顾忌的直接弃掉，也就是说原来的数与5的159次方是模7同余的，接着使用欧拉定理对5的159次方进行缩小，由于5和7是互质的，所以5的6次方是与1模7同余的，还记得同余运算的性质吗？a与c模m同余，b与d模m同余，则ab与cd模m同余，运用这条性质，可得5的26*6次方与1模7也是同余的，而5的3次方是与5的3次方模7同余的，再次运用性质，可得5的159次方是与5的3次方模7同余的，而5的3次方就很容易计算了，他与6模7同余，这样就算出了最后答案。</p>
+<p>对于m的欧拉函数的求法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/13.PNG" alt=""></p>
+<p>再介绍一条重要的相似的定理，可以说是欧拉定理的推论：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/14.PNG" alt=""></p>
+<p>##数论姿势5-同余方程组##<br><img src="/img/密码系列7-公钥密码之从RSA看数论/15.PNG" alt=""><br><strong>解一次同余方程组之孙子定理</strong><br><img src="/img/密码系列7-公钥密码之从RSA看数论/16.PNG" alt=""></p>
+<p>举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/17.PNG" alt=""></p>
+<p>##数论姿势6-二次剩余##</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/18.PNG" alt=""></p>
+<p>我们先来讨论下二次剩余，大部分内容参考了blog-<a href="http://blog.sina.com.cn/s/blog_a661ecd50101ayas.html" target="_blank" rel="external">数论学习笔记（5）：二次剩余</a>，我这里会对这篇blog里面的内容写一些我自己的理解。</p>
+<p>对于二次剩余方程，其中 a 为整数， p 为奇素数， x 为未知整数。当然，我们不妨限定 a,x 均在 0,1,2,3,…,p-1 内。不过，为了叙述方便我们又经常把 0 去掉（当 a=0 时显然有唯一解 x=0 ）。这里将a，x限定在0,1,2,3,…,p-1 内，按我的理解，因为是模p运算，所以说大于p的所有数经过模p运算后得到的都是小于p的数字，所以因为模p运算，所以我们只需要讨论小于p的数字就ok了，就是说任何大于p的数字都可以在小于p的这个集合中找到等价的数字。</p>
+<p>因为我们的最终目的是在小于p的这个数字集合中找到所有的二次剩余嘛，那么，现在我们就很自然的想到了一个问题，对于哪些 a 方程有解？如果有的话有几个解？</p>
+<p>我们先给出结论：使方程有解的 a 的取值恰好是 (p-1)/2 个，恰好是全部取值个数的一半。若方程有解，则恰好有两个解，且这两个解的和为p 。</p>
+<p>下面证明他。我们考虑 1,2,3,…,p-1 这些数的平方。我们关心的是这些平方有没有重复（模 p 同余）的。这里重复可以这样理解，还是刚才说到的模p运算的等价问题，对于x而言，如果两个不同的x，x的平方模p得到相同的余数，说明二者只需要保留一个即可，因为对于这两个不同的x，他们所对应的二次剩余a(这里a其实就是x平方模p的余数)其实是相同的(还想不懂的话，考虑同余运算的定义，即p整除x平方减a)。假设这里面有两个不相同的平方 u^2,v^2 模 p 同余(先假设存在重复)，则有：p | (u^2-v^2)，即p | ((u+v)(u-v))，这里的意思就是素数p整除两个整数乘积，那么p必然整除其中一个数，这是毋庸置疑的。我们考虑u-v，由于 u-v 不可能是 p 的倍数（因为u，v都小于p嘛，否则有 u=v ），则有 u+v 是 p 的倍数，也就是说 u+v=p 。到这里，我们就已经可以看出来了，对于满足条件u+v=p的u和v，他们的平方是重复的，即模p同余的。</p>
+<p>我们回过来看，因为我们考虑的集合是[1,p-1]，那么1,2,3,…,p-1 这些数的平方必然可以两两配对(配对的条件是两者之和为p)，每对都模 p 同余，除此之外不在同一对的两个数模 p 不同余。这样，实质不同的平方数只有 (p-1)/2 个，正好可以从中间将他们劈开，[1，(p-1)/2]已经可以代表[(p-1)/2，p-1]这个集合了，因为他们所对应的二次剩余a是一样的，也就是说，[1，(p-1)/2]这个集合中的每一个数对于我们研究二次剩余才是有效的，我们将[1，(p-1)/2]这个集合称为二次剩余问题中p的一个简化系，它们对应着使方程有解的 a 的 (p-1)/2 个取值，而且每个使方程有解的 a 的取值都对应着两个平方数。这就证完了。我们把这 (p-1)/2 个取值称作模 p 的二次剩余，另外 (p-1)/2 个使方程无解的 a 称作模 p 的二次非剩余。另外规定如果 a 是模 p 的二次剩余/二次非剩余，那么与 a 模 p 同余的数也是模 p 的二次剩余/二次非剩余(可以看出，模p的二次剩余其实是有无穷无尽的，这里我们为了讨论问题的方便，将a限定在[1，p-1]这个集合范围内，根据前面的讨论，我们知道这样限定并不会丢失一般性，[1，p-1]这个集合足以涵盖所有的情况)。对于 p 的倍数，规定它既不是模 p 的二次剩余，也不是模 p 的二次非剩余。</p>
+<p>这里还要强调一点，就是a是与x^2相对应的，a在[1,p-1]中的分布是不均匀的。所以x的取值范围是[1，(p-1)/2]，而a的取值范围是[1，p]，我们并不能将这个集合像x一样做等分。</p>
+<p>有了上面的姿势，我们对于一个奇素数(素数除2外都是奇数)p的二次剩余就有了一套体系的求法。首先求出x的取值范围[1,(p-1)/2]，我们知道这里面的每一个数都对应着一个不同的二次剩余数a，然后对每一个x做平方运算后再模p后就得到了该x对应的二次剩余数a(因为经过了模p运算，所以a定&lt;p)，求完每一个x对应的二次剩余a后，共(p-1)/2个a，但a在[1,p-1]中的分布是不均匀的，剩下的就是二次非剩余了。给出结论：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/19.PNG" alt=""></p>
+<p>对于这个结论，需要补充一点，根据上面的结论求出每个的二次剩余可能会大于p，这时别忘了通过模p运算找到这个二次剩余在[1,p-1]这个集合中等价的那个二次剩余。</p>
+<p>说到这，我们已经可以求任意一个奇素数的二次剩余了，而且编程也是易于实现的。但是对于奇素数p，当我们随意给定一个a∈[1,p-1]时，我们如何判断这个a是不是该p的二次剩余呢？难道要把所有的二次剩余都求出来后，然后看给定的a是否属于这个集合吗？虽然可以实现，但这样未免效率太低了。艺术家欧拉给出了他的判别条件：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/20.PNG" alt=""></p>
+<p>对于这个定理，我不做证明，因为我不会证明，但是它很好用就是了。这个定理也给出了我们求二次剩余和非二次剩余的另一种方法，即对于[1,p-1]，从1开始考虑，逐个判断[1,p-1]中的数是否满足二次剩余判断条件，这样也可以把所有的二次剩余找出来。</p>
+<p>##数论姿势7-素性测试##<br>RSA算法中有生成大素数的需要，那么如何产生一个大素数还得保证该大素数的随机性？我们的思路是随机产生一个大正整数，判断其是不是素数，如果是即为需要的大素数，否则重新产生素数。那么这个随机产生的大正整数是素数的概率是多大呢？如果太小的话，那么这种思路就是不值得的，好在这个概率还可以。数论中有著名的素数定理: 不超过x的素数的个数大约为x/lnx。举个例子：任选一个512位的随机正整数p, 它是素数的概率大约为1/lnp ≈ 1/177, 即平均177个具有适当规模的随机正整数p中将有一个素数。从概率学加计算机的角度来看，这个思路是可取的。那么问题就变成了如何判定这个大正整数是不是素数了，我们称之为素性检测。素性检测可以分为两大类：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/21.PNG" alt=""></p>
+<p>确定性算法：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/22.PNG" alt=""></p>
+<p>然而没什么鸟用，n较小时还可以用用，但当n为大素数时(几百位)，这两个确定性检测算法就显得尤为笨重且对于计算机来说，计算量有点接受不了，所以抛弃这两个确定性算法，还有个AKS算法，也是确定性算法，是印度人想出来的算法，由于不成熟，所以也没什卵用。让我们来看看有什么好用的概率性算法：首先是费马<br><img src="/img/密码系列7-公钥密码之从RSA看数论/23.PNG" alt=""><br>根据上图的理论，费马提出了他的素性测试法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/24.PNG" alt=""></p>
+<p>然后是Lehmann，不知道这哥们名字怎么读。。。他在费马素性检测算法的基础上做了改进，二者的核心思想都是一样的：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/25.PNG" alt=""></p>
+<p>然而，存在一类极其罕见的合数，称为Carmichael，针对所有与N互素的a，N将通过费马测试和Lehmann测试，所以这两种概率性算法我们也不用。</p>
+<p>现阶段常用的素性检测算法是Miller-Rabin概率型素性测试算法，对这个定理我也不会证明，并不想证明，会用就行：Miller-Rabin素性检测的理论依据：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/26.PNG" alt=""></p>
+<p>对于给定要测试的数n，可以求出该n对应的s和m的值，由此可得Miller-Rabin素性检测算法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/27.PNG" alt=""></p>
+<p>有了较为可靠的素性检测算法后，我们上面的思路就易于实现了，产生素数的步骤可为：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/28.PNG" alt=""></p>
+<p>##数论姿势8-整数的阶##<br><img src="/img/密码系列7-公钥密码之从RSA看数论/29.PNG" alt=""></p>
+<p>这里说明为什么整数的阶一定存在，由条件可知(a，m)=1，想到了什么？没错，就是欧拉定理，描述为a的m的欧拉数次方与1是模m同余的，也就是说，l是一定存在的，至于l是不是m的欧拉数，这个就不知道了，反正一定存在，意思就是l是在不行还可以取m的欧拉数嘛。</p>
+<p>关于整数的阶的性质：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/30.PNG" alt=""></p>
+<p>第一条性质可以为我们计算整数的阶的运算带来简化，第一条性质说明整数的阶必然是欧拉数的一个公因子，所以我们只需要对欧拉数的公因子进行验证即可，举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/31.PNG" alt=""></p>
+<p>第二第三条性质同样可以简化运算，例子说话：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/32.PNG" alt=""></p>
+<p>整数的阶的另外两个重要性质：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/32.PNG" alt=""></p>
+<p>这个性质其实是对上面的第三条性质的扩充，我们暂且称它为第四条性质，是一个扩展，意思就是，当我们计算a相对于一个较大的模数m的整数阶时，我们可以对m进行质因数分解，然后分别求较小的因数的阶，最后求这些阶的最小公倍数即可得到原来的那个较大的数的整数阶，这个性质运用的前提是对m进行标准分解，什么是标准分解呢，就是分解成由最简单的质因数连乘的形式，大家小学时应该都学过，反正我小学学过。举个例子：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/33.PNG" alt=""></p>
+<p>可以看出运用以上性质简化了运算。在运用这个性质时，还有一点需要注意，那就是对于这个式子：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/37.PNG" alt=""></p>
+<p>这个性质不可以被重用，什么意思呢，假设m被分解成有一个因式是2^3(即pi=2，ji=3)，则对于<img src="/img/密码系列7-公钥密码之从RSA看数论/37.PNG" alt="">这个式子的计算，不能把2^3拆成2<em>2</em>2，然后分别计算a模2的整数阶，最后再求这3个整数阶的最小公倍数，这样得到的结果并不是a模2^3的整数阶，这样做是不对的，至于如何处理这种形式，就需要下面即将讲到的性质。还有个性质，我们暂且称为第5条性质：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/34.PNG" alt=""><br><img src="/img/密码系列7-公钥密码之从RSA看数论/35.PNG" alt=""></p>
+<p>这个性质其实是对上面性质的一个补充，上面也说到了，就是当我们面临标准分解中有次幂这种因子时，应该怎么求，就是用上面的性质求。</p>
+<p>对于上面性质的白话解释，先以5^3(p=5,j=3)的情况来说明，这里p=5≠2，那么先计算f2，f2就是a模5^2的整数阶，然后根据性质中说的a的f2次方-1可以整除p^i，而不能整除p^i+1，找到这个临界的i，即可使用这个性质，看j值所属的范围即可得到fj，再啰嗦一下2^3(p=2,j=3)的情况，此时看a的值，然后得到相应的r值，再根据r和j值得到fj。</p>
+<p>这样我们在面临要求a模一个较大的m的整数阶时，我们就有了相应的化简方法，实际上就是把m进行标准分解，然后看有没有标准分解中有没有带幂的因子，对于带幂的因子，采用第5条性质先转化为不带幂的，然后根据前面说的前三条性质简化求出不带幂的，然后根据第5条性质就可以得到该带幂因子的整数阶，不带幂的因子用刚开始说的前三条性质简化求出整数阶，这样每一个因子的整数阶就都求出来了，最后再根据第四条性质得出最后的整数阶是标准分解的各因子整数阶的最小公倍数，就是这样。举个例子：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/38.PNG" alt=""></p>
+<p>##数论姿势9-原根##<br>原根的定义：<img src="/img/密码系列7-公钥密码之从RSA看数论/39.PNG" alt=""><br>另一个等价的定义：假设一个数g对于P来说是原根，那么g^i mod P的结果两两不同,且有 1&lt;g&lt;P, 1&lt;i&lt;P,那么g可以称为是P的一个原根。简单来说，g^i mod p ≠ g^j mod p （p为素数）其中i≠j且i, j介於1至(p-1)之间则g为p的原根。简单的来说，如果g是P的原根，那么g的（1…P-1）次幂mod P的结果一定互不相同。</p>
+<p>这样对于原根的定义就有两个了，一是g模p的整数阶等于p的欧拉函数时，g称为p的一个原根；另一个是g的（1…P-1）次幂mod P的结果一定互不相同时，g称为p的一个原根。为什么说这两个是等价定义呢，让我来解释一下，两者是可以等价互导的，也就是说g模p的整数阶等于p的欧拉函数时，g的（1…P-1）次幂mod P的结果一定互不相同，反过来亦成立。这里只说明由第二个定义导出第一个定义，至于反过来导，看我导完这个应该不是问题，留给大家自己导着玩。g的（1…P-1）次幂mod P的结果互不相同时，g模p的整数阶一定等于p的欧拉函数。为什么这句话是对的呢？用反证法来证，假设存在两个数a∈[1,p-1],b∈[1,p-1]，且不妨设a&gt;b满足(g^a)modP=(g^b)modP,即g^a-<em>-(g^b)modp（这里说明一下，三个横线的那个同余符号不知道怎么打，只好用-</em>-这个代替，大家习惯就好）。这说明什么呢？因为没有同余等式两边同除以一个数同余等式依然成立的性质，事实上是我不知道存不存在，只有乘法，没关系，我们回归同余运算最基本的定义，由g^a-_-(g^b)modp这个式子可以得到g^a-g^b=p<em>k(k为整数)，设g^a=p</em>m+t,g^b=p<em>n+t,显然t&lt;p,则这个式子可以变形为g^b(g^(a-b)-1)=p</em>(m-n),进一步变形为(p<em>n+t)(g^(a-b)-1)=p</em>(m-n)，再变p<em>(n</em>g^(a-b)-n)+t<em>(g^(a-b)-1)=p</em>(m-n),再来t<em>(g^(a-b)-1)=p</em>(m-n-n<em>g^(a-b)+n)=p</em>(m-n<em>g^(a-b)),即t</em>(g^(a-b)-1)=p<em>(m-n</em>g^(a-b))，到这就差不多了，由于t&lt;p,g^(a-b)-1必存在因子p，所以g^(a-b)-1=p*l(l为整数),即g^(a-b)与1模p同余，这与原根的定义矛盾，即如果存在两个数a∈[1,p-1],b∈[1,p-1]，g的a，b次幂mod P的结果相同时，通过上面的证明可以知道由于a-b&lt;p的欧拉函数，所以此时g模p的整数的阶就变成了a-b，而非原根定义要求的必须是p的欧拉函数值，所以从原根的定义出发，g的（1…P-1）次幂mod P的结果一定互不相同时，g模p的整数阶才等于p的欧拉函数，这样的g才能被称为原根，就是说如果g的（1…P-1）次幂mod P的结果存在两个相同的值的时候，g是不能被称为原根的。好像说了半天，越说越糊涂，总之就是想证明一下，为什么g模p的整数阶等于p的欧拉函数时一定会满足g的（1…P-1）次幂mod P的结果一定互不相同，查了好多资料都没说，只能自己硬生生证明了，就这样。</p>
+<p>现在我们已经对原根的概念有了个大体的认识，知道了要想成为原根应该具备什么资格。</p>
+<p>原根的性质：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/40.PNG" alt=""></p>
+<p>举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/41.PNG" alt=""></p>
+<p>这是直接对一个奇素数求原根，当我们知道一个奇素数的原根时，如果要求这个奇素数的幂的原根，这时需要用到下面一条性质：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/42.PNG" alt=""></p>
+<p>举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/43.PNG" alt=""></p>
+<p>在密码应用中，通常需要产生一个很大的素数的原根，根据上面的第一个性质我们可以知道，当p的欧拉数只能分解成两个素数乘积的时候找原根的速度会很快，所以当我们可以故意产生一个p，使得他的欧拉数只能分解成两个素数乘积的形式，一般采用的形式是p=q*2+1<br>下面给出具体的算法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/44.PNG" alt=""></p>
+<hr>
+<p>数论的姿势就先科普到这里，下面进入真正的公钥密码算法。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/cryptography/">cryptography</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/密码学/">密码学</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2016/01/04/密码系列7-公钥密码之从RSA看数论/" data-title="密码系列7-公钥密码之从RSA看数论 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/01/01/密码系列6-分组密码的尾声之IDEA和AES/"  title="密码系列6-分组密码的尾声之IDEA和AES">
+ <strong>下一篇：</strong><br/> 
+ <span>密码系列6-分组密码的尾声之IDEA和AES
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_背景介绍"><span class="toc-number">1.</span> <span class="toc-text">0x00 背景介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_RSA流程"><span class="toc-number">2.</span> <span class="toc-text">0x01 RSA流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_各种脑瓜疼的数论姿势"><span class="toc-number">3.</span> <span class="toc-text">0x02 各种脑瓜疼的数论姿势</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

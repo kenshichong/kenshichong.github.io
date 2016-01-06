@@ -1,0 +1,607 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>密码系列4-分组密码之大名鼎鼎的DES | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 分组密码的概述除流密码外，分组密码是对称密码体系的又一大分支。
+什么是分组密码分组密码（block cipher）：将明文消息序列划分成等长的消息组,在密钥 的控制下按固定的加密算法一组一组进行加密，输出一组一组密文。
+
+对于分组的长度，通常取m=l。若m&amp;gt;l，则为有数据扩展的分组密码；若m&amp;lt;l，则为有数据压缩的分组密码。
+分组密码的设计准则准则是扩散和混淆，扩散和混淆是由S">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码系列4-分组密码之大名鼎鼎的DES">
+<meta property="og:url" content="http://kenshichong.github.io/2015/12/28/密码系列4-分组密码之大名鼎鼎的DES/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 分组密码的概述除流密码外，分组密码是对称密码体系的又一大分支。
+什么是分组密码分组密码（block cipher）：将明文消息序列划分成等长的消息组,在密钥 的控制下按固定的加密算法一组一组进行加密，输出一组一组密文。
+
+对于分组的长度，通常取m=l。若m&amp;gt;l，则为有数据扩展的分组密码；若m&amp;lt;l，则为有数据压缩的分组密码。
+分组密码的设计准则准则是扩散和混淆，扩散和混淆是由S">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/6.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/7.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/8.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/9.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/11.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/12.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/13.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/14.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/15.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/16.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/17.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列4-分组密码之大名鼎鼎的DES/18.PNG">
+<meta property="og:updated_time" content="2015-12-30T07:57:33.502Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="密码系列4-分组密码之大名鼎鼎的DES">
+<meta name="twitter:description" content="0x00 分组密码的概述除流密码外，分组密码是对称密码体系的又一大分支。
+什么是分组密码分组密码（block cipher）：将明文消息序列划分成等长的消息组,在密钥 的控制下按固定的加密算法一组一组进行加密，输出一组一组密文。
+
+对于分组的长度，通常取m=l。若m&amp;gt;l，则为有数据扩展的分组密码；若m&amp;lt;l，则为有数据压缩的分组密码。
+分组密码的设计准则准则是扩散和混淆，扩散和混淆是由S">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/28/密码系列4-分组密码之大名鼎鼎的DES/" title="密码系列4-分组密码之大名鼎鼎的DES" itemprop="url">密码系列4-分组密码之大名鼎鼎的DES</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-28T07:48:18.000Z" itemprop="datePublished"> 发表于 2015-12-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_分组密码的概述"><span class="toc-number">1.</span> <span class="toc-text">0x00 分组密码的概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是分组密码"><span class="toc-number">1.1.</span> <span class="toc-text">什么是分组密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分组密码的设计准则"><span class="toc-number">1.2.</span> <span class="toc-text">分组密码的设计准则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_DES"><span class="toc-number">2.</span> <span class="toc-text">0x01 DES</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#口胡"><span class="toc-number">2.1.</span> <span class="toc-text">口胡</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插一下又不会怀孕-Feistel密码结构"><span class="toc-number">2.2.</span> <span class="toc-text">插一下又不会怀孕-Feistel密码结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-初始置换"><span class="toc-number">2.3.</span> <span class="toc-text">1.初始置换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-轮结构"><span class="toc-number">2.4.</span> <span class="toc-text">2.轮结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-密钥的产生"><span class="toc-number">2.5.</span> <span class="toc-text">3.密钥的产生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-解密"><span class="toc-number">2.6.</span> <span class="toc-text">4.解密</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_DES的扩展"><span class="toc-number">3.</span> <span class="toc-text">0x02 DES的扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#二重DES"><span class="toc-number">3.1.</span> <span class="toc-text">二重DES</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三重DES"><span class="toc-number">3.2.</span> <span class="toc-text">三重DES</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_分组密码的概述">0x00 分组密码的概述</h1><p>除流密码外，分组密码是对称密码体系的又一大分支。</p>
+<h2 id="什么是分组密码">什么是分组密码</h2><p>分组密码（block cipher）：将明文消息序列划分成等长的消息组,在密钥 的控制下按固定的加密算法一组一组进行加密，输出一组一组密文。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/0.PNG" alt=""></p>
+<p>对于分组的长度，通常取m=l。若m&gt;l，则为有数据扩展的分组密码；若m&lt;l，则为有数据压缩的分组密码。</p>
+<h2 id="分组密码的设计准则">分组密码的设计准则</h2><p>准则是扩散和混淆，扩散和混淆是由Shannon提出的设计密码系统的两个基本方法。</p>
+<p>扩散的目的是使明文和密文之间的统计关系变得尽可能复杂；</p>
+<p>混淆是使密文和密钥之间的统计关系变得尽可能复杂，以使敌手无法得到密钥。</p>
+<p>如果敌手知道明文的某些统计特性，如消息中不同字母出现的频率、可能出现的特定单词或短语，而且这些统计特性以某种方式在密文中反映出来，那么敌手就有可能得出加密密钥或其一部分，或者得出包含加密密钥的一个可能的密钥集合。在Shannon称之为理想密码的密码系统中，密文的所有统计特性都与所使用的密钥独立。</p>
+<p>下面说几个具体的设计准则：</p>
+<ol>
+<li>分组长度n要足够大，使分组代换字母表中的元素个数2n足够大，防止明文穷举攻击法奏效。DES、IDEA、FEAL和LOKI等分组密码都采用n=64。</li>
+<li>密钥量要足够大，以防止密钥穷举攻击奏效。但密钥又不能过长，以便于密钥的管理。DES采用56比特密钥，看来太短了，IDEA采用128比特密钥，据估计，在今后30～40年内采用80 比特密钥是足够安全的。</li>
+<li>由密钥确定置换的算法要足够复杂，充分实现明文与密钥的扩散和混淆，没有简单的关系可循，能抗击各种已知的攻击，如差分攻击和线性攻击；有高的非线性阶数，实现复杂的密码变换；使对手破译时,除穷举无捷径。(这句我也有好多不太懂的。。。)</li>
+<li>加密和解密运算简单，易于软件和硬件高速实现。<br>应选用简单的运算，如加、乘、移位等实现<br>加密和解密就可用同一器件实现<br>设计的算法采用规则的模块结构，如多轮迭代等，以便于软件和VLSI快速实现.</li>
+<li>数据尽量无扩展、差错传播尽可能地小。</li>
+</ol>
+<h1 id="0x01_DES">0x01 DES</h1><h2 id="口胡">口胡</h2><p>数据加密标准( data encryption standard , DES)是迄今为止世界上最为广泛使用和流行的一种分组密码算法, 它的分组长度为64 比特, 密钥长度为56 比特, 它是由美国IBM 公司研制的, 是早期的称作Lucifer 密码的一种发展和修改。DES 在1975 年3 月17日首次被公布在联邦记录中, 经过大量的公开讨论后,DES 于1977 年1 月15 日被正式批准并作为美国联邦信息处理标准, 即FIPS-46 , 同年7 月15 日开始生效。规定每隔5 年由美国国家保密局( national security agency , NSA)作出评估, 并重新批准它是否继续作为联邦加密标准。最近的一次评估是在1994 年1 月, 美国已决定1998 年12 月以后将不再使用DES。1997 年DESCHALL 小组经过近4 个月的努力, 通过Inter net 搜索了3×1016 个密钥, 找出了DES 的密钥, 恢复出了明文。1998 年5 月美国EFF ( elect ronicsfrontier foundation )宣布, 他们以一台价值20 万美元的计算机改装成的专用解密机, 用56 小时破译了56 比特密钥的DES。美国国家标准和技术协会已征集并进行了几轮评估、筛选, 产生了称之为AES( advanced encryption standard ) 的新加密标准。尽管如此,DES 对于推动密码理论的发展和应用毕竟起了重大作用, 对于掌握分组密码的基本理论、设计思想和实际应用仍然有着重要的参考价值。</p>
+<p>不啰嗦，直接上流程图，以下内容均来自《现代密码学——杨波》，感觉此书对于DES流程的讲解还是比较详细的。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/1.PNG" alt=""></p>
+<p>上图是DES 加密算法的框图, 其中明文分组长为64 比特, 密钥长为56 比特。图的左边是明文的处理过程, 有3 个阶段, 首先是一个初始置换IP, 用于重排明文分组的64比特数据。然后是具有相同功能的16 轮变换, 每轮中都有置换和代换运算, 第16 轮变换的输出分为左右两半, 并被交换次序。最后再经过一个逆初始置换IP- 1 ( 为IP 的逆) 从而产生64 比特的密文。除初始置换和逆初始置换外, DES 的结构和Feistel密码结构完全相同。</p>
+<h2 id="插一下又不会怀孕-Feistel密码结构">插一下又不会怀孕-Feistel密码结构</h2><p>强势插入Feistel密码结构</p>
+<p>很多分组密码的结构从本质上说都是基于一个称为Feistel 网络的结构。Feistel 提出利用乘积密码可获得简单的代换密码, 乘积密码指顺序地执行两个或多个基本密码系统, 使得最后结果的密码强度高于每个基本密码系统产生的结果, Feistel 还提出了实现代换和置换的方法。其思想实际上是Shannon 提出的利用乘积密码实现混淆和扩散思想的具体应用。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/2.PNG" alt=""></p>
+<p>是Feistel 网络示意图, 加密算法的输入是分组长为2 w 的明文和一个密钥K。将每组明文分成左右两半L0 和R0 , 在进行完n 轮迭代后, 左右两半再合并到一起以产生密文分组。其第i 轮迭代的输入为前一轮输出的函数:Li = Ri - 1Ri = Li - 1 xor F( Ri - 1 , Ki )其中Ki 是第i 轮用的子密钥, 由加密密钥K 得到。一般地, 各轮子密钥彼此不同而且与K 也不同。Feistel 网络中每轮结构都相同, 每轮中右半数据被作用于轮函数F 后, 再与左半数据进行异或运算, 这一过程就是上面介绍的代换。每轮的轮函数的结构都相同, 但以不同的子密钥Ki 作为参数。代换过程完成后, 再交换左、右两半数据, 这一过程称为置换。这种结构是Shannon 提出的代换———置换网络( s ubstitution-permutation network ,SPN )的特有形式。</p>
+<p>Feistel 网络的实现与以下参数和特性有关:</p>
+<ol>
+<li>分组大小 分组越大则安全性越高, 但加密速度就越慢。分组密码设计中最为普遍使用的分组大小是64 比特。</li>
+<li>密钥大小 密钥越长则安全性越高, 但加密速度就越慢。现在普遍认为64 比特或更短的密钥长度是不安全的, 通常使用128 比特的密钥长度。</li>
+<li>轮数 单轮结构远不足以保证安全性, 但多轮结构可提供足够的安全性。典型地, 轮数取为16。</li>
+<li>子密钥产生算法 该算法的复杂性越大, 则密码分析的困难性就越大。</li>
+<li>轮函数 轮函数的复杂性越大, 密码分析的困难性也越大。</li>
+</ol>
+<p>在设计F eistel 网络时, 还有以下两个方面需要考虑:</p>
+<ol>
+<li>快速的软件实现 在很多情况中, 算法是被镶嵌在应用程序中, 因而无法用硬件实现。此时算法的执行速度是考虑的关键。</li>
+<li>算法容易分析 如果算法能被无疑义地解释清楚, 就可容易地分析算法抵抗攻击的能力, 有助于设计高强度的算法。</li>
+</ol>
+<p><strong>Feistel解密结构</strong>：<br>Feistel 解密过程本质上和加密过程是一样的, 算法使用密文作为输入, 但使用子密钥Ki 的次序与加密过程相反, 即第1 轮使用Kn , 第2 轮使用Kn - 1 , ⋯⋯ , 最后一轮使用K1 。这一特性保证了解密和加密可采用同一算法。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/3.PNG" alt=""></p>
+<p>上图的左边表示16 轮Feistel 网络的加密过程, 右边表示解密过程, 加密过程由上而下, 解密过程由下而上。为清楚起见, 加密算法每轮的左右两半用LEi 和REi 表示, 解密算法每轮的左右两半用LDi 和RDi 表示。图中右边标出了解密过程中每一轮的中间值与左边加密过程中间值的对应关系, 即加密过程第i 轮的输出是LEi ‖ REi ( ‖表示链接) , 解密过程第16 - i 轮相应的输入是RDi ‖ LDi 。加密过程的最后一轮执行完后, 两半输出再经交换, 因此密文是RE16 ‖ LE16 。解密<br>过程取以上密文作为同一算法的输入, 即第1 轮输入是RE16 ‖ LE16 , 等于加密过程第16轮两半输出交换后的结果。下面证明解密过程第1 轮的输出等于加密过程第16 轮输入<br>左右两半的交换值。<br>在加密过程中:<br>LE16 = RE1 5<br>RE16 = LE1 5 xor F( RE15 , K16 )<br>在解密过程中:<br>LD1 = RD0 = LE16 = RE15<br>RD1 = LD0 xor F( RD0 , K16 ) = RE16 xor F( RE1 5 , K1 6 )= [ LE1 5 xor F( RE15 , K16 ) ] xor F( RE1 5 , K16 )<br>= LE15<br>所以解密过程第1 轮的输出为LE15 ‖ RE15 , 等于加密过程第16 轮输入左右两半交换后<br>的结果。容易证明这种对应关系在16 轮中每轮都成立。一般地, 加密过程的第i 轮有<br>LEi = REi - 1<br>REi = LEi - 1 xor F( REi - 1 , Ki )<br>因此<br>REi - 1 = LEi<br>LEi - 1 = REi xor F( REi - 1 , Ki ) = REi xor F( LEi , Ki )<br>以上两式描述了加密过程中第i 轮的输入与第i 轮输出的函数关系, 由此关系可得图3 -4右边显示的LDi 和RDi 的取值关系。最后可以看到, 解密过程第16 轮的输出是RE0 ‖ LE0 , 左右两半再经一次交换后即得最初的明文。</p>
+<p>这里有必要对上面的两个图进行一个说明，两个图所表达的意思是一样的，第一个图偏向于说明理论的流程，把每一次左右两边的交换过程给体现在了图中；而第二个图更偏向于真正现实中的应用，是硬件的具体实现，在具体的实现过程中，我们可以把每一次的左右交换调整为异或原件的左右交换，第二个图也是这么做的，这样和每一次交换一下左右两边达到的效果是一样的，而这样的硬件电路板实现后，每一轮就不需要交换，而是数据直接作为下一轮的输入。</p>
+<p>还有一点需要注意，就是不论是加密还是解密的最后一次交换都是非常必要的，因为硬件实现后，是需要能够重用的，加密与解密用的是同一块硬件电路板，但我们可以很清楚的注意到，在电路板中，第一轮与第十六轮的异或原件所处的左右位置是不一样的，所以为了使加密与解密的正常逻辑的实现，为了重用同一块电路板，为了避免第一轮与最后一轮异或原件所处左右位置不一样而是解密操作逻辑上的失败，这加密过程的最后一步是必不可少的，而在解密过程中的最后一步交换也能够使得解密能够得到正确的明文。</p>
+<hr>
+<p>看完了Feistel解密结构，我们接着来谈DES</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/1.PNG" alt=""></p>
+<p>接着看这个图，该图的右边是使用56 比特密钥的方法。密钥首先通过一个置换函数, 然后, 对加密过程的每一轮, 通过一个左循环移位和一个置换产生一个子密钥。其中每轮的置换都相同, 但由于密钥被重复迭代, 所以产生的每轮子密钥不相同。</p>
+<p>下面解析DES的流程：</p>
+<h2 id="1-初始置换">1.初始置换</h2><p>DES 的置换表：</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/4.PNG" alt=""></p>
+<p>表3 -2 ( a )和表3 -2 ( b) 分别给出了初始置换和逆初始置换的定义, 为了显示这两个置<br>换的确是彼此互逆的, 考虑下面64 比特的输入M :</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/5.PNG" alt=""></p>
+<p>其中Mi 是二元数字。由表3 -2( a )得X = IP( M) 为:</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/6.PNG" alt=""><br><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/7.PNG" alt=""></p>
+<p>如果再取逆初始置换Y = IP- 1 ( X ) = IP - 1 ( IP ( M) ) , 可以看出, M 各位的初始顺序将被<br>恢复。</p>
+<h2 id="2-轮结构">2.轮结构</h2><p>DES 加密算法的轮结构：</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/8.PNG" alt=""></p>
+<p>首先看图的左半部分。将64 比特的轮输入分成各为32 比特的左、右两半, 分别记为L 和R。和Feistel 网络一样, 每轮变换可由以下公式表示:<br>Li = Ri - 1<br>Ri = Li - 1 xor F( Ri - 1 , Ki )<br>其中轮密钥Ki 为48 比特, 函数F( R, K) (虚线框中的所有过程)的计算过程如图3 -7 所示。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/9.PNG" alt=""></p>
+<p>轮输入的右半部分R 为32 比特, R 首先被扩展成48 比特, 扩展过程由表( c )定义：</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/10.PNG" alt=""></p>
+<p>其中将R 的16 个比特各重复一次。扩展后的48 比特再与子密钥Ki 异或, 然后再通过一个S 盒, 产生32 比特的输出。该输出再经过一个由表( d ) 定义的置换</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/11.PNG" alt=""></p>
+<p>产生的结果即为函数F( R, K) 的输出。</p>
+<p>F 中的代换由8 个S 盒组成, 每个S 盒的输入长为6 比特、输出长为4 比特, 其变换关系由表3 -3 定义, 每个S 盒给出了4 个代换(由一个表的4 行给出) 。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/12.PNG" alt=""><br><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/13.PNG" alt=""></p>
+<p>对每个盒Si , 其6 比特输入中, 第1 个和第6 个比特形成一个2 位二进制数, 用来选择Si 的4 个代换中的一个。6 比特输入中, 中间4 位用来选择列。行和列选定后, 得到其交叉位置的十进制数, 将这个数表示为4 位二进制数即得这一S 盒的输出。例如, S1 的输入为011001 , 行选为01( 即第1 行) , 列选为1100 (即第12 列) , 行列交叉位置的数为9 , 其4 位二进制表示为1001 , 所以S1 的输出为1001。</p>
+<p>对于S盒的每一行，S 盒的每一行定义了一个可逆代换, 举个例子：下图表示S1 第0 行所定义的代换。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/14.PNG" alt=""></p>
+<h2 id="3-密钥的产生">3.密钥的产生</h2><p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/15.PNG" alt=""></p>
+<p>输入算法的56 比特密钥首先经过一个置换运算, 该置换由表3 -4( a) 给出, 然后将置换后的56 比特分为各为28 比特的左、右两半, 分别记为C0 和D0 。在第i 轮分别对Ci - 1 和Di - 1 进行左循环移位, 所移位数由表3 -4( c )给出。移位后的结果作为求下一轮子密钥的输入, 同时也作为置换选择2 的输入。通过置换选择2 产生的48比特的Ki , 即为本轮的子密钥, 作为函数F( Ri - 1 , Ki )的输入。其中置换选择2 由表3 -4( b)定义。</p>
+<h2 id="4-解密">4.解密</h2><p>和F eistel 密码一样,DES 的解密和加密使用同一算法, 但子密钥使用的顺序相反。</p>
+<hr>
+<h1 id="0x02_DES的扩展">0x02 DES的扩展</h1><p>普通的DES的安全性已经不能满足要求，但是由于DES曾经的辉煌，导致很多软硬件是按照DES去实现的。所以提出了一种较为折中的方法，为了提高DES 的安全性, 并利用实现DES 的现有软硬件, 可将DES 算法在多密钥下多重使用。</p>
+<h2 id="二重DES">二重DES</h2><p>二重DES 是多重使用DES 时最简单的形式, 如图:</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/16.PNG" alt=""></p>
+<p>其中明文为P, 两个加密密钥为K1 和K2 , 密文为:<br>C = EK2 [ EK1 [ P] ]<br>解密时, 以相反顺序使用两个密钥:<br>P = DK1 [ DK2 [ C] ]<br>因此, 二重DES 所用密钥长度为112 比特, 强度极大地增加。</p>
+<p><strong>针对二重DES的攻击</strong><br>假设对任意两个密钥K1 和K2 , 能够找出另一密钥K3 , 使得EK2 [ EK1 [ P] ] = EK3 [ P]那么, 二重DES 以及多重DES 都没有意义, 因为它们与56 比特密钥的单重DES 等价, 好在这种假设对DES 并不成立。原因：将DES 加密过程64 比特分组到64 比特分组的映射看作一个置换, 如果考虑2的64次方个所有可能的输入分组, 则密钥给定后, DES 的加密将把每个输入分组映射到一个惟一的输出分组。否则, 如果有两个输入分组被映射到同一分组, 则解密过程就无法实施。另一方面, 对每个不同的密钥,DES 也都定义了一个映射。因此, 可假定用两个不同的密钥两次使用DES, 可得一个新映射, 而且这一新映射不出现在单重DES 定义的映射中。这一假定已于1992 年被证明。所以使用二重DES 产生的映射不会等价于单重DES 加密。那二重DES这么一说不就挺好的了，112bit长度的密钥我们可以接受，是不是可以放心使用了？其实并不，对二重DES 有以下一种称为中途相遇攻击的攻击方案, 这种攻击不依赖于DES 的任何特性, 因而可用于攻击任何分组密码。</p>
+<p><strong>中途相遇攻击</strong> </p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/17.PNG" alt=""></p>
+<p>基本思想如下:如果有C = EK2 [ EK1 [ P] ]那么( 见图3 -8)X = EK1 [ P] = DK2 [ C]如果已知一个明文密文对( P, C) , 攻击的实施可如下进行: 首先, 用256 个所有可能的K1对P 加密, 将加密结果存入一表并对表按X 排序, 然后用256 个所有可能的K2 对C 解密, 在上述表中查找与C 解密结果相匹配的项, 如果找到, 则记下相应的K1 和K2 。最后再用一新的明文密文对( P′, C′)检验上面找到的K1 和K2 , 用K1 和K2 对P′两次加密,若结果等于C′, 就可确定K1 和K2 是所要找的密钥。对已知的明文P, 二重DES 能产生2的64次方个可能的密文, 而可能的密钥个数为2的112次方 , 所以平均来说, 对一个已知的明文, 有2的112次方 / 2的64次方 = 2的48次方个密钥可产生已知的密文。而再经过另外一对明文密文的检验, 误报率将下降到2的(48 - 64)次方= 2的(-16)次方 。所以在实施中途相遇攻击时, 如果已知两个明文密文对, 则找到正确密钥的概率为1 - 2(-16)次方 。</p>
+<p>可见，由于二重DES的对称性，加上2的64次方数量级的计算对于现代计算机来说可以实现，并不是什么难事，所以导致他不能避免中途相遇攻击，那么三重DES应运而生</p>
+<h2 id="三重DES">三重DES</h2><p>三重DES可以抵抗中途相遇攻击。三重DES使用3 个不同的密钥做3 次加密, 从而可使已知明文攻击的代价增加到2的112次方 。但这样又会使密钥长度增加到56×3 = 168 比特, 因而过于笨重。一种实用的方法是仅使用两个密钥做3 次加密, 实现方式为加密-解密-加密, 简记为EDE( enc rypt-decrypt-encrypt )如图：</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/18.PNG" alt=""></p>
+<p>即:C = EK1 [ DK2 [ EK1 [ P] ] ]，第2 步解密的目的仅在于使得用户可对一重DES 加密的数据解密。此方案已在密钥管理标准ANS X .917 和ISO 8732 中被采用。</p>
+<p>但是三个密钥的三重DES并不是我们所不能容忍的。三重DES的密钥长度为168 比特, 加密方式为C = EK3 [ DK2 [ EK1 [ P] ] ]，三个密钥的三重DES 已在因特网的许多应用(如PGP 和S/ MIME) 中被采用。</p>
+<hr>
+<p>DES就介绍到这，但分组密码还远没有结束。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/cryptography/">cryptography</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/密码学/">密码学</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2015/12/28/密码系列4-分组密码之大名鼎鼎的DES/" data-title="密码系列4-分组密码之大名鼎鼎的DES | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/12/30/密码系列5-分组密码的运行模式/" title="密码系列5-分组密码的运行模式">
+  <strong>上一篇：</strong><br/>
+  <span>
+  密码系列5-分组密码的运行模式</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/12/26/密码系列3-流密码实战之RC4算法/"  title="密码系列3-流密码实战之RC4算法">
+ <strong>下一篇：</strong><br/> 
+ <span>密码系列3-流密码实战之RC4算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_分组密码的概述"><span class="toc-number">1.</span> <span class="toc-text">0x00 分组密码的概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是分组密码"><span class="toc-number">1.1.</span> <span class="toc-text">什么是分组密码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分组密码的设计准则"><span class="toc-number">1.2.</span> <span class="toc-text">分组密码的设计准则</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_DES"><span class="toc-number">2.</span> <span class="toc-text">0x01 DES</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#口胡"><span class="toc-number">2.1.</span> <span class="toc-text">口胡</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插一下又不会怀孕-Feistel密码结构"><span class="toc-number">2.2.</span> <span class="toc-text">插一下又不会怀孕-Feistel密码结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-初始置换"><span class="toc-number">2.3.</span> <span class="toc-text">1.初始置换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-轮结构"><span class="toc-number">2.4.</span> <span class="toc-text">2.轮结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-密钥的产生"><span class="toc-number">2.5.</span> <span class="toc-text">3.密钥的产生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-解密"><span class="toc-number">2.6.</span> <span class="toc-text">4.解密</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_DES的扩展"><span class="toc-number">3.</span> <span class="toc-text">0x02 DES的扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#二重DES"><span class="toc-number">3.1.</span> <span class="toc-text">二重DES</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三重DES"><span class="toc-number">3.2.</span> <span class="toc-text">三重DES</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Be a machine]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kenshichong.github.io/"/>
-  <updated>2015-12-16T15:31:39.974Z</updated>
+  <updated>2016-01-06T12:55:06.103Z</updated>
   <id>http://kenshichong.github.io/</id>
   
   <author>
@@ -13,6 +13,613 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[密码系列7-公钥密码之从RSA看数论]]></title>
+    <link href="http://kenshichong.github.io/2016/01/04/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%977-%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81%E4%B9%8B%E4%BB%8ERSA%E7%9C%8B%E6%95%B0%E8%AE%BA/"/>
+    <id>http://kenshichong.github.io/2016/01/04/密码系列7-公钥密码之从RSA看数论/</id>
+    <published>2016-01-04T08:53:45.000Z</published>
+    <updated>2016-01-06T12:55:06.103Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_背景介绍">0x00 背景介绍</h1><p>本篇主要是由RSA算法的流程引入公钥密码体制所需的数论姿势，也就是说，没错，会让你脑袋疼的东西，反正我是脑袋疼。。。</p>
+<h1 id="0x01_RSA流程">0x01 RSA流程</h1><p><img src="/img/密码系列7-公钥密码之从RSA看数论/0.PNG" alt=""></p>
+<p>没错，非常简洁的一个算法，流程什么的很容易懂，但是如果细究其中的每一步的细节，那么结果就是-脑子疼。但是，作为共产主义接班人，我们要迎难而上，下面就让我们由简到难来看下其中所涉及到的数论姿势</p>
+<h1 id="0x02_各种脑瓜疼的数论姿势">0x02 各种脑瓜疼的数论姿势</h1><p>##数论姿势1-如何求最大公约数(公因子)</p>
+<ol>
+<li>整除：设a, b为整数,  b ≠ 0,如果存在整数c, 使得a=bc,  则称b整除a(记为b | a), 否则称b不整除a</li>
+<li>最大公约数：若d | a1，d | a2，则称d是a1，a2的一个公因数，其中最大的称为最大公因数，记为(a1，a2)。若(a1，a2)=1，则称a1，a2互质(素)，其他公因子一定是最大公因子的因子(可以用反证法证得，若不是，则二者互质，则二者相乘可以得到更大的公因子，矛盾)</li>
+<li>最大公约数的概念不仅仅局限于两个数，最大公约数概念扩展：</li>
+</ol>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/1.PNG" alt=""></p>
+<ol>
+<li>两个数的最大公约数求法：最大公约数必为正整数，且a=bq+r，b≠0=&gt;（a，b)=(b，r)，没错，就是辗转相除法了，通过辗转相除，我们可以很容易快速的求出两个数的最大公约数</li>
+<li>三个及三个以上数的最大公约数：需要的定理：</li>
+</ol>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/2.PNG" alt=""></p>
+<p>下面强行用大白话解释该定理的证明，首先，一方面，因为d|a1，d|a2···d|an-1，还有由(a1，a2···an-1)=dn-1可知前n-1个数的最大公约数是dn-1，同时前n-1个数又可以同时整除d，则由最大公约数的定义(公约数中最大的那个)可知，d&lt;=dn-1，且d|dn-1，而(dn-1，an)=dn，说明dn-1，an的最大公约数是dn，而别忘了d|dn-1且d|an，说明d是dn-1和an的一个公因子，则由其他公因子一定是最大公因子的因子的性质可知，d&lt;=dn这样，对于证明中的一方面，我们就说清了。<br>再来说另一方面，对于(dn-1，an)=dn=&gt;dn|an，dn|dn-1，这没什么好说的，下面的一个推出可以这样理解，dn-1是前n-1个数的最大公约数，说明dn-1是可以被前n-1个数整除的，而dn又是dn-1的一个因子，所以前n-1个数当然也可以整除dn了，这样就推出了前n个数都可以整除dn了，而前n个数的最大公约数是d，所以dn&lt;=d，这样把另一方面的证明也解释通了，一方面结合另一方面，该定理就得到了证明。</p>
+<p>这个定理直接为我们求三个及三个以上数的最大公约数提供了依据，通过计算机，我们可以使用一个递归来达到实现求三个及三个以上数的最大公约数的目的。</p>
+<ol>
+<li>关于最大公约数的一些性质：</li>
+</ol>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/3.PNG" alt=""></p>
+<p>##数论姿势2-最小公倍数##<br>整数a1, a2, ···, ak的公共倍数称为a1, a2, ···, ak的公倍数。a1, a2, ····, ak的正公倍数中的最小的一个叫做a1, a2, ···, ak的最小公倍数，记为[a1, a2, ···, ak]。<br>一些最小公倍数的基本性质：</p>
+<ol>
+<li>[a, 1] = |a|，[a, a] = |a|；</li>
+<li>[a, b] = [b, a]；</li>
+<li>[a1, a2, ···, ak] = [|a1|, |a2| ···, |ak|]；</li>
+<li>若a | b，则[a, b] = |b|。</li>
+<li><img src="/img/密码系列7-公钥密码之从RSA看数论/4.PNG" alt=""></li>
+</ol>
+<p>##数论姿势3-整数模运算和同余概念##<br><img src="/img/密码系列7-公钥密码之从RSA看数论/5.PNG" alt=""></p>
+<p>注意同余的符号，同余的概念非常重要，下面来看关于同余的性质：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/6.PNG" alt=""></p>
+<ol>
+<li>模同余逆元：</li>
+</ol>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/7.PNG" alt=""></p>
+<p>那么如何求模同余逆元呢？需要以下理论技巧：1.我们前面提到的辗转相除法：<img src="/img/密码系列7-公钥密码之从RSA看数论/8.PNG" alt=""><br>2.最大公约数的线性表示：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/9.PNG" alt=""></p>
+<p>解锁了这两个姿势，我们就可以求出模同余逆元了：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/10.PNG" alt=""></p>
+<p>##数论姿势4-欧拉的故事##<br>不得不说，有点佩服这个数学家，虽然他使得我们的学生生活过的并不轻松，但不得不承认他是天才，称之为艺术家不为过。失明过后各种心算，没谁了，我只想说我服。。。<br><strong>欧拉定理</strong><br><img src="/img/密码系列7-公钥密码之从RSA看数论/11.PNG" alt=""><br>利用欧拉定理解题：<br>今天星期三， 313^159天后是星期几?<br>好久没做数学题，所以当时做这个题时是拒绝的，这个题会用到上面的很多同余运算的性质，所以还是有必要做下的。解题过程为：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/12.PNG" alt=""></p>
+<p>让我来解释一下，要想求星期几，由于这个数太大，所以我们要尽量缩小它，当然mod7是很好的选择，因为减去7的倍数会在数字缩小的前提下不影响我们判断是星期几。(7k+5)的159次方展开之后，除了5的159次方外，其余项都是带7的，所以可以不用顾忌的直接弃掉，也就是说原来的数与5的159次方是模7同余的，接着使用欧拉定理对5的159次方进行缩小，由于5和7是互质的，所以5的6次方是与1模7同余的，还记得同余运算的性质吗？a与c模m同余，b与d模m同余，则ab与cd模m同余，运用这条性质，可得5的26*6次方与1模7也是同余的，而5的3次方是与5的3次方模7同余的，再次运用性质，可得5的159次方是与5的3次方模7同余的，而5的3次方就很容易计算了，他与6模7同余，这样就算出了最后答案。</p>
+<p>对于m的欧拉函数的求法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/13.PNG" alt=""></p>
+<p>再介绍一条重要的相似的定理，可以说是欧拉定理的推论：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/14.PNG" alt=""></p>
+<p>##数论姿势5-同余方程组##<br><img src="/img/密码系列7-公钥密码之从RSA看数论/15.PNG" alt=""><br><strong>解一次同余方程组之孙子定理</strong><br><img src="/img/密码系列7-公钥密码之从RSA看数论/16.PNG" alt=""></p>
+<p>举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/17.PNG" alt=""></p>
+<p>##数论姿势6-二次剩余##</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/18.PNG" alt=""></p>
+<p>我们先来讨论下二次剩余，大部分内容参考了blog-<a href="http://blog.sina.com.cn/s/blog_a661ecd50101ayas.html" target="_blank" rel="external">数论学习笔记（5）：二次剩余</a>，我这里会对这篇blog里面的内容写一些我自己的理解。</p>
+<p>对于二次剩余方程，其中 a 为整数， p 为奇素数， x 为未知整数。当然，我们不妨限定 a,x 均在 0,1,2,3,…,p-1 内。不过，为了叙述方便我们又经常把 0 去掉（当 a=0 时显然有唯一解 x=0 ）。这里将a，x限定在0,1,2,3,…,p-1 内，按我的理解，因为是模p运算，所以说大于p的所有数经过模p运算后得到的都是小于p的数字，所以因为模p运算，所以我们只需要讨论小于p的数字就ok了，就是说任何大于p的数字都可以在小于p的这个集合中找到等价的数字。</p>
+<p>因为我们的最终目的是在小于p的这个数字集合中找到所有的二次剩余嘛，那么，现在我们就很自然的想到了一个问题，对于哪些 a 方程有解？如果有的话有几个解？</p>
+<p>我们先给出结论：使方程有解的 a 的取值恰好是 (p-1)/2 个，恰好是全部取值个数的一半。若方程有解，则恰好有两个解，且这两个解的和为p 。</p>
+<p>下面证明他。我们考虑 1,2,3,…,p-1 这些数的平方。我们关心的是这些平方有没有重复（模 p 同余）的。这里重复可以这样理解，还是刚才说到的模p运算的等价问题，对于x而言，如果两个不同的x，x的平方模p得到相同的余数，说明二者只需要保留一个即可，因为对于这两个不同的x，他们所对应的二次剩余a(这里a其实就是x平方模p的余数)其实是相同的(还想不懂的话，考虑同余运算的定义，即p整除x平方减a)。假设这里面有两个不相同的平方 u^2,v^2 模 p 同余(先假设存在重复)，则有：p | (u^2-v^2)，即p | ((u+v)(u-v))，这里的意思就是素数p整除两个整数乘积，那么p必然整除其中一个数，这是毋庸置疑的。我们考虑u-v，由于 u-v 不可能是 p 的倍数（因为u，v都小于p嘛，否则有 u=v ），则有 u+v 是 p 的倍数，也就是说 u+v=p 。到这里，我们就已经可以看出来了，对于满足条件u+v=p的u和v，他们的平方是重复的，即模p同余的。</p>
+<p>我们回过来看，因为我们考虑的集合是[1,p-1]，那么1,2,3,…,p-1 这些数的平方必然可以两两配对(配对的条件是两者之和为p)，每对都模 p 同余，除此之外不在同一对的两个数模 p 不同余。这样，实质不同的平方数只有 (p-1)/2 个，正好可以从中间将他们劈开，[1，(p-1)/2]已经可以代表[(p-1)/2，p-1]这个集合了，因为他们所对应的二次剩余a是一样的，也就是说，[1，(p-1)/2]这个集合中的每一个数对于我们研究二次剩余才是有效的，我们将[1，(p-1)/2]这个集合称为二次剩余问题中p的一个简化系，它们对应着使方程有解的 a 的 (p-1)/2 个取值，而且每个使方程有解的 a 的取值都对应着两个平方数。这就证完了。我们把这 (p-1)/2 个取值称作模 p 的二次剩余，另外 (p-1)/2 个使方程无解的 a 称作模 p 的二次非剩余。另外规定如果 a 是模 p 的二次剩余/二次非剩余，那么与 a 模 p 同余的数也是模 p 的二次剩余/二次非剩余(可以看出，模p的二次剩余其实是有无穷无尽的，这里我们为了讨论问题的方便，将a限定在[1，p-1]这个集合范围内，根据前面的讨论，我们知道这样限定并不会丢失一般性，[1，p-1]这个集合足以涵盖所有的情况)。对于 p 的倍数，规定它既不是模 p 的二次剩余，也不是模 p 的二次非剩余。</p>
+<p>这里还要强调一点，就是a是与x^2相对应的，a在[1,p-1]中的分布是不均匀的。所以x的取值范围是[1，(p-1)/2]，而a的取值范围是[1，p]，我们并不能将这个集合像x一样做等分。</p>
+<p>有了上面的姿势，我们对于一个奇素数(素数除2外都是奇数)p的二次剩余就有了一套体系的求法。首先求出x的取值范围[1,(p-1)/2]，我们知道这里面的每一个数都对应着一个不同的二次剩余数a，然后对每一个x做平方运算后再模p后就得到了该x对应的二次剩余数a(因为经过了模p运算，所以a定&lt;p)，求完每一个x对应的二次剩余a后，共(p-1)/2个a，但a在[1,p-1]中的分布是不均匀的，剩下的就是二次非剩余了。给出结论：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/19.PNG" alt=""></p>
+<p>对于这个结论，需要补充一点，根据上面的结论求出每个的二次剩余可能会大于p，这时别忘了通过模p运算找到这个二次剩余在[1,p-1]这个集合中等价的那个二次剩余。</p>
+<p>说到这，我们已经可以求任意一个奇素数的二次剩余了，而且编程也是易于实现的。但是对于奇素数p，当我们随意给定一个a∈[1,p-1]时，我们如何判断这个a是不是该p的二次剩余呢？难道要把所有的二次剩余都求出来后，然后看给定的a是否属于这个集合吗？虽然可以实现，但这样未免效率太低了。艺术家欧拉给出了他的判别条件：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/20.PNG" alt=""></p>
+<p>对于这个定理，我不做证明，因为我不会证明，但是它很好用就是了。这个定理也给出了我们求二次剩余和非二次剩余的另一种方法，即对于[1,p-1]，从1开始考虑，逐个判断[1,p-1]中的数是否满足二次剩余判断条件，这样也可以把所有的二次剩余找出来。</p>
+<p>##数论姿势7-素性测试##<br>RSA算法中有生成大素数的需要，那么如何产生一个大素数还得保证该大素数的随机性？我们的思路是随机产生一个大正整数，判断其是不是素数，如果是即为需要的大素数，否则重新产生素数。那么这个随机产生的大正整数是素数的概率是多大呢？如果太小的话，那么这种思路就是不值得的，好在这个概率还可以。数论中有著名的素数定理: 不超过x的素数的个数大约为x/lnx。举个例子：任选一个512位的随机正整数p, 它是素数的概率大约为1/lnp ≈ 1/177, 即平均177个具有适当规模的随机正整数p中将有一个素数。从概率学加计算机的角度来看，这个思路是可取的。那么问题就变成了如何判定这个大正整数是不是素数了，我们称之为素性检测。素性检测可以分为两大类：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/21.PNG" alt=""></p>
+<p>确定性算法：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/22.PNG" alt=""></p>
+<p>然而没什么鸟用，n较小时还可以用用，但当n为大素数时(几百位)，这两个确定性检测算法就显得尤为笨重且对于计算机来说，计算量有点接受不了，所以抛弃这两个确定性算法，还有个AKS算法，也是确定性算法，是印度人想出来的算法，由于不成熟，所以也没什卵用。让我们来看看有什么好用的概率性算法：首先是费马<br><img src="/img/密码系列7-公钥密码之从RSA看数论/23.PNG" alt=""><br>根据上图的理论，费马提出了他的素性测试法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/24.PNG" alt=""></p>
+<p>然后是Lehmann，不知道这哥们名字怎么读。。。他在费马素性检测算法的基础上做了改进，二者的核心思想都是一样的：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/25.PNG" alt=""></p>
+<p>然而，存在一类极其罕见的合数，称为Carmichael，针对所有与N互素的a，N将通过费马测试和Lehmann测试，所以这两种概率性算法我们也不用。</p>
+<p>现阶段常用的素性检测算法是Miller-Rabin概率型素性测试算法，对这个定理我也不会证明，并不想证明，会用就行：Miller-Rabin素性检测的理论依据：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/26.PNG" alt=""></p>
+<p>对于给定要测试的数n，可以求出该n对应的s和m的值，由此可得Miller-Rabin素性检测算法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/27.PNG" alt=""></p>
+<p>有了较为可靠的素性检测算法后，我们上面的思路就易于实现了，产生素数的步骤可为：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/28.PNG" alt=""></p>
+<p>##数论姿势8-整数的阶##<br><img src="/img/密码系列7-公钥密码之从RSA看数论/29.PNG" alt=""></p>
+<p>这里说明为什么整数的阶一定存在，由条件可知(a，m)=1，想到了什么？没错，就是欧拉定理，描述为a的m的欧拉数次方与1是模m同余的，也就是说，l是一定存在的，至于l是不是m的欧拉数，这个就不知道了，反正一定存在，意思就是l是在不行还可以取m的欧拉数嘛。</p>
+<p>关于整数的阶的性质：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/30.PNG" alt=""></p>
+<p>第一条性质可以为我们计算整数的阶的运算带来简化，第一条性质说明整数的阶必然是欧拉数的一个公因子，所以我们只需要对欧拉数的公因子进行验证即可，举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/31.PNG" alt=""></p>
+<p>第二第三条性质同样可以简化运算，例子说话：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/32.PNG" alt=""></p>
+<p>整数的阶的另外两个重要性质：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/32.PNG" alt=""></p>
+<p>这个性质其实是对上面的第三条性质的扩充，我们暂且称它为第四条性质，是一个扩展，意思就是，当我们计算a相对于一个较大的模数m的整数阶时，我们可以对m进行质因数分解，然后分别求较小的因数的阶，最后求这些阶的最小公倍数即可得到原来的那个较大的数的整数阶，这个性质运用的前提是对m进行标准分解，什么是标准分解呢，就是分解成由最简单的质因数连乘的形式，大家小学时应该都学过，反正我小学学过。举个例子：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/33.PNG" alt=""></p>
+<p>可以看出运用以上性质简化了运算。在运用这个性质时，还有一点需要注意，那就是对于这个式子：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/37.PNG" alt=""></p>
+<p>这个性质不可以被重用，什么意思呢，假设m被分解成有一个因式是2^3(即pi=2，ji=3)，则对于<img src="/img/密码系列7-公钥密码之从RSA看数论/37.PNG" alt="">这个式子的计算，不能把2^3拆成2<em>2</em>2，然后分别计算a模2的整数阶，最后再求这3个整数阶的最小公倍数，这样得到的结果并不是a模2^3的整数阶，这样做是不对的，至于如何处理这种形式，就需要下面即将讲到的性质。还有个性质，我们暂且称为第5条性质：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/34.PNG" alt=""><br><img src="/img/密码系列7-公钥密码之从RSA看数论/35.PNG" alt=""></p>
+<p>这个性质其实是对上面性质的一个补充，上面也说到了，就是当我们面临标准分解中有次幂这种因子时，应该怎么求，就是用上面的性质求。</p>
+<p>对于上面性质的白话解释，先以5^3(p=5,j=3)的情况来说明，这里p=5≠2，那么先计算f2，f2就是a模5^2的整数阶，然后根据性质中说的a的f2次方-1可以整除p^i，而不能整除p^i+1，找到这个临界的i，即可使用这个性质，看j值所属的范围即可得到fj，再啰嗦一下2^3(p=2,j=3)的情况，此时看a的值，然后得到相应的r值，再根据r和j值得到fj。</p>
+<p>这样我们在面临要求a模一个较大的m的整数阶时，我们就有了相应的化简方法，实际上就是把m进行标准分解，然后看有没有标准分解中有没有带幂的因子，对于带幂的因子，采用第5条性质先转化为不带幂的，然后根据前面说的前三条性质简化求出不带幂的，然后根据第5条性质就可以得到该带幂因子的整数阶，不带幂的因子用刚开始说的前三条性质简化求出整数阶，这样每一个因子的整数阶就都求出来了，最后再根据第四条性质得出最后的整数阶是标准分解的各因子整数阶的最小公倍数，就是这样。举个例子：</p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/38.PNG" alt=""></p>
+<p>##数论姿势9-原根##<br>原根的定义：<img src="/img/密码系列7-公钥密码之从RSA看数论/39.PNG" alt=""><br>另一个等价的定义：假设一个数g对于P来说是原根，那么g^i mod P的结果两两不同,且有 1&lt;g&lt;P, 1&lt;i&lt;P,那么g可以称为是P的一个原根。简单来说，g^i mod p ≠ g^j mod p （p为素数）其中i≠j且i, j介於1至(p-1)之间则g为p的原根。简单的来说，如果g是P的原根，那么g的（1…P-1）次幂mod P的结果一定互不相同。</p>
+<p>这样对于原根的定义就有两个了，一是g模p的整数阶等于p的欧拉函数时，g称为p的一个原根；另一个是g的（1…P-1）次幂mod P的结果一定互不相同时，g称为p的一个原根。为什么说这两个是等价定义呢，让我来解释一下，两者是可以等价互导的，也就是说g模p的整数阶等于p的欧拉函数时，g的（1…P-1）次幂mod P的结果一定互不相同，反过来亦成立。这里只说明由第二个定义导出第一个定义，至于反过来导，看我导完这个应该不是问题，留给大家自己导着玩。g的（1…P-1）次幂mod P的结果互不相同时，g模p的整数阶一定等于p的欧拉函数。为什么这句话是对的呢？用反证法来证，假设存在两个数a∈[1,p-1],b∈[1,p-1]，且不妨设a&gt;b满足(g^a)modP=(g^b)modP,即g^a-<em>-(g^b)modp（这里说明一下，三个横线的那个同余符号不知道怎么打，只好用-</em>-这个代替，大家习惯就好）。这说明什么呢？因为没有同余等式两边同除以一个数同余等式依然成立的性质，事实上是我不知道存不存在，只有乘法，没关系，我们回归同余运算最基本的定义，由g^a-_-(g^b)modp这个式子可以得到g^a-g^b=p<em>k(k为整数)，设g^a=p</em>m+t,g^b=p<em>n+t,显然t&lt;p,则这个式子可以变形为g^b(g^(a-b)-1)=p</em>(m-n),进一步变形为(p<em>n+t)(g^(a-b)-1)=p</em>(m-n)，再变p<em>(n</em>g^(a-b)-n)+t<em>(g^(a-b)-1)=p</em>(m-n),再来t<em>(g^(a-b)-1)=p</em>(m-n-n<em>g^(a-b)+n)=p</em>(m-n<em>g^(a-b)),即t</em>(g^(a-b)-1)=p<em>(m-n</em>g^(a-b))，到这就差不多了，由于t&lt;p,g^(a-b)-1必存在因子p，所以g^(a-b)-1=p*l(l为整数),即g^(a-b)与1模p同余，这与原根的定义矛盾，即如果存在两个数a∈[1,p-1],b∈[1,p-1]，g的a，b次幂mod P的结果相同时，通过上面的证明可以知道由于a-b&lt;p的欧拉函数，所以此时g模p的整数的阶就变成了a-b，而非原根定义要求的必须是p的欧拉函数值，所以从原根的定义出发，g的（1…P-1）次幂mod P的结果一定互不相同时，g模p的整数阶才等于p的欧拉函数，这样的g才能被称为原根，就是说如果g的（1…P-1）次幂mod P的结果存在两个相同的值的时候，g是不能被称为原根的。好像说了半天，越说越糊涂，总之就是想证明一下，为什么g模p的整数阶等于p的欧拉函数时一定会满足g的（1…P-1）次幂mod P的结果一定互不相同，查了好多资料都没说，只能自己硬生生证明了，就这样。</p>
+<p>现在我们已经对原根的概念有了个大体的认识，知道了要想成为原根应该具备什么资格。</p>
+<p>原根的性质：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/40.PNG" alt=""></p>
+<p>举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/41.PNG" alt=""></p>
+<p>这是直接对一个奇素数求原根，当我们知道一个奇素数的原根时，如果要求这个奇素数的幂的原根，这时需要用到下面一条性质：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/42.PNG" alt=""></p>
+<p>举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/43.PNG" alt=""></p>
+<p>在密码应用中，通常需要产生一个很大的素数的原根，根据上面的第一个性质我们可以知道，当p的欧拉数只能分解成两个素数乘积的时候找原根的速度会很快，所以当我们可以故意产生一个p，使得他的欧拉数只能分解成两个素数乘积的形式，一般采用的形式是p=q*2+1<br>下面给出具体的算法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/44.PNG" alt=""></p>
+<hr>
+<p>数论的姿势就先科普到这里，下面进入真正的公钥密码算法。。。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_背景介绍">0x00 背景介绍</h1><p>本篇主要是由RSA算法的流程引入公钥密码体制所需的数论姿势，也就是说，没错，会让你脑袋疼的东西，反正我是脑袋疼。。。</p>
+<h1 id="0x01_RSA流程">0x01 RSA流程</h1><p><im]]>
+    </summary>
+    
+      <category term="密码学" scheme="http://kenshichong.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+    
+      <category term="cryptography" scheme="http://kenshichong.github.io/categories/cryptography/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[密码系列6-分组密码的尾声之IDEA和AES]]></title>
+    <link href="http://kenshichong.github.io/2016/01/01/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%976-%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E7%9A%84%E5%B0%BE%E5%A3%B0%E4%B9%8BIDEA%E5%92%8CAES/"/>
+    <id>http://kenshichong.github.io/2016/01/01/密码系列6-分组密码的尾声之IDEA和AES/</id>
+    <published>2016-01-01T13:33:58.000Z</published>
+    <updated>2016-01-04T08:17:08.323Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>对于IDEA的介绍只是简单带过，重点介绍AES</p>
+<h1 id="0x01_IDEA">0x01 IDEA</h1><ol>
+<li>IDEA分组长度64比特。</li>
+<li>密钥是128比特。</li>
+<li>加密过程是8轮。<br>具体加密过程如下图：</li>
+</ol>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/0.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/1.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/2.PNG" alt=""></p>
+<h1 id="0x02_AES">0x02 AES</h1><p>1997年4月15日，美国ANSI发起征集AES（advanced encryption standard）的活动。此次活动的目的是确定一个非保密的、可以公开技术细节的、全球免费使用的分组密码算法，以作为新的数据加密标准。1997年9月12日，美国联邦登记处公布了正式征集AES候选算法的通告。对AES的基本要求是：  比三重DES快、至少与三重DES一样安全。1998年8月12日，在首届AES候选会议上公布了AES的15个候选算法，任由全世界各机构和个人攻击和评论，这15个候选算法是CAST256、CRYPTON、E2、DEAL、FROG、SAFER+、RC6、MAGENTA、LOKI97、SERPENT、MARS、Rijndael、DFC、Twofish、HPC。2000年10月2日，NIST宣布Rijndael作为新的AES。至此，经过3年多的讨论，Rijndael终于脱颖而出。</p>
+<h2 id="AES流程">AES流程</h2><p>关于AES的数学基础和设计思想，我们在讲流程的时候具体用到时再来讨论，先来谈论具体的流程，看看AES加密算法到底是什么样子的。</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/5.PNG" alt=""></p>
+<p>Rijndael 是一个迭代型分组密码, 其分组长度和密钥长度都可变, 各自可以独立地指定为128 比特、192 比特、256 比特。</p>
+<p><strong>1.状态、种子密钥和轮数</strong><br>类似于明文分组和密文分组, 算法的中间结果也须分组, 称算法中间结果的分组为状态, 所有的操作都在状态上进行。状态可以用以字节为元素的矩阵阵列表示, 该阵列有4行, 列数记为Nb , Nb 等于分组长度除以32。</p>
+<p>种子密钥类似地用一个以字节为元素的矩阵阵列表示, 该阵列有4 行, 列数记为Nk , Nk等于分组长度除以32。表3-8 是Nb = 6 的状态和Nk = 4 的种子密钥的矩阵阵列表示。</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/3.PNG" alt=""></p>
+<p>有时可将这些分组当作一维数组, 其每一元素是上述阵列表示中的4 字节元素构成的列向量, 数组长度可为4、6、8 , 数组元素下标的范围分别是0～3、0～5 和0～7。4 字节元素构成的列向量有时也称为字。</p>
+<p>算法的输入和输出被看成是由8 比特字节构成的一维数组, 其元素下标的范围是0～(4 Nb - 1 ) , 因此输入和输出以字节为单位的分组长度分别是16、24 和32 , 其元素下标的范围分别是0～15、0～23 和0～31。输入的种子密钥也看成是由8 比特字节构成的一维数组, 其元素下标的范围是0～( 4 Nk - 1) , 因此种子密钥以字节为单位的分组长度也分别是16、24 和32 , 其元素下标的范围分别是0～15、0～23 和0～31。算法的输入( 包括最初的明文输入和中间过程的轮输入) 以字节为单位按a00 a10 a20 a30 a01 a11 a21 a31 ⋯ 的顺序放置到状态阵列中。同理, 种子密钥以字节为单位按k00 k1 0 k20 k30 k01 k1 1 k21 k31 ⋯ 的顺序放置到种子密钥阵列中。而输出( 包括中间过程的轮输出和最后的密文输出) 也是以字节为单位按相同的顺序从状态阵列中取出。若输入(或输出) 分组中第n 个元素对应于状态阵列的第( i, j ) 位置上的元素, 则n 和( i, j ) 有以下关系:i = n mod 4; j = n/ 4的结果下取整 ; n = i + 4 j迭代的轮数记为Nr , Nr与Nb 和Nk 有关, 表3 -9 给出了Nr 与Nb和Nk 的关系。</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/4.PNG" alt=""></p>
+<p><strong>2. 轮函数</strong><br>Rijndael 的轮函数由4 个不同的计算部件组成, 分别是: 字节代换(ByteSub )、行移位( ShiftRow) 、列混合(MixColumn) 、密钥加( AddRoundKey )。伪C代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Round (State, RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">    ByteSub (State);</span><br><span class="line">    ShiftRow (State);</span><br><span class="line">    MixColumn (State);</span><br><span class="line">    AddRoundKey (State, RoundKey)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><em>字节代换（ByteSub）</em><br>字节代换是非线形变换，独立地对状态的每个字节进行。代换表（即S-盒）是可逆的，由以下两个变换的合成得到：  </p>
+<ol>
+<li>首先，将字节看作多项式，映射到自己的乘法逆元，‘00’映射到自己。</li>
+<li>其次，对字节做如下的仿射变换：</li>
+</ol>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/6.PNG" alt=""></p>
+<p>达到的效果：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/7.PNG" alt=""></p>
+<p>上面提到了将字节看做多项式以及乘法逆元的概念，下面介绍什么是字节多项式及乘法逆元，以及如何求乘法逆元</p>
+<p>有限域GF(2^8 )以及多项式的加法、减法、乘法运算:<br>前面好像提到过有限域的概念。因排版较麻烦，所以直接截图了。。。</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/8.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/9.PNG" alt=""></p>
+<p>对于多项式的乘法，有必要补充一下，就拿‘57’·‘83’=‘C1’这个例子来看，给出如下图来说明计算过程：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/10.PNG" alt=""></p>
+<p>这张图已经很清晰的写出了多项式模乘的运算过程</p>
+<p>我们在来看乘法逆元：<br>对任何次数小于8 的多项式b( x ) , 可用推广的欧几里得算法得b( x) a( x ) + m( x) c( x) = 1即a( x) ·b( x ) = 1 mod m( x) , 因此a( x )是b( x) 的乘法逆元。<br>对于乘法逆元的求法，就是用大名鼎鼎的扩展欧几里得算法(又称辗转相除法)了，自行google。这里要用到欧几里得算法的逆推过程，给出求逆元的伪代码：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Extended Euclid (d，f)<span class="comment"> //算法求d关于模f的乘法逆元d-1 ，即 d* d-1 mod f = 1</span></span><br><span class="line"><span class="number">1</span> 。(X1，X2，X3) := (<span class="number">1</span>，<span class="number">0</span>，f)； (Y1，Y2，Y3) := (<span class="number">0</span>，<span class="number">1</span>，d)</span><br><span class="line"><span class="number">2</span>。 <span class="keyword">if</span> (Y3=<span class="number">0</span>) <span class="keyword">then</span> <span class="constant">return</span> d-<span class="number">1</span> = <span class="constant">null</span><span class="comment"> //无逆元</span></span><br><span class="line"><span class="number">3</span>。 <span class="keyword">if</span> (Y3=<span class="number">1</span>) <span class="keyword">then</span> <span class="constant">return</span> d-<span class="number">1</span> = Y2<span class="comment"> //Y2为逆元</span></span><br><span class="line"><span class="number">4</span>。 Q := X3 <span class="operator">div</span> Y3<span class="comment"> //整除</span></span><br><span class="line"><span class="number">5</span>。 (T1，T2，T3) := (X1 - Q*Y1，X2 - Q*Y2，X3 - Q*Y3)</span><br><span class="line"><span class="number">6</span> 。(X1，X2，X3) := (Y1，Y2，Y3)</span><br><span class="line"><span class="number">7</span>。 (Y1，Y2，Y3) := (T1，T2，T3)</span><br><span class="line"><span class="number">8</span>。 goto <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>C++代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="title">extend_gcd</span><span class="params">(<span class="keyword">long</span> <span class="keyword">long</span> a,<span class="keyword">long</span> <span class="keyword">long</span> b,<span class="keyword">long</span> <span class="keyword">long</span> &amp;x,<span class="keyword">long</span> <span class="keyword">long</span> &amp;y)</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">if</span>(a==<span class="number">0</span>&amp;&amp;b==<span class="number">0</span>)</span><br><span class="line"><span class="keyword">return</span> -<span class="number">1l</span>l;</span><br><span class="line"><span class="keyword">if</span>(b==<span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">x=<span class="number">1l</span>l;</span><br><span class="line">y=<span class="number">0l</span>l;</span><br><span class="line"><span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> d=extend_gcd(b,a%b,y,x);</span><br><span class="line">y-=a/b*x;</span><br><span class="line"><span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="title">mod_reverse</span><span class="params">(<span class="keyword">long</span> <span class="keyword">long</span> a,<span class="keyword">long</span> <span class="keyword">long</span> n)</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> x,y,d=extend_gcd(a,n,x,y);</span><br><span class="line"><span class="keyword">if</span>(d==<span class="number">1</span>)</span><br><span class="line"><span class="keyword">return</span> (x%n+n)%n;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="keyword">return</span> -<span class="number">1l</span>l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>补充说明：<br>若ax≡1 mod f, 则称a关于模f的乘法逆元为x。也可表示为ax≡1(mod f)。当a与f互素时，a关于模f的乘法逆元有唯一解。如果不互素，则无解。如果f为素数，则从1到f-1的任意数都与f互素，即在1到f-1之间都恰好有一个关于模f的乘法逆元。<br>对于上面的C++代码，当d==1时，说明二者是互素的，即二者的最大公约数是1，扩展的欧几里得算法实际上是通过辗转相除法来求得两个数的最大公约数，只不过上面不论是伪代码还是C++代码，都是在将这个辗转相相除的中间过程记录下来，以便后面反向迭代求逆元时用。给出一个具体的例子，比如我们要求5关于模14的乘法逆元。首先我们通过辗转相除法来做，14/5=2余4，5/4=1余1，4/1=4余0，到这里，我们可以确定gcd(14,5)=gcd(4,1)=1，即14和5互素，则5关于模14的乘法逆元有唯一解，那么如何求乘法逆元呢，答案就是将辗转相除的过程反向迭代回去，上面代码也是通过递归体现一个反向迭代的过程。有一个定理忘了叫什么了，就是说两个数的最大公约数可以写成两个数的线性表示，比如a，b的最大公约数是c，则c=ma+nb，其中m，n是整数。那么上面14和5的最大公约数是1，所以1=m<em>14+n</em>5，由乘法逆元的定义可知，n就是5的乘法逆元，n由反向迭代求出。1=5-4<em>1=5-(14-5</em>2)<em>1=5</em>3-14；(就这样一直向上迭代，直到迭代到最上层的式子时停止，此时所得到的较小数的系数就是要求的小数关于大数的模逆元)。其实，你仔细总结还会发现，最后得到的两个数的系数是有一定规律的，下面是我根据规律写的python代码，没有递归来的那么直观和便于理解，仅供参考：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">re_gcd</span><span class="params">(a,b)</span>:</span></span><br><span class="line">    temp_a=a</span><br><span class="line">    temp_b=b</span><br><span class="line">    result=list()</span><br><span class="line">    <span class="keyword">if</span>(a%b==<span class="number">0</span>):</span><br><span class="line">        result.append(<span class="number">1</span>)</span><br><span class="line">        result.append(-(int(a/b)-<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        count=<span class="number">0</span></span><br><span class="line">        c=list()</span><br><span class="line">        <span class="keyword">while</span>(a%b!=<span class="number">0</span>):</span><br><span class="line">            c.append(int(a/b))</span><br><span class="line">            temp=b</span><br><span class="line">            b=a%b</span><br><span class="line">            a=temp</span><br><span class="line">            count+=<span class="number">1</span></span><br><span class="line"><span class="comment">##        print(count)</span></span><br><span class="line"><span class="comment">##        print(c)</span></span><br><span class="line">        <span class="keyword">if</span>(count==<span class="number">1</span>):</span><br><span class="line">            result.append(<span class="number">1</span>)</span><br><span class="line">            result.append(-int(temp_a/temp_b))</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">elif</span>(count%<span class="number">2</span>!=<span class="number">0</span>):</span><br><span class="line">            t=c[count-<span class="number">1</span>]</span><br><span class="line">            <span class="keyword">while</span>(count-<span class="number">1</span>!=<span class="number">0</span>):</span><br><span class="line">                s=t</span><br><span class="line">                t=t*c[count-<span class="number">2</span>]+<span class="number">1</span></span><br><span class="line">                count-=<span class="number">1</span></span><br><span class="line">            result.append(s)</span><br><span class="line">            result.append(-t)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            t=c[count-<span class="number">1</span>]</span><br><span class="line">            <span class="keyword">while</span>(count-<span class="number">1</span>!=<span class="number">0</span>):</span><br><span class="line">                s=t</span><br><span class="line">                t=t*c[count-<span class="number">2</span>]+<span class="number">1</span></span><br><span class="line">                count-=<span class="number">1</span></span><br><span class="line">            result.append(-s)</span><br><span class="line">            result.append(t)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">a=<span class="number">18</span></span><br><span class="line">b=<span class="number">12</span></span><br><span class="line"><span class="keyword">if</span>(a&gt;=b):</span><br><span class="line">    re=re_gcd(a,b)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    re=re_gcd(b,a)</span><br><span class="line">print(<span class="string">"s=%d\nt=%d\n"</span>%(re[<span class="number">0</span>],re[<span class="number">1</span>]))</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>强势介绍了一波数学姿势，我们有必要来条分割线压压惊。。。</p>
+<hr>
+<p>通过上面的数学姿势，我们已经懂得如何将字节看做多项式，并明白两者是可以相互转化的，并且会求字节的乘法逆元了，那么字节代换对于我们来说已经没有问题了，下面继续来讲流程，为了防止脱节，再将字节代换的流程po一遍<br><em>字节代换（ByteSub）</em><br>字节代换是非线形变换，独立地对状态的每个字节进行。代换表（即S-盒）是可逆的，由以下两个变换的合成得到：  </p>
+<ol>
+<li>首先，将字节看作多项式，映射到自己的乘法逆元，‘00’映射到自己。</li>
+<li>其次，对字节做如下的仿射变换：</li>
+</ol>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/6.PNG" alt=""></p>
+<p><em>行移位(Shift Row)</em><br>行移位是将状态阵列的各行进行循环移位, 不同状态行的位移量不同。第0 行不移动, 第1 行循环左移C1 个字节, 第2 行循环左移C2 个字节, 第3 行循环左移C3 个字节。位移量C1 、C2 、C3 的取值与Nb 有关, 由下表给出。</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/11.PNG" alt=""></p>
+<p>按指定的位移量对状态的行进行的行移位运算记为ShiftRow ( State )，行移位示意图：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/12.PNG" alt=""></p>
+<p>Shift Row 的逆变换是对状态阵列的后3 列分别以位移量Nb - C1 、Nb - C2 、Nb - C3进行循环移位, 使得第i 行第j 列的字节移位到( j + Nb - Ci ) mod Nb 。这里注意一下，逆变换是对状态阵列的后3 列进行的变换的，这样做的确可以变换为原来的状态。可能有同学会问，为甚不能直接对行进行逆变换，个人觉着没什么不妥，可能是我哪考虑不周全，但是这样做是经过很多砖家鉴定的，所以说对状态阵列的后3 列进行循环变换是不会错的。<br><em>列混合(MixColumn)</em><br>在列混合变换中, 将状态阵列的每个列视为GF(2^8 ) 上的多项式, 再与一个固定的多项式c( x )进行模x^4 + 1 乘法。当然要求c( x) 是模x^4 + 1 可逆的多项式, 否则列混合变换就是不可逆的, 因而会使不同的输入分组对应的输出分组可能相同。</p>
+<p>这里有必要说明下，如何将每个列视为GF(2^8 )上的多项式。还记得我们上面说的对于单个字节，可以将单个字节视为多项式，这里，我们知道，每个列是4字节，这里引入系数在GF(2^8 )上的多项式的概念：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/13.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/14.PNG" alt=""></p>
+<p>这里对于系数多项式，对于系数多项式的模乘运算，要说这本书真是写的烂，这些具体的计算细节啊原则啊什么的从来都不写出来，搞得我云里雾里的。。。从网上无意间发现了下面东西-<a href="http://www.mamicode.com/info-detail-514466.html" target="_blank" rel="external">密码算法详解——AES</a>其中有讲解系数多项式模乘运算的细节，直接截图：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/20.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/21.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/22.PNG" alt=""></p>
+<p>这样，对于系数多项式的模乘我们就知道具体是如何计算了</p>
+<p>对于上面提到的c(x)：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/15.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/16.PNG" alt=""></p>
+<p>对状态State 的所有列所做的列混合运算记为MixColumn( State )，列混合整体效果图：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/17.PNG" alt=""></p>
+<p>对于逆运算：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/18.PNG" alt=""></p>
+<p><em>密钥加( AddRoundKey)</em><br>密钥加是将轮密钥简单地与状态进行逐比特异或。轮密钥由种子密钥通过密钥编排算法得到, 轮密钥长度等于分组长度Nb。状态State 与轮密钥RoundKey 的密钥加运算表示为AddRoundKey ( State, RoundKey)，密钥加的整体效果图：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/19.PNG" alt=""></p>
+<p>对于逆运算，密钥加运算的逆运算是其自身。</p>
+<hr>
+<p>综上所述, 组成Rijndael 轮函数的计算部件简捷快速, 功能互补。轮函数的伪C 代码如下:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Round (State , RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">ByteSub (State ) ;</span><br><span class="line">ShiftRow (State ) ;</span><br><span class="line">MixColumn (Sta te) ;</span><br><span class="line">AddRoundKey (State , RoundKey)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>结尾轮的轮函数与前面各轮不同, 将MixColumn 这一步去掉, 其伪C 代码如下:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FinalRound ( State , RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">ByteSub (State ) ;</span><br><span class="line">ShiftRow (State ) ;</span><br><span class="line">AddRoundKey (State , RoundKey)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在以上伪C 代码记法中, State、RoundKey 可用指针类型, 函数Round、FinalRound、ByteSub、Shift Row、MixColumn、AddRoundKey 都在指针Sta te、RoundKey 所指向的阵列上进行运算。</p>
+<p><strong>3. 密钥编排</strong><br>密钥编排指从种子密钥得到轮密钥的过程, 它由密钥扩展和轮密钥选取两部分组成。其基本原则如下:</p>
+<ol>
+<li>轮密钥的比特数等于分组长度乘以轮数加1;</li>
+<li>种子密钥被扩展成为扩展密钥;</li>
+<li>轮密钥从扩展密钥中取, 其中第1 轮轮密钥取扩展密钥的前Nb 个字, 第2 轮轮密钥取接下来的Nb 个字, 如此下去。</li>
+</ol>
+<p>排版问题(md用的不熟)，直接截图：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/23.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/24.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/25.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/26.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/27.PNG" alt=""></p>
+<p><strong>4. 加密算法</strong><br>加密算法为顺序完成以下操作: 初始的密钥加; ( Nr - 1) 轮迭代;一个结尾轮。即<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Rijndael (State , Ciphe rKey)</span><br><span class="line">&#123;</span><br><span class="line">KeyExpansion (Ciphe rKey , ExpandedKey) ;</span><br><span class="line">AddRoundKey (State , ExpandedKey) ;</span><br><span class="line"><span class="keyword">for</span> ( i = <span class="number">1</span>; i &lt; Nr ; i + + ) Round (State , ExpandedKey + Nb * i) ;</span><br><span class="line">FinalRound (State, ExpandedKey + Nb * Nr )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中CipherKey 是种子密钥, ExpandedKey 是扩展密钥。密钥扩展可以事先进行( 预计算) , 且Rijndael 密码的加密算法可以用这一扩展密钥来描述, 即<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Rijndael (State , ExpandedKey)</span><br><span class="line">&#123;</span><br><span class="line">AddRoundKey (State , ExpandedKey) ;</span><br><span class="line"><span class="keyword">for</span> ( i = <span class="number">1</span>; i &lt; Nr ; i + + ) Round (State , ExpandedKey + Nb * i) ;</span><br><span class="line">FinalRound (State, ExpandedKey + Nb * Nr )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>5. 加解密的相近程度及解密算法</strong><br>首先给出几个引理。<br>引理1 设字节代换(ByteSu b) 、行移位( Shif tRow ) 的逆变换分别为InvByteSub、InvShift Row。则组合部件“ ByteSub → Shif tRow ”的逆变换为“ InvByteSub →InvShift Row”。<br>证明: 组合部件“ ByteSu b → Shift Row”的逆变换原本为“ InvShif tRow →InvByteSub”。由于字节代换(ByteSub) 是对每个字节进行相同的变换, 故“InvShiftRow”与“InvByteSub”两个计算部件可以交换顺序。( 证毕)<br>引理2 设列混合(MixColumn ) 的逆变换为InvMixColumn。则列混合部件与密钥加部件( AddRoundKey )的组合部件“MixColumn→AddRoundKey (· , Key )”的逆变换为“InvMixColumn→AddRoundKey (· , InvKey)”。其中密钥InvKey 与Key 的关系为: InvKey = InvMixColumn ( Key) 。证明: 组合部件“MixColumn → AddRoundKey ( · , Key )” 的逆变换原本为“AddRoundKey (· , Key ) →InvMixColumn”, 由于列混合(MixColumn) 实际上是线性空间GF(28 )4 上的可逆线性变换, 因此“AddRoundKey (·, Key) → InvMixColumn”=“InvMixColumn → AddRoundKey (·, InvMixColumn ( Key) )” ( 证毕)<br>引理3 将某一轮的后两个计算部件和下一轮的前两个计算部件组成组合部件,<br>该组合部件的程序为<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MixColumn (State ) ;</span><br><span class="line">AddRoundKey (Sta te, Key( i) ) ;</span><br><span class="line">ByteSub (State) ;</span><br><span class="line"><span class="function">Shif <span class="title">tRow</span> <span class="params">(State)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>则该组合部件的逆变换程序为<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">InvByteSub (State ) ;</span><br><span class="line">InvShiftRow (State ) ;</span><br><span class="line">InvMixColumn (State) ;</span><br><span class="line">AddRoundKey (Sta te, InvMixColumn (Key( i) ) )</span><br></pre></td></tr></table></figure></p>
+<p>证明: 这是引理3 -1 和引理3 -2 的直接推论。<br>Rijndael 密码的解密算法为顺序完成以下操作: 初始的密钥加; ( Nr - 1 )<br>轮迭代; 一个结尾轮。其中解密算法的轮函数为<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">InvRound (Sta te, RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">InvByteSub ( State ) ;</span><br><span class="line"><span class="function">InvShif <span class="title">tRow</span> <span class="params">( State )</span> </span>;</span><br><span class="line">InvMixColumn (State ) ;</span><br><span class="line">AddRoundKey (State , RoundKey)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>解密算法的结尾轮为<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">InvFinalRound (State, RoundKey)</span><br><span class="line">&#123;</span><br><span class="line">InvByteSub ( State ) ;</span><br><span class="line"><span class="function">InvShif <span class="title">tRow</span> <span class="params">( State )</span> </span>;</span><br><span class="line">AddRoundKey (State , RoundKey)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>设加密算法的初始密钥加、第1 轮、第2 轮、⋯、第Nr 轮的子密钥依次为<br>k(0 ) , k( 1) , k(2 ) , ⋯ , k( Nr - 1) , k( Nr )<br>则解密算法的初始密钥加、第1 轮、第2 轮、⋯、第Nr 轮的子密钥依次为<br>k( Nr ) , InvMixColumn ( k( Nr - 1) ) , InvMixColumn ( k( Nr - 2 ) ) , ⋯ ,<br>InvMixColumn ( k(1 ) ) , k(0 )。<br>证明: 这是上述3 个引理的直接推论。<br>综上所述, Rijndael 密码的解密算法与加密算法的计算网络相同, 只是将各计算部件换为对应的逆部件。这样，在具体的工业实现中就不用重新做一块板子了，节约成本。</p>
+<hr>
+<p>终于写完了分组密码，本来信心满满的开始写这个系列，写到这里突然有点恶心，感觉写着写着就变味了，写成了傻逼教科书式的blog，但没办法，我对于密码的理解一点也不深，抓不住重点，觉着都挺重要的，就都写上了。下面就到了公钥密码体制了，希望能写的有趣一点，自己也能写的开心一点。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>对于IDEA的介绍只是简单带过，重点介绍AES</p>
+<h1 id="0x01_IDEA">0x01 IDEA</h1><ol>
+<li>IDEA分组长度64比特。</li>
+<li>密钥是128比特。</li>
+]]>
+    </summary>
+    
+      <category term="密码学" scheme="http://kenshichong.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+    
+      <category term="cryptography" scheme="http://kenshichong.github.io/categories/cryptography/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[密码系列5-分组密码的运行模式]]></title>
+    <link href="http://kenshichong.github.io/2015/12/30/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%975-%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E7%9A%84%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F/"/>
+    <id>http://kenshichong.github.io/2015/12/30/密码系列5-分组密码的运行模式/</id>
+    <published>2015-12-30T08:04:59.000Z</published>
+    <updated>2016-01-01T13:31:47.951Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_填充模式">0x00 填充模式</h1><p>在讲解分组密码的运行模式之前，先科普下分组密码的填充模式。填充模式是当我们在使用分组密码时，对于输入的明文不是分组长度的倍数的情况提出的一种解决方案，以DES为例。<br>DES输入明文不是64比特倍数怎么办？，这是就需要填充，下面介绍几种常用(大家都在用)的填充模式，当然你也可以自定义你自己的填充模式(但关键是别人不用啊)</p>
+<h2 id="Zeros填充算法">Zeros填充算法</h2><p>需要填充的7个字节全部填充为0，例子(其中斜体加粗为填充的数据)：<br>第一个消息分组：<br>F1 F2 F3 F4 F5 F6 F7 F8<br>第二个消息分组：<br>F9 <strong><em>00 00 00 00 00 00 00</em></strong><br>注意：即使消息长度恰好是8的整数倍，仍需填充8字节的全0</p>
+<h2 id="X923填充算法">X923填充算法</h2><p>需要填充的7个字节中前6个字节填充0，最后一个字节记录填充的总字节数,例子(其中斜体加粗为填充的数据)：<br>第一个消息分组：<br>F1 F2 F3 F4 F5 F6 F7 F8<br>第二个消息分组：<br>F9 <strong><em>00 00 00 00 00 00 07</em></strong><br>注意：即使消息长度恰好是8的整数倍，仍需填充8字节的全0。因为，若不如此，对于 前7字节全0，最后1字节为01 的消息 00 00 00 00 00 00 00 01与7字节的全0消息，由于需要填充一个字节，但又是最后一个字节只能记录填充的字节数 所以填 01。 从而与上面的8字节消息相同。因此出现 00 00 00 00 00 00 00 01时，你分辨不出它应该是哪种情况。</p>
+<h2 id="PKCS7填充算法">PKCS7填充算法</h2><p>需要填充的7个字节中的每一个字节填充需要填充的总字节数，分组结果为：<br>第一个消息分组：<br>F1 F2 F3 F4 F5 F6 F7 F8<br>第二个消息分组：<br>F9 <strong><em>07 07 07 07 07 07 07</em></strong></p>
+<h2 id="ISO10126填充算法">ISO10126填充算法</h2><p>需要填充的7个字节中前6个字节填充随机字节序列，最后一个字节记录填充的总字节数，分组结果为：<br>第一个消息分组：<br>F1 F2 F3 F4 F5 F6 F7 F8<br>第二个消息分组：<br>F9 <strong><em>7D 2A 75 EF F8 EF 07</em></strong></p>
+<h1 id="0x01_分组密码的运行模式">0x01 分组密码的运行模式</h1><p>分组密码在加密时, 明文分组的长度是固定的, 而实际应用中待加密消息的数据量是不定的, 数据格式可能是多种多样的。为了能在各种应用场合使用DES, 美国在FIPSPUS 74 和81 中定义了DES 的4 种运行模式, 如下表 所示。这些模式也可用于其他分组密码, 下面以DES 为例来介绍这4 种模式。</p>
+<p><img src="/img/密码系列5-分组密码的运行模式/0.PNG" alt=""></p>
+<h2 id="电码本(ECB-Electronic_Code_Book)模式">电码本(ECB-Electronic Code Book)模式</h2><p>ECB模式是将明文的各个分组独立地使用同一密钥k加密。由于这种工作模式类似于电报密码本中指定码字的过程，所以被形象地称为电码本模式</p>
+<p><img src="/img/密码系列5-分组密码的运行模式/1.PNG" alt=""></p>
+<p>优点：</p>
+<ol>
+<li>实现简单；</li>
+<li>不同明文分组的加密可并行实施,尤其是硬件实现时速度很快.</li>
+</ol>
+<p>缺点：<br>不同的明文分组之间的加密独立进行,故保留了单表代替缺点,造成相同明文分组对应相同密文分组,因而不能隐蔽明文分组的统计规律和结构规律,不能抵抗替换攻击.</p>
+<p>ECB 在用于短数据(如加密密钥)时非常理想。比如，用于随机数的加密保护、用于单分组明文的加密。</p>
+<h2 id="密码分组链接(CBC)模式">密码分组链接(CBC)模式</h2><p>可以看出，ECB是有安全缺陷的，为了解决ECB 的安全缺陷, 可以让重复的明文分组产生不同的密文分组, CBC( cipher block chaining)模式就可满足这一要求。</p>
+<p><img src="/img/密码系列5-分组密码的运行模式/2.PNG" alt=""></p>
+<p>它一次对一个明文分组加密, 每次加密使用同一密钥, 加密算法的输入是当前明文分组和前一次密文分组的异或, 因此加密算法的输入不会显示出与这次的明文分组之间的固定关系, 所以重复的明文分组不会在密文中暴露出这种重复关系。加密与解密的过程如上图所示，核心就是异或的可逆性。</p>
+<p>在产生第1 个密文分组时, 需要有一个初始向量IV 与第1 个明文分组异或。解密时, I V 和解密算法对第1 个密文分组的输出进行异或以恢复第1 个明文分组。I V 对于收发双方都应是已知的, 为使安全性最高, I V 应像密钥一样被保护, 可使用ECB 加密模式来发送I V。保护IV 的原因如下: 如果敌手能欺骗接收方使用不同的I V值, 敌手就能够在明文的第1 个分组中插入自己选择的比特值, 这是因为:<br>C1 = EK [ IV xor P1 ]P1 = IV xor DK [ C1 ]用X( i)表示64 比特分组X 的第i 个比特, 那么P1 ( i) = I V( i)xor DK [ C1 ] ( i) , 由异或的性质得P1 ( i)′= IV( i)′xor DK [ C1 ] ( i)其中撇号表示比特补。上式意味着如果敌手篡改IV 中的某些比特, 则接收方收到的P1中相应的比特也发生了变化。由于CBC 模式的链接机制, CBC 模式对加密长于64 比特的消息非常合适。CBC 模式除能够获得保密性外, 还能用于认证。</p>
+<p>总结下CBC模式的特点：</p>
+<ol>
+<li>明文块的统计特性得到了隐蔽。这是由于在密文CBC模式中，各密文块不仅与当前明文块有关，而且还与以前的明文块及初始化向量有关，从而使明文的统计规律在密文中得到了较好的隐蔽。</li>
+<li>具有有限的(两步)错误传播特性。一个密文块的错误将导致两个密文块不能正确脱密.</li>
+</ol>
+<h2 id="密码反馈(CFB_)模式">密码反馈(CFB )模式</h2><p>若待加密消息需按字符、字节或比特处理时，可采用CFB模式。并称待加密消息按 j 比特处理的CFB模式为 j 比特CFB模式。适用于每次处理 j比特明文块的特定需求的加密情形,能灵活适应数据各格式的需要.例如,数据库加密要求加密时不能改变明文的字节长度,这时就要以明文字节为单位进行加密.</p>
+<p><img src="/img/密码系列5-分组密码的运行模式/3.PNG" alt=""></p>
+<p>加密时, 加密算法的输入是64 比特移位寄存器, 其初值为某个初始向量I V。加密算法输出的最左( 最高有效位) j 比特与明文的第一个单元P1 进行异或, 产生出密文的第1个单元C1 , 并传送该单元。然后将移位寄存器的内容左移j 位并将C1 送入移位寄存器最右边( 最低有效位) j 位。这一过程继续到明文的所有单元都被加密为止。</p>
+<p>解密时, 将收到的密文单元与加密函数的输出进行异或。注意这时仍然使用加密算法而不是解密算法, 原因如下:设Sj ( X)是X 的j 个最高有效位, 那么C1 = P1 xor Sj ( E( I V) ) , 因此P1 = C1 xor Sj ( E( IV) )可证明以后各步也有类似的这种关系。CFB 模式除能获得保密性外, 还能用于认证。</p>
+<p>优点：</p>
+<ol>
+<li>适用于每次处理 j比特明文块的特定需求的加密情形;</li>
+<li>具有有限步的错误传播，可用于认证;</li>
+<li>可实现自同步功能:该工作模式本质上是将分组密码当作序列密码使用的一种方式,但乱数与明文和密文有关！该模式适应于数据库加密、无线通信加密等对数据格式有特殊要求或密文信号容易丢失或出错的应用环境。</li>
+</ol>
+<p>缺点：加密效率低</p>
+<h2 id="输出反馈(OFB)模式">输出反馈(OFB)模式</h2><p>OFB(output feedback)模式的结构类似于CFB, 如下图。</p>
+<p><img src="/img/密码系列5-分组密码的运行模式/4.PNG" alt=""></p>
+<p>不同之处如下: OFB 模式是将加密算法的输出反馈到移位寄存器, 而CFB 模式中是将密文单元反馈到移位寄存器。</p>
+<p>优点：</p>
+<ol>
+<li>这是将分组密码当作序列密码使用的一种方式，但乱数与明文和密文无关！</li>
+<li>不具有错误传播特性！只要密文在传输过程中不丢信号，即使信道不好，也能将明文的大部分信号正常恢复。例如C1 中出现1 比特错误, 在解密结果中只有P1 受到影响, 以后各明文单元则不受影响。而在CFB 中, C1 也作为移位寄存器的输入, 因此它的1 比特错误会影响解密结果中各明文单元的值。</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>不能实现报文的完整性认证。</li>
+<li>乱数序列的周期可能有短周期现象。</li>
+<li>比CFB 模式更易受到对消息流的篡改攻击, 比如在密文中取1 比特的补, 那么在恢复的明文中相应位置的比特也为原比特的补。因此使得敌手有可能通过对消息校验部分的篡改和对数据部分的篡改, 而以纠错码不能检测的方式篡改密文。</li>
+</ol>
+<p>适用范围：<br>明文的冗余度特别大，信道不好但不易丢信号，明文错些信号也不影响效果的情形。如图象加密，语音加密等。</p>
+<h1 id="0x02_总结">0x02 总结</h1><p>4种工作模式比较</p>
+<p><img src="/img/密码系列5-分组密码的运行模式/0.PNG" alt=""></p>
+<p>下篇介绍其他较为著名的分组密码。。。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_填充模式">0x00 填充模式</h1><p>在讲解分组密码的运行模式之前，先科普下分组密码的填充模式。填充模式是当我们在使用分组密码时，对于输入的明文不是分组长度的倍数的情况提出的一种解决方案，以DES为例。<br>DES输入明文不是64比特倍数怎么办]]>
+    </summary>
+    
+      <category term="密码学" scheme="http://kenshichong.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+    
+      <category term="cryptography" scheme="http://kenshichong.github.io/categories/cryptography/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[密码系列4-分组密码之大名鼎鼎的DES]]></title>
+    <link href="http://kenshichong.github.io/2015/12/28/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%974-%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8B%E5%A4%A7%E5%90%8D%E9%BC%8E%E9%BC%8E%E7%9A%84DES/"/>
+    <id>http://kenshichong.github.io/2015/12/28/密码系列4-分组密码之大名鼎鼎的DES/</id>
+    <published>2015-12-28T07:48:18.000Z</published>
+    <updated>2015-12-30T07:57:33.502Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_分组密码的概述">0x00 分组密码的概述</h1><p>除流密码外，分组密码是对称密码体系的又一大分支。</p>
+<h2 id="什么是分组密码">什么是分组密码</h2><p>分组密码（block cipher）：将明文消息序列划分成等长的消息组,在密钥 的控制下按固定的加密算法一组一组进行加密，输出一组一组密文。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/0.PNG" alt=""></p>
+<p>对于分组的长度，通常取m=l。若m&gt;l，则为有数据扩展的分组密码；若m&lt;l，则为有数据压缩的分组密码。</p>
+<h2 id="分组密码的设计准则">分组密码的设计准则</h2><p>准则是扩散和混淆，扩散和混淆是由Shannon提出的设计密码系统的两个基本方法。</p>
+<p>扩散的目的是使明文和密文之间的统计关系变得尽可能复杂；</p>
+<p>混淆是使密文和密钥之间的统计关系变得尽可能复杂，以使敌手无法得到密钥。</p>
+<p>如果敌手知道明文的某些统计特性，如消息中不同字母出现的频率、可能出现的特定单词或短语，而且这些统计特性以某种方式在密文中反映出来，那么敌手就有可能得出加密密钥或其一部分，或者得出包含加密密钥的一个可能的密钥集合。在Shannon称之为理想密码的密码系统中，密文的所有统计特性都与所使用的密钥独立。</p>
+<p>下面说几个具体的设计准则：</p>
+<ol>
+<li>分组长度n要足够大，使分组代换字母表中的元素个数2n足够大，防止明文穷举攻击法奏效。DES、IDEA、FEAL和LOKI等分组密码都采用n=64。</li>
+<li>密钥量要足够大，以防止密钥穷举攻击奏效。但密钥又不能过长，以便于密钥的管理。DES采用56比特密钥，看来太短了，IDEA采用128比特密钥，据估计，在今后30～40年内采用80 比特密钥是足够安全的。</li>
+<li>由密钥确定置换的算法要足够复杂，充分实现明文与密钥的扩散和混淆，没有简单的关系可循，能抗击各种已知的攻击，如差分攻击和线性攻击；有高的非线性阶数，实现复杂的密码变换；使对手破译时,除穷举无捷径。(这句我也有好多不太懂的。。。)</li>
+<li>加密和解密运算简单，易于软件和硬件高速实现。<br>应选用简单的运算，如加、乘、移位等实现<br>加密和解密就可用同一器件实现<br>设计的算法采用规则的模块结构，如多轮迭代等，以便于软件和VLSI快速实现.</li>
+<li>数据尽量无扩展、差错传播尽可能地小。</li>
+</ol>
+<h1 id="0x01_DES">0x01 DES</h1><h2 id="口胡">口胡</h2><p>数据加密标准( data encryption standard , DES)是迄今为止世界上最为广泛使用和流行的一种分组密码算法, 它的分组长度为64 比特, 密钥长度为56 比特, 它是由美国IBM 公司研制的, 是早期的称作Lucifer 密码的一种发展和修改。DES 在1975 年3 月17日首次被公布在联邦记录中, 经过大量的公开讨论后,DES 于1977 年1 月15 日被正式批准并作为美国联邦信息处理标准, 即FIPS-46 , 同年7 月15 日开始生效。规定每隔5 年由美国国家保密局( national security agency , NSA)作出评估, 并重新批准它是否继续作为联邦加密标准。最近的一次评估是在1994 年1 月, 美国已决定1998 年12 月以后将不再使用DES。1997 年DESCHALL 小组经过近4 个月的努力, 通过Inter net 搜索了3×1016 个密钥, 找出了DES 的密钥, 恢复出了明文。1998 年5 月美国EFF ( elect ronicsfrontier foundation )宣布, 他们以一台价值20 万美元的计算机改装成的专用解密机, 用56 小时破译了56 比特密钥的DES。美国国家标准和技术协会已征集并进行了几轮评估、筛选, 产生了称之为AES( advanced encryption standard ) 的新加密标准。尽管如此,DES 对于推动密码理论的发展和应用毕竟起了重大作用, 对于掌握分组密码的基本理论、设计思想和实际应用仍然有着重要的参考价值。</p>
+<p>不啰嗦，直接上流程图，以下内容均来自《现代密码学——杨波》，感觉此书对于DES流程的讲解还是比较详细的。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/1.PNG" alt=""></p>
+<p>上图是DES 加密算法的框图, 其中明文分组长为64 比特, 密钥长为56 比特。图的左边是明文的处理过程, 有3 个阶段, 首先是一个初始置换IP, 用于重排明文分组的64比特数据。然后是具有相同功能的16 轮变换, 每轮中都有置换和代换运算, 第16 轮变换的输出分为左右两半, 并被交换次序。最后再经过一个逆初始置换IP- 1 ( 为IP 的逆) 从而产生64 比特的密文。除初始置换和逆初始置换外, DES 的结构和Feistel密码结构完全相同。</p>
+<h2 id="插一下又不会怀孕-Feistel密码结构">插一下又不会怀孕-Feistel密码结构</h2><p>强势插入Feistel密码结构</p>
+<p>很多分组密码的结构从本质上说都是基于一个称为Feistel 网络的结构。Feistel 提出利用乘积密码可获得简单的代换密码, 乘积密码指顺序地执行两个或多个基本密码系统, 使得最后结果的密码强度高于每个基本密码系统产生的结果, Feistel 还提出了实现代换和置换的方法。其思想实际上是Shannon 提出的利用乘积密码实现混淆和扩散思想的具体应用。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/2.PNG" alt=""></p>
+<p>是Feistel 网络示意图, 加密算法的输入是分组长为2 w 的明文和一个密钥K。将每组明文分成左右两半L0 和R0 , 在进行完n 轮迭代后, 左右两半再合并到一起以产生密文分组。其第i 轮迭代的输入为前一轮输出的函数:Li = Ri - 1Ri = Li - 1 xor F( Ri - 1 , Ki )其中Ki 是第i 轮用的子密钥, 由加密密钥K 得到。一般地, 各轮子密钥彼此不同而且与K 也不同。Feistel 网络中每轮结构都相同, 每轮中右半数据被作用于轮函数F 后, 再与左半数据进行异或运算, 这一过程就是上面介绍的代换。每轮的轮函数的结构都相同, 但以不同的子密钥Ki 作为参数。代换过程完成后, 再交换左、右两半数据, 这一过程称为置换。这种结构是Shannon 提出的代换———置换网络( s ubstitution-permutation network ,SPN )的特有形式。</p>
+<p>Feistel 网络的实现与以下参数和特性有关:</p>
+<ol>
+<li>分组大小 分组越大则安全性越高, 但加密速度就越慢。分组密码设计中最为普遍使用的分组大小是64 比特。</li>
+<li>密钥大小 密钥越长则安全性越高, 但加密速度就越慢。现在普遍认为64 比特或更短的密钥长度是不安全的, 通常使用128 比特的密钥长度。</li>
+<li>轮数 单轮结构远不足以保证安全性, 但多轮结构可提供足够的安全性。典型地, 轮数取为16。</li>
+<li>子密钥产生算法 该算法的复杂性越大, 则密码分析的困难性就越大。</li>
+<li>轮函数 轮函数的复杂性越大, 密码分析的困难性也越大。</li>
+</ol>
+<p>在设计F eistel 网络时, 还有以下两个方面需要考虑:</p>
+<ol>
+<li>快速的软件实现 在很多情况中, 算法是被镶嵌在应用程序中, 因而无法用硬件实现。此时算法的执行速度是考虑的关键。</li>
+<li>算法容易分析 如果算法能被无疑义地解释清楚, 就可容易地分析算法抵抗攻击的能力, 有助于设计高强度的算法。</li>
+</ol>
+<p><strong>Feistel解密结构</strong>：<br>Feistel 解密过程本质上和加密过程是一样的, 算法使用密文作为输入, 但使用子密钥Ki 的次序与加密过程相反, 即第1 轮使用Kn , 第2 轮使用Kn - 1 , ⋯⋯ , 最后一轮使用K1 。这一特性保证了解密和加密可采用同一算法。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/3.PNG" alt=""></p>
+<p>上图的左边表示16 轮Feistel 网络的加密过程, 右边表示解密过程, 加密过程由上而下, 解密过程由下而上。为清楚起见, 加密算法每轮的左右两半用LEi 和REi 表示, 解密算法每轮的左右两半用LDi 和RDi 表示。图中右边标出了解密过程中每一轮的中间值与左边加密过程中间值的对应关系, 即加密过程第i 轮的输出是LEi ‖ REi ( ‖表示链接) , 解密过程第16 - i 轮相应的输入是RDi ‖ LDi 。加密过程的最后一轮执行完后, 两半输出再经交换, 因此密文是RE16 ‖ LE16 。解密<br>过程取以上密文作为同一算法的输入, 即第1 轮输入是RE16 ‖ LE16 , 等于加密过程第16轮两半输出交换后的结果。下面证明解密过程第1 轮的输出等于加密过程第16 轮输入<br>左右两半的交换值。<br>在加密过程中:<br>LE16 = RE1 5<br>RE16 = LE1 5 xor F( RE15 , K16 )<br>在解密过程中:<br>LD1 = RD0 = LE16 = RE15<br>RD1 = LD0 xor F( RD0 , K16 ) = RE16 xor F( RE1 5 , K1 6 )= [ LE1 5 xor F( RE15 , K16 ) ] xor F( RE1 5 , K16 )<br>= LE15<br>所以解密过程第1 轮的输出为LE15 ‖ RE15 , 等于加密过程第16 轮输入左右两半交换后<br>的结果。容易证明这种对应关系在16 轮中每轮都成立。一般地, 加密过程的第i 轮有<br>LEi = REi - 1<br>REi = LEi - 1 xor F( REi - 1 , Ki )<br>因此<br>REi - 1 = LEi<br>LEi - 1 = REi xor F( REi - 1 , Ki ) = REi xor F( LEi , Ki )<br>以上两式描述了加密过程中第i 轮的输入与第i 轮输出的函数关系, 由此关系可得图3 -4右边显示的LDi 和RDi 的取值关系。最后可以看到, 解密过程第16 轮的输出是RE0 ‖ LE0 , 左右两半再经一次交换后即得最初的明文。</p>
+<p>这里有必要对上面的两个图进行一个说明，两个图所表达的意思是一样的，第一个图偏向于说明理论的流程，把每一次左右两边的交换过程给体现在了图中；而第二个图更偏向于真正现实中的应用，是硬件的具体实现，在具体的实现过程中，我们可以把每一次的左右交换调整为异或原件的左右交换，第二个图也是这么做的，这样和每一次交换一下左右两边达到的效果是一样的，而这样的硬件电路板实现后，每一轮就不需要交换，而是数据直接作为下一轮的输入。</p>
+<p>还有一点需要注意，就是不论是加密还是解密的最后一次交换都是非常必要的，因为硬件实现后，是需要能够重用的，加密与解密用的是同一块硬件电路板，但我们可以很清楚的注意到，在电路板中，第一轮与第十六轮的异或原件所处的左右位置是不一样的，所以为了使加密与解密的正常逻辑的实现，为了重用同一块电路板，为了避免第一轮与最后一轮异或原件所处左右位置不一样而是解密操作逻辑上的失败，这加密过程的最后一步是必不可少的，而在解密过程中的最后一步交换也能够使得解密能够得到正确的明文。</p>
+<hr>
+<p>看完了Feistel解密结构，我们接着来谈DES</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/1.PNG" alt=""></p>
+<p>接着看这个图，该图的右边是使用56 比特密钥的方法。密钥首先通过一个置换函数, 然后, 对加密过程的每一轮, 通过一个左循环移位和一个置换产生一个子密钥。其中每轮的置换都相同, 但由于密钥被重复迭代, 所以产生的每轮子密钥不相同。</p>
+<p>下面解析DES的流程：</p>
+<h2 id="1-初始置换">1.初始置换</h2><p>DES 的置换表：</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/4.PNG" alt=""></p>
+<p>表3 -2 ( a )和表3 -2 ( b) 分别给出了初始置换和逆初始置换的定义, 为了显示这两个置<br>换的确是彼此互逆的, 考虑下面64 比特的输入M :</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/5.PNG" alt=""></p>
+<p>其中Mi 是二元数字。由表3 -2( a )得X = IP( M) 为:</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/6.PNG" alt=""><br><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/7.PNG" alt=""></p>
+<p>如果再取逆初始置换Y = IP- 1 ( X ) = IP - 1 ( IP ( M) ) , 可以看出, M 各位的初始顺序将被<br>恢复。</p>
+<h2 id="2-轮结构">2.轮结构</h2><p>DES 加密算法的轮结构：</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/8.PNG" alt=""></p>
+<p>首先看图的左半部分。将64 比特的轮输入分成各为32 比特的左、右两半, 分别记为L 和R。和Feistel 网络一样, 每轮变换可由以下公式表示:<br>Li = Ri - 1<br>Ri = Li - 1 xor F( Ri - 1 , Ki )<br>其中轮密钥Ki 为48 比特, 函数F( R, K) (虚线框中的所有过程)的计算过程如图3 -7 所示。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/9.PNG" alt=""></p>
+<p>轮输入的右半部分R 为32 比特, R 首先被扩展成48 比特, 扩展过程由表( c )定义：</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/10.PNG" alt=""></p>
+<p>其中将R 的16 个比特各重复一次。扩展后的48 比特再与子密钥Ki 异或, 然后再通过一个S 盒, 产生32 比特的输出。该输出再经过一个由表( d ) 定义的置换</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/11.PNG" alt=""></p>
+<p>产生的结果即为函数F( R, K) 的输出。</p>
+<p>F 中的代换由8 个S 盒组成, 每个S 盒的输入长为6 比特、输出长为4 比特, 其变换关系由表3 -3 定义, 每个S 盒给出了4 个代换(由一个表的4 行给出) 。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/12.PNG" alt=""><br><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/13.PNG" alt=""></p>
+<p>对每个盒Si , 其6 比特输入中, 第1 个和第6 个比特形成一个2 位二进制数, 用来选择Si 的4 个代换中的一个。6 比特输入中, 中间4 位用来选择列。行和列选定后, 得到其交叉位置的十进制数, 将这个数表示为4 位二进制数即得这一S 盒的输出。例如, S1 的输入为011001 , 行选为01( 即第1 行) , 列选为1100 (即第12 列) , 行列交叉位置的数为9 , 其4 位二进制表示为1001 , 所以S1 的输出为1001。</p>
+<p>对于S盒的每一行，S 盒的每一行定义了一个可逆代换, 举个例子：下图表示S1 第0 行所定义的代换。</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/14.PNG" alt=""></p>
+<h2 id="3-密钥的产生">3.密钥的产生</h2><p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/15.PNG" alt=""></p>
+<p>输入算法的56 比特密钥首先经过一个置换运算, 该置换由表3 -4( a) 给出, 然后将置换后的56 比特分为各为28 比特的左、右两半, 分别记为C0 和D0 。在第i 轮分别对Ci - 1 和Di - 1 进行左循环移位, 所移位数由表3 -4( c )给出。移位后的结果作为求下一轮子密钥的输入, 同时也作为置换选择2 的输入。通过置换选择2 产生的48比特的Ki , 即为本轮的子密钥, 作为函数F( Ri - 1 , Ki )的输入。其中置换选择2 由表3 -4( b)定义。</p>
+<h2 id="4-解密">4.解密</h2><p>和F eistel 密码一样,DES 的解密和加密使用同一算法, 但子密钥使用的顺序相反。</p>
+<hr>
+<h1 id="0x02_DES的扩展">0x02 DES的扩展</h1><p>普通的DES的安全性已经不能满足要求，但是由于DES曾经的辉煌，导致很多软硬件是按照DES去实现的。所以提出了一种较为折中的方法，为了提高DES 的安全性, 并利用实现DES 的现有软硬件, 可将DES 算法在多密钥下多重使用。</p>
+<h2 id="二重DES">二重DES</h2><p>二重DES 是多重使用DES 时最简单的形式, 如图:</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/16.PNG" alt=""></p>
+<p>其中明文为P, 两个加密密钥为K1 和K2 , 密文为:<br>C = EK2 [ EK1 [ P] ]<br>解密时, 以相反顺序使用两个密钥:<br>P = DK1 [ DK2 [ C] ]<br>因此, 二重DES 所用密钥长度为112 比特, 强度极大地增加。</p>
+<p><strong>针对二重DES的攻击</strong><br>假设对任意两个密钥K1 和K2 , 能够找出另一密钥K3 , 使得EK2 [ EK1 [ P] ] = EK3 [ P]那么, 二重DES 以及多重DES 都没有意义, 因为它们与56 比特密钥的单重DES 等价, 好在这种假设对DES 并不成立。原因：将DES 加密过程64 比特分组到64 比特分组的映射看作一个置换, 如果考虑2的64次方个所有可能的输入分组, 则密钥给定后, DES 的加密将把每个输入分组映射到一个惟一的输出分组。否则, 如果有两个输入分组被映射到同一分组, 则解密过程就无法实施。另一方面, 对每个不同的密钥,DES 也都定义了一个映射。因此, 可假定用两个不同的密钥两次使用DES, 可得一个新映射, 而且这一新映射不出现在单重DES 定义的映射中。这一假定已于1992 年被证明。所以使用二重DES 产生的映射不会等价于单重DES 加密。那二重DES这么一说不就挺好的了，112bit长度的密钥我们可以接受，是不是可以放心使用了？其实并不，对二重DES 有以下一种称为中途相遇攻击的攻击方案, 这种攻击不依赖于DES 的任何特性, 因而可用于攻击任何分组密码。</p>
+<p><strong>中途相遇攻击</strong> </p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/17.PNG" alt=""></p>
+<p>基本思想如下:如果有C = EK2 [ EK1 [ P] ]那么( 见图3 -8)X = EK1 [ P] = DK2 [ C]如果已知一个明文密文对( P, C) , 攻击的实施可如下进行: 首先, 用256 个所有可能的K1对P 加密, 将加密结果存入一表并对表按X 排序, 然后用256 个所有可能的K2 对C 解密, 在上述表中查找与C 解密结果相匹配的项, 如果找到, 则记下相应的K1 和K2 。最后再用一新的明文密文对( P′, C′)检验上面找到的K1 和K2 , 用K1 和K2 对P′两次加密,若结果等于C′, 就可确定K1 和K2 是所要找的密钥。对已知的明文P, 二重DES 能产生2的64次方个可能的密文, 而可能的密钥个数为2的112次方 , 所以平均来说, 对一个已知的明文, 有2的112次方 / 2的64次方 = 2的48次方个密钥可产生已知的密文。而再经过另外一对明文密文的检验, 误报率将下降到2的(48 - 64)次方= 2的(-16)次方 。所以在实施中途相遇攻击时, 如果已知两个明文密文对, 则找到正确密钥的概率为1 - 2(-16)次方 。</p>
+<p>可见，由于二重DES的对称性，加上2的64次方数量级的计算对于现代计算机来说可以实现，并不是什么难事，所以导致他不能避免中途相遇攻击，那么三重DES应运而生</p>
+<h2 id="三重DES">三重DES</h2><p>三重DES可以抵抗中途相遇攻击。三重DES使用3 个不同的密钥做3 次加密, 从而可使已知明文攻击的代价增加到2的112次方 。但这样又会使密钥长度增加到56×3 = 168 比特, 因而过于笨重。一种实用的方法是仅使用两个密钥做3 次加密, 实现方式为加密-解密-加密, 简记为EDE( enc rypt-decrypt-encrypt )如图：</p>
+<p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/18.PNG" alt=""></p>
+<p>即:C = EK1 [ DK2 [ EK1 [ P] ] ]，第2 步解密的目的仅在于使得用户可对一重DES 加密的数据解密。此方案已在密钥管理标准ANS X .917 和ISO 8732 中被采用。</p>
+<p>但是三个密钥的三重DES并不是我们所不能容忍的。三重DES的密钥长度为168 比特, 加密方式为C = EK3 [ DK2 [ EK1 [ P] ] ]，三个密钥的三重DES 已在因特网的许多应用(如PGP 和S/ MIME) 中被采用。</p>
+<hr>
+<p>DES就介绍到这，但分组密码还远没有结束。。。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_分组密码的概述">0x00 分组密码的概述</h1><p>除流密码外，分组密码是对称密码体系的又一大分支。</p>
+<h2 id="什么是分组密码">什么是分组密码</h2><p>分组密码（block cipher）：将明文消息序列划分成等长的消息组,在]]>
+    </summary>
+    
+      <category term="密码学" scheme="http://kenshichong.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+    
+      <category term="cryptography" scheme="http://kenshichong.github.io/categories/cryptography/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[密码系列3-流密码实战之RC4算法]]></title>
+    <link href="http://kenshichong.github.io/2015/12/26/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%973-%E6%B5%81%E5%AF%86%E7%A0%81%E5%AE%9E%E6%88%98%E4%B9%8BRC4%E7%AE%97%E6%B3%95/"/>
+    <id>http://kenshichong.github.io/2015/12/26/密码系列3-流密码实战之RC4算法/</id>
+    <published>2015-12-26T09:01:09.000Z</published>
+    <updated>2015-12-28T07:30:53.837Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x01_口胡">0x01 口胡</h1><p>RC4加密算法是大名鼎鼎的RSA三人组中的头号人物Ronald Rivest在1987年设计的密钥长度可变的流加密算法簇。之所以称其为簇，是由于其核心部分的S-box长度可为任意，但一般为256字节。该算法的速度可以达到DES加密的10倍左右，且具有很高级别的非线性。RC4起初是用于保护商业机密的。但是在1994年9月，它的算法被发布在互联网上，也就不再有什么商业机密了。RC4也被叫做ARC4（Alleged RC4——所谓的RC4），因为RSA从来就没有正式发布过这个算法。</p>
+<p>一切的口胡都是苍白无力的，话不多说，都在代码里，直接进正片看代码。</p>
+<h1 id="0x02_正片">0x02 正片</h1><p>由于RC4算法的代码很少，所以下面会直接贴代码来说明RC4加密流程：</p>
+<h2 id="main函数">main函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> s[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;,s2[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;;    <span class="comment">//S-box</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">char</span> key[<span class="number">256</span>] = &#123;<span class="string">"just for test"</span>&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">char</span> pData[<span class="number">512</span>] = <span class="string">"Data"</span>;</span><br><span class="line"><span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">ULONG len = <span class="built_in">strlen</span>(pData);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"pData = %s\n"</span>,pData);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"key = %s, length = %d\n\n"</span>,key,<span class="built_in">strlen</span>(key));</span><br><span class="line"> </span><br><span class="line">rc4_init(s,(<span class="keyword">unsigned</span> <span class="keyword">char</span> *)key,<span class="built_in">strlen</span>(key));   <span class="comment">//已经完成了初始化</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"完成对S[i]的初始化，如下：\n\n"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;<span class="number">256</span>; i++)</span><br><span class="line"> </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%-3d "</span>,s[i]);</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"\n\n"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">256</span>;i++)<span class="comment">//用s2[i]暂时保留经过初始化的s[i]，很重要的！！！</span></span><br><span class="line"><span class="comment">//这里之所以做保留是因为s在经过初始化后需要做一个备份，以保证在加解密的时候经过crypt函数生成的密钥流一样，只要使用相同的密钥流才能够保证数据在加密之后能够被正常解密，这也是流密码的一大特性</span></span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">s2[i]=s[i];</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"已经初始化，现在加密:\n\n"</span>);</span><br><span class="line"> </span><br><span class="line">rc4_crypt(s,(<span class="keyword">unsigned</span> <span class="keyword">char</span> *)pData,len);<span class="comment">//加密</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"pData = %s\n\n"</span>,pData);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"已经加密，现在解密:\n\n"</span>);</span><br><span class="line"> </span><br><span class="line">rc4_init(s,(<span class="keyword">unsigned</span> <span class="keyword">char</span> *)key, <span class="built_in">strlen</span>(key));   <span class="comment">//初始化密钥</span></span><br><span class="line"> </span><br><span class="line">rc4_crypt(s2,(<span class="keyword">unsigned</span> <span class="keyword">char</span> *)pData,len);<span class="comment">//解密</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"pData = %s\n\n"</span>,pData);</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>main的流程：</p>
+<ol>
+<li>声明两个S盒，两个S盒的大小都是256字节，并都被定义为0；</li>
+<li>声明并定义密钥(key)；</li>
+<li>声明并定义要加密的数据，即明文，这里的长度是随意的，长度范围为[0,255]；</li>
+<li>进入初始化函数rc4_init，我们来看下初始化函数的代码：</li>
+</ol>
+<h2 id="rc4_init函数">rc4_init函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rc4_init</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *s, <span class="keyword">unsigned</span> <span class="keyword">char</span> *key, <span class="keyword">unsigned</span> <span class="keyword">long</span> Len)</span> <span class="comment">//初始化函数</span></span><br><span class="line"><span class="comment">//初始化过程只是根据秘钥打乱了s这个0-255数组的顺序，具体怎么打乱的不需要知道</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> i =<span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">char</span> k[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> tmp = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">256</span>;i++)</span><br><span class="line"> </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">s[i]=i; <span class="comment">//s是0-255的数组</span></span><br><span class="line"> </span><br><span class="line">k[i]=key[i%Len]; <span class="comment">//k是根据秘钥生成的一个秘钥循环数组</span></span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;<span class="number">256</span>; i++)</span><br><span class="line"> </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">j=(j+s[i]+k[i])%<span class="number">256</span>; <span class="comment">//根据秘钥去初始化(打乱)s数组的顺序</span></span><br><span class="line"> </span><br><span class="line">tmp = s[i];</span><br><span class="line"> </span><br><span class="line">s[i] = s[j]; <span class="comment">//交换s[i]和s[j]</span></span><br><span class="line"> </span><br><span class="line">s[j] = tmp;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>rc4_init的流程：</p>
+<ol>
+<li>非常简单的一个函数。首先要明确参数，main传进来的参数是S盒，密钥以及密钥的长度；</li>
+<li>第一个循环是对S盒进行初始赋值，将S盒赋值为0-255，然后根据密钥循环生成一个大小为256字节的密钥循环数组；</li>
+<li>第二个循环是根据密钥去打乱S盒的顺序，具体的打乱规则如代码所示，针对每一个s[i]，s[i]与k[i]混淆后产生一个要交换的索引j，然后s[i]与s[j]交换</li>
+</ol>
+<p>其实具体的交换规则我们不需要知道，没什么意思，我们只需要知道S盒经过rc4_init之后，生成了一个很乱的S盒，且这个S盒的生成与循环密钥数组有关，可以这样理解，将这个函数看做一个黑盒，全0的S盒和密钥循环数组k(由给定的密钥生成)被放进这个黑盒中，按下黑盒的搅拌开关，搅拌成功后黑盒吐出来一个面目全非的S盒，这个S盒会用于接下来的加密与解密操作。</p>
+<p>书接上文，接着来看main的流程：</p>
+<ol>
+<li>S盒经过rc4_init之后，得到一个全新的S盒，然后这个S盒会被copy一份存储在S2中，S2是新S盒的一个副本，S用于加密操作，S2用于解密操作，以保证在加解密的时候经过crypt函数生成的密钥流一样。</li>
+<li>进入rc4_crypt进行加密；</li>
+</ol>
+<h2 id="rc4_crypt函数">rc4_crypt函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rc4_crypt</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *s, <span class="keyword">unsigned</span> <span class="keyword">char</span> *Data, <span class="keyword">unsigned</span> <span class="keyword">long</span> Len)</span> <span class="comment">//加解密</span></span><br><span class="line"><span class="comment">//打乱之后，在对s进行一系列的变换后当做密钥流</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>, t = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> k = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> tmp;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span>(k=<span class="number">0</span>;k&lt;Len;k++)</span><br><span class="line"> </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">i=(i+<span class="number">1</span>)%<span class="number">256</span>;</span><br><span class="line"> </span><br><span class="line">j=(j+s[i])%<span class="number">256</span>;</span><br><span class="line"> </span><br><span class="line">tmp = s[i];</span><br><span class="line"> </span><br><span class="line">s[i] = s[j]; <span class="comment">//交换s[x]和s[y]</span></span><br><span class="line"> </span><br><span class="line">s[j] = tmp;</span><br><span class="line"> </span><br><span class="line">t=(s[i]+s[j])%<span class="number">256</span>;</span><br><span class="line"> </span><br><span class="line">Data[k] ^= s[t];</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>rc4_crypt的流程：</p>
+<p>函数就一个循环，该循环完成加密操作，这个循环对S盒又进行了一系列变换操作，然后才作为加密明文的密钥流，这里需要注意的是，对于每一次循环，明文只在最后一步跟S盒进行了异或操作，体现出流密码的特性.</p>
+<p>到这里rc4算法的加密过程就结束了，我们可以这样理解，不管是rc4_init还是rc4_crypt，这两个函数所做的很多工作都是根据给定的密钥经过一系列杂七杂八的操作去生成较为安全的密钥流，然后明文只需要跟密钥流异或一下就生成了明文</p>
+<p>书接上文，接着看main的流程：</p>
+<ol>
+<li>加密之后，解密操作就顺其自然了。还记得前面保存的S盒的副本S2吗，解密的过程就是通过S2产生相同的密钥流，然后与密文进行异或，由于异或的可逆性，所以相同的密钥流在与密文异或后会得到相应的明文。</li>
+</ol>
+<p>这就是rc4算法的整体流程</p>
+<hr>
+<h1 id="0x03_rc4在现实中的具体应用">0x03 rc4在现实中的具体应用</h1><p>是使用最广泛的软件流密码之一,并且广泛应用在SSL和WEP层协议中。</p>
+<p>让我们来看一下RC4算法在手机和AP的通信中应用：</p>
+<ol>
+<li>客户发出验证请求</li>
+<li>AP接到请求后AP产生一个随机数，该随机数会以明文方式发送给客户端</li>
+<li>客户端使用WEP密钥(该密钥是用户连入AP时需要输入的，是连入AP的凭证)用RC4算法(此时RC4算法的密钥就是用的前面的WEP密钥，该密钥为用户和AP共享的)加密数据包(携带着经过加密的随机数)并且将它发回</li>
+<li>AP 解密数据包(用共享密钥+rc4算法解密)并且同原始随机数比较</li>
+<li>AP 向客户端发出成功信息</li>
+</ol>
+<p>在SSL中的应用已经被废弃掉了，在今年9月份，三大浏览器厂商明确明年将放弃RC4加密支持，所以SSL中的应用就不说了</p>
+<h1 id="0x04_尾声">0x04 尾声</h1><p>对于rc4的破解，看到过一篇还不错的帖子，没来得及细看，先放着，留着以后看——<a href="http://bbs.pediy.com/showthread.php?t=174969" target="_blank" rel="external">RC4算法暴力破解的尝试</a></p>
+<hr>
+<p>关于流密码，就打算写到这了，下面开始转战分组密码。。。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x01_口胡">0x01 口胡</h1><p>RC4加密算法是大名鼎鼎的RSA三人组中的头号人物Ronald Rivest在1987年设计的密钥长度可变的流加密算法簇。之所以称其为簇，是由于其核心部分的S-box长度可为任意，但一般为256字节。该算法的速度可以]]>
+    </summary>
+    
+      <category term="密码学" scheme="http://kenshichong.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+    
+      <category term="cryptography" scheme="http://kenshichong.github.io/categories/cryptography/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[密码系列2-流密码实战之A5算法]]></title>
+    <link href="http://kenshichong.github.io/2015/12/26/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%972-%E6%B5%81%E5%AF%86%E7%A0%81%E5%AE%9E%E6%88%98%E4%B9%8BA5%E7%AE%97%E6%B3%95/"/>
+    <id>http://kenshichong.github.io/2015/12/26/密码系列2-流密码实战之A5算法/</id>
+    <published>2015-12-26T00:32:10.000Z</published>
+    <updated>2015-12-28T07:32:06.294Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x01_口胡">0x01 口胡</h1><p>流密码由于其适合在硬件上的高效实现，所以在发明初期也是应用广泛，其中流密码在现实中最广为人知的应用要数A5算法了。A5在1989年由法国人开发，用于GSM系统的序列密码算法，它用于对从电话到基站连接的加密，先后开发了三个版本记作A5/1、A5/2、A5/3，如果没有特别说明，通常所说的A5是指A5/1，关于GSM加密问题，一些人认为会因为密码的问题阻碍手机的推广，另一些人则认为A5太弱，不能抵抗一些情报机构的窃听，A5的特点是效率高，适合硬件上高效实现，它能通过已知的统计检验，起初该算法的实际没有公开，但最终不慎泄漏。</p>
+<h1 id="0x02_正片">0x02 正片</h1><p>A5算法总的流程图：</p>
+<p><img src="/img/密码系列2-流密码实战之A5算法/1.PNG" alt=""></p>
+<p>A5/1算法使用3个线性反馈移位寄存器，简称为LFSR，我们分别将其标识为X、Y和Z。寄存器X有19位，可以表示为(x0, x1, … ,x18)；寄存器Y有22位，可以表示为(y0, y1, … ,y21)；而寄存器Z有23位，可以表示为(z0, z1,… ,z22)。这里要使用三个共包含64位二进制的线性反馈移位寄存器，这个设计绝非偶然。绝非巧合的是，A5/1算法的密钥K也是64位。该密钥用于三个线性反馈移位寄存器的初始填充，也就是说，该密钥用于充当三个寄存器的初始值。这三个寄存器用密钥填充之后，就可以开始生成密钥流了。</p>
+<p>那么，它是如何生成密钥流的呢，现在我们给定初始密钥后，三个LFSR中已经有了初始状态，这三个LFSR是通过何种方式生孩子的呢？像上篇中我们讲的那样，对于每一个寄存器，它会通过向最高位的移动(产下处于最高位的孩子)来产生密钥，3个寄存器都通过这种操作来产生密钥，然后3个最高位经过异或操作得到最终的密钥。此时需要考虑的一个问题就是当最高位产下后，最低位的补充问题。对于最低位的补充，不同的寄存器采取不同的策略：对于X，即19位的LFSR，采取的策略是取当前状态的(从第0位开始算)第18、17、16、13位的异或值作为当前状态转换为下一状态时，下一状态的最低位的补充，代码体现为：</p>
+<p><img src="/img/密码系列2-流密码实战之A5算法/2.PNG" alt=""></p>
+<p>相似的，Y取21、20、16、12位，代码体现为：</p>
+<p><img src="/img/密码系列2-流密码实战之A5算法/3.PNG" alt=""></p>
+<p>Z取22、21、18、17，代码体现为：</p>
+<p><img src="/img/密码系列2-流密码实战之A5算法/4.PNG" alt=""></p>
+<p>这里之所以要po上代码图，是为了让大家感受如何通过位操作来实现我们的策略，体会位操作的精准与强大。</p>
+<p>是不是每一次都会像上面所说的，每次3个LFSR移位，然后结果异或作为最终输出结果，而对于最低位的补充，不同的LFSR采取不同的策略。其实不然，并不是每一次3个寄存器都移动产生密钥流的，什么意思呢？就是说在一次密钥的产生过程中，并不是每个LFSR都会移动，但是对于最终密钥的产生，仍然会取三个LFSR中的最高位的异或值作为输出，只不过对于不移动的LFSR而言，它前后两次提供的密钥是相同的，应为它没有移动。而对于移不移动的问题，A5中采用的是一种叫做钟控的方式。描述为：给定三个二进制位x、y和z，定义多数投票函数maj(x, y, z)。也就是说，如果x、y和z的多数为0，那么函数返回0；否则，函数返回1。因为二进制位的个数为奇数，所以不会存在无法判决的情况，因此该函数的定义不会存在问题 。</p>
+<p>在A5/1加密算法中，对于生成的每一个密钥流的位，都将执行如下操作。首先，我们计算：m=maj(x8, y10, z10)然后，执行寄存器X、Y和Z的各自步骤(或者不执行，根据计算执行结果的情况而定)如下：如果x8=m，那么执行X步骤(这里的X步骤即指我们上面所说的移动，然后最低位补充的意思，Y步骤和Z步骤也是这个意思)。如果y10=m，那么执行Y步骤。如果z10=m，那么执行Z步骤。最终，单独密钥流的位s通过如下计算生成：S=x18+y21+z22。即：</p>
+<p><img src="/img/密码系列2-流密码实战之A5算法/5.PNG" alt=""></p>
+<p>到这里，对于A5算法中3个LFSR的工作，即如何移动，是否移动，我们已经清楚了，也就是说，如果给定三个这样的LFSR，我们只需要给定一个64位的初始状态(初始密钥)，那么这3个LFSR就可以按照我们所想的那样去不停的产生密钥流了。</p>
+<p>这只是A5算法理论上产生密钥流的过程，在具体的应用过程中，它还有很多不同之处。</p>
+<h2 id="A5算法的具体实战流程">A5算法的具体实战流程</h2><ol>
+<li>利用会话密钥k设定三个移存器的起点，即初始状态。</li>
+<li>(帧序号参与) 三个LFSR都规则动作22次，每次动作1步。在第i步动作时，三个LFSR的反馈内容都首先与帧序号的第i比特模2加，并将模2加的结果作为LFSR反馈的内容；帧序号比特的序号是从最低位编到最高位。</li>
+<li>三个LFSR以钟控方式连续动作100次，但不输出乱数</li>
+<li>三个LFSR以钟控方式连续动作114次，在每次动作后，三个LFSR都将最高级寄存器中的值输出，这三个比特的模2和就是当前时刻输出的1比特乱数。 </li>
+<li>连续动作114步，共输出114比特乱数，用于对用户手机到基站传送的114比特数据的加密。</li>
+</ol>
+<p>对于上面的补充：</p>
+<p>帧序号参与方式：与密钥参与方式相同，不同的明文数据帧按顺序编号，每个编号为22比特。帧密钥参与的目的：对不同的帧设置不同的帧会话密钥，保证对每帧以不同的起点生成乱数，尽可能避免密钥重用。</p>
+<p>A5算法用于GSM系统中，也就是说，传输的数据以帧为单位，每帧的大小是114bit，科普下为什么是114bit：</p>
+<blockquote>
+<p>gsm系统中，是将每20ms的模拟话音进行一次处理，将20ms的话音通过信源编码（rpe-ltp）处理成260bit的数字信号；再经过信道编码变换为456bit的数字信号，然后经过交织分成8个部分，每部分57bit；空中的时隙中，每个时隙承载2部分即114个bit的内容，于是20ms的话音完全通过4个时隙的资源承载。</p>
+</blockquote>
+<p>知道了A5算法具体的加密流程，我们来看下A5在现实中具体的应用模型：</p>
+<p>A5-1算法用于用户的手机到基站之间的通信加密，通信内容到基站后先脱密变成明文，然后再进行基站到基站之间、以及基站到用户手机之间的信息加密，完成通信内容在通信过程的加密保护。  </p>
+<p><img src="/img/密码系列2-流密码实战之A5算法/6.PNG" alt=""></p>
+<p>这里，我们只需考察用户A到基站1之间通信内容的加脱密，中间消息的传送由基站到基站之间的加密完成，而接收方用户B对消息的加脱密与用户A到基站1之间的通信完全类似，只不过是用户B先脱密消息。</p>
+<p>对于密钥：</p>
+<p>基本密钥KA1：预置在SIM卡中，与基站1共享。<br>生存期：一旦植入SIM卡将不再改变。<br>用途：用来分配用户和基站之间的会话密钥。<br>注意：这里的基本密钥并非用来加密数据，而是用来加密在每一次的会话过程中的密钥，会话过程中数据的加密采用A5，而对于A5加密算法中的初始密钥，在用户和基站之间，一般是通过非对称密码体制产生的基本密钥(或密钥对)KA1来实现对每次通信过程所需的密钥进行加密，将密钥加密后进行传输，来达到让用户和基站之间在一次通信过程中共享同一个密钥的目的。</p>
+<p>这里，我们对每次会话的密钥k做补充说明：</p>
+<p><img src="/img/密码系列2-流密码实战之A5算法/7.PNG" alt=""></p>
+<p>对于通信过程中数据(明文)的处理：</p>
+<p><img src="/img/密码系列2-流密码实战之A5算法/8.PNG" alt=""></p>
+<p>由于发送和接收是同时发生的，所以每帧的数据可以看成两个114bit，即228bit，这两个114bit所使用的密钥流是相同的。一次通话使用一个会话密钥，对每帧使用不同的帧密钥。所以一次通话量：至多222帧数据，约0.89×230比特 。</p>
+<p>这里总结下具体的通信流程(以手机通信为例，只说明A与基站的通信):</p>
+<ol>
+<li>用户A与基站建立联系；</li>
+<li>基站得知用户A的身份，并知道用户A要与它通信，此时基站就会找到与用户A共享的密钥KA1(存在基站的数据库中)，当然这个密钥也会在用户A的SIM中存储着一份，然后基站随机产生64bit的密钥，作为此次通信中A5算法的初始密钥，对该密钥用KA1加密后，传递给用户A；</li>
+<li>用户A用存储在SIM中的与KA1相对应的密钥KA1对加密的密钥进行解密，得到此次通信过程中所需的密钥；</li>
+<li>用户A用得到的此次通信过程中的密钥对通信数据进行加密后传递给基站，加密的算法使用A5算法，由于SIM中内置A5算法的硬件实现，所以可以轻易实现该加密过程；</li>
+<li>基站在接收到用户A发送过来的数据后，由于基站中也有相应的A5算法的实现过程，且A和基站的A5算法的初始密钥相同，所以说，此时基站会产生与A相同的密钥流，然后对数据进行依顺序解密，从而得到用户A发送过来的明文数据；</li>
+<li>基站对用户A的响应过程类似；</li>
+<li>这样，用户A和基站之间就可以正常通信了</li>
+</ol>
+<p>对于A5在通信过程中的应用模型大致就是这样，下面我们来看一下，如何对此种模型下数据的机密性造成破坏。</p>
+<h1 id="0x03_破坏即艺术">0x03 破坏即艺术</h1><p>这里首先说明下，虽然A5属于流密码体系，但对于A5的破解，跟我们上一篇blog中提到的对流密码的破解是两个完全不同的概念，上篇blog中谈到的破解指得到了一串明密文对，我们想知道它是怎么加密的，根据破解的加密方式，我们可以由当前的密文得到接下来的密钥流，这样的话，我们在继续截获密文的情况下就可以根据前面破解的加密方式来得到的密钥流来对密文进行解密，从而得到相应的明文；但A5算法是完全不同的，A5是知道了加密方式的，它是对外公开的，而A5破解的关键是得到初始密钥，所以二者意义完全不同，破解的思路也就大不一样。</p>
+<p>首先是针对A5算法本身，A5算法的加密强度弱，由于A5使用的加密密钥长度是64 bit的算法，现在超级计算机已经能在较短的时间内破解这些算法，所以对于A5算法的爆破我们不讨论，我们这里以一种类似于极客的眼光去看下如何对A5算法应用的这种通信模型造成破坏。</p>
+<h2 id="SIM卡的复制">SIM卡的复制</h2><p>在看完我写的该通信模型的流程之后，大家已经可以隐约意识到了这个通信模型的脆弱性，发挥你的想象力，去思考如何从其中的一环去破坏。对于该通信模型的破坏，首先就是SIM卡的复制了。</p>
+<p>对于SIM卡，SIM卡存储有持卡者的用户数据、保密数据和鉴权加密算法等；<br>SIM卡和设备间有一个开放的公共接口，移动设备通过该接口读取SIM卡中的用户数据，并将数据发送给GSM网络，请求接入网络。由于这张卡上存储着你的用户信息，也就是说基站只认识你这张卡，所以说只要你能复制这张卡，你就是用户A的一个copy，那么数据的机密性也就无从谈起了。对于SIM卡的复制，已经有前人做过实验：</p>
+<p><img src="/img/密码系列2-流密码实战之A5算法/9.PNG" alt=""></p>
+<h2 id="伪基站">伪基站</h2><p>既然用户A可以copy，那么基站自然也不是问题，伪基站模拟成一个真实的基站，与手机交互，实施鉴权过程，并且获得了手机用户的IMSI，对于其具体的原理，由于我也不是很懂，而且也没有找到相关资料，所以就不误导了。。。</p>
+<hr>
+<p>A5/1加密算法是一个非常富有代表性的例子，该方案代表了一大类基于移位寄存器并以硬件实现的流加密算法。此类系统曾经在对称密钥加密领域大行其道，但是近年来，分组密码加密已经明显地占了上风，取代了流密码加密的昔日辉煌地位。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x01_口胡">0x01 口胡</h1><p>流密码由于其适合在硬件上的高效实现，所以在发明初期也是应用广泛，其中流密码在现实中最广为人知的应用要数A5算法了。A5在1989年由法国人开发，用于GSM系统的序列密码算法，它用于对从电话到基站连接的加密，先后开发了]]>
+    </summary>
+    
+      <category term="密码学" scheme="http://kenshichong.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+    
+      <category term="cryptography" scheme="http://kenshichong.github.io/categories/cryptography/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[密码初探-玩bin的人怎么能不懂密码呢]]></title>
+    <link href="http://kenshichong.github.io/2015/12/22/%E5%AF%86%E7%A0%81%E5%88%9D%E6%8E%A2-%E7%8E%A9bin%E7%9A%84%E4%BA%BA%E6%80%8E%E4%B9%88%E8%83%BD%E4%B8%8D%E6%87%82%E5%AF%86%E7%A0%81%E5%91%A2/"/>
+    <id>http://kenshichong.github.io/2015/12/22/密码初探-玩bin的人怎么能不懂密码呢/</id>
+    <published>2015-12-21T16:24:03.000Z</published>
+    <updated>2015-12-25T15:03:56.292Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x01_前情提要">0x01 前情提要</h1><p>本文不像前几篇一样，不会这么注重框架性和体系性。本文以及相关的后续blog的目的在于介绍各种你所耳熟能详的几种密码的具体姿势。鉴于朋友说前几篇blog太长，所以这里打算把密码写成一个系列，并且在排版上也会上点心。。。</p>
+<h1 id="0x02_正片">0x02 正片</h1><p>说到密码，每个人都有每个人的第一印象。其实在很久以前，人们就有了对信息加密的意识，这里，古典密码不得不提。</p>
+<h2 id="古典密码">古典密码</h2><p>古典密码的加密体现的是一种代换的思想。包括单表代换密码和多表代换密码，单表代换如经典的恺撒密码，移位变换，仿射变换等。这里简单说一下，恺撒密码，加密时每个字母后移3位，然后mod26，解密时，每个字母前移3位，然后mod26，其中3就是加解密所用的密钥。移位变换是移k位，仿射变换（该图来自百度百科）:</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/1.PNG" alt=""></p>
+<p>上图中的k3是k1的逆元，关于逆元的概念，下面会谈到</p>
+<p>对于多表代换密码，自己懒得写，直接把书上的东西po出来(渣像素，见谅):</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/2.PNG" alt=""></p>
+<p>关于古典密码的介绍就到这，古典密码的代换思想在现代密码中有很多体现。现在我们来看现代密码</p>
+<h2 id="现代密码">现代密码</h2><p>现代密码系统可以用一个看一眼就懂的五元组表示：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/0.PNG" alt=""></p>
+<p>这里主要从密码的体制上来展开对密码的讨论</p>
+<p>密码体制从原理上可以分为两大类，即单钥体制和双钥体制</p>
+<p>单钥体制又称对称密码体制，就是加密密钥和解密密钥相同。对称密码体制按照对明文加密方式的不同，分为序列密码和分组密码。序列密码（stream cipher):又称流密码。序列密码每次通过输出密钥流序列加密(通常是模2加，即异或运算)一位或一字节的明文。如A5、RC4等。分组密码（block cipher):将明文分成固定长度的组，用同一密钥和算法对每一块加密，输出也是固定长度的密文。如DES、IDEA、AES等</p>
+<p>双钥体制又称非对称密码体制，就是加密密钥和解密密钥不相同，从一个很难推出另一个，又称公开密钥体制。</p>
+<p>说了要写一个系列的，所以这篇就主要讲流密码(序列密码)了</p>
+<h1 id="0x03_本篇重点——序列密码">0x03 本篇重点——序列密码</h1><p>序列密码的基本思想是采用一个短的密钥来控制某种算法产生出长的密钥序列，供加、解密使用，利用密钥k产生一个伪随机序列密钥流z=z0z1…，并使用如下规则对明文串x=x0x1x2…加密：y=y0y1y2…= (x0+z0) (x1+z1) …</p>
+<p>过程如图所示：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/3.PNG" alt=""></p>
+<p>根据加密器中记忆元件的存储状态σi 是否依赖于输入的明文字符, 流密码可进一步分成同步和自同步两种。σi 独立于明文字符的叫做同步流密码, 否则叫做自同步流密码。由于自同步流密码的密钥流的产生与明文有关, 因而较难从理论上进行分析，目前大多数研究成果都是关于同步流密码的，因此同步流密码也是我们讨论的重点。</p>
+<p>可见同步流密码的关键是密钥流产生器。目前最为流行和实用的密钥流产生器是通过线性反馈移位寄存器来实现密钥的产生。移位寄存器是流密码产生密钥流的一个主要组成部分。GF(2 )上一个n 级反馈移位<br>寄存器由n 个二元存储器与一个反馈函数f ( a1 , a2 , ⋯ , an )组成，如图：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/4.PNG" alt=""></p>
+<p>每一存储器称为移位寄存器的一级, 在任一时刻, 这些级的内容构成该反馈移位寄存器的状态, 每一状态对应于GF( 2)上的一个n 维向量, 共有2n 种可能的状态。每一时刻的状态可用n 长序列a1 , a2 , ⋯ , an或n 维向量( a1 , a2 , ⋯ , an )表示, 其中ai 是第i 级存储器的内容。初始状态由用户确定, 当第i 个移位时钟脉冲到来时, 每一级存储器ai 都将其内容向下一级ai - 1 传递, 并根据寄存器此时的状态a1 , a2 , ⋯ ,an 计算f ( a1 , a2 , ⋯ , an ) , 作为下一时刻的an 。反馈函数f ( a1 , a2 , ⋯ , an )是n 元布尔函数, 即n 个变元a1 , a2 , ⋯ , an 可以独立地取0 和1 这两个可能的值, 函数中的运算有逻辑与、逻辑或、逻辑补等运算, 最后的函数值也为0 或1。</p>
+<p>其实上面的过程可以形象的想象成鸡下蛋的过程，鸡肚子中存储的蛋的数量是有限的。首先，用户，没错，就是你，你让鸡怀上了鸡所能承受的最多的蛋，然后鸡开始下蛋，并且鸡没下一个蛋(认为产生了一个密钥位)，你或者其他什么东西又会立马使它怀上一个蛋，且这个蛋的产生与这只鸡还没生蛋前的所有肚子里的蛋有关系，至于是什么关系，这是用户，没错，还是你，可以去定义的，这样，鸡就会一直下蛋，相当于一个密钥流产生器。</p>
+<p>如果移位寄存器的反馈函数f ( a1 , a2 , ⋯ , an ) 是a1 , a2 , ⋯ , an 的线性函数, 则称之为线性反馈移位寄存器LFSR( linear feedback shiftregister ) 。这里我们需要注意的是，由于线性反馈寄存器都是按位来计算的，所以这里的线性函数中各个项之间的运算基本上都是模2加，即异或操作。此时f 可写为f ( a1 , a2 , ⋯ , an ) = cn a1 + cn - 1 a2 + ⋯ + c1 an其中常数ci = 0 或1 ,+是模2 加法。ci = 0 或1 可用实际电路的开关的断开和闭合来实现,如图：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/5.PNG" alt=""></p>
+<p>则，输出序列{ at }满足：an + t = cn at + cn - 1 at+ 1 + ⋯ + c1 an + t - 1，线性反馈移位寄存器因其实现简单、速度快、有较为成熟的理论等优点而成为构造密钥流生成器的最重要的部件之一。在线性反馈移位寄存器中总是假定c1 , c2 , ⋯ , cn 中至少有一个不为0 , 否则f ( a1 ,a2 , ⋯ , an )≡0 , 这样的话, 在n 个脉冲后状态必然是00⋯0 , 且这个状态必将一直持续下去。若只有一个系数不为0 , 设仅有cj 不为0 , 实际上是一种延迟装置。一般对于n 级线性反馈移位寄存器, 总是假定cn = 1。线性反馈移位寄存器输出序列的性质完全由其反馈函数决定。n 级线性反馈移位寄存器最多有2n 个不同的状态。若其初始状态为0 , 则其状态恒为0。若其初始状态非0 ,则其后继状态不会为0。因此n 级线性反馈移位寄存器的状态周期小于等于2n - 1。其输出序列的周期与状态周期相等, 也小于等于2n - 1。只要选择合适的反馈函数便可使序列的周期达到最大值2n - 1 , 周期达到最大值的序列称为m 序列。</p>
+<p>流密码的安全性取决于密钥流的安全性, 要求密钥流序列有好的随机性, 以使密码分析者对它无法预测。也就是说, 即使截获其中一段, 也无法推测后面是什么。如果密钥流是周期的, 要完全做到随机性是困难的。严格地说, 这样的序列不可能做随机, 只能要求截获比周期短的一段密钥流时不会泄露更多信息, 这样的序列称为伪随序列。为讨论m 序列的随机性, 先要讨论随机序列的一般特性。</p>
+<p>前方数学高能，先来个分割线压压惊。</p>
+<hr>
+<p>游程：设{ ai } = ( a1 a2 a3 ⋯) 为0、1 序列, 例如00110111 , 其前两个数字是00 , 称为0 的2 游程; 接着是11 , 是1 的2 游程;再下来是0 的1 游程和1 的3 游程。</p>
+<p>自相关函数：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/6.PNG" alt=""></p>
+<p>定义中的和式表示序列{ ai } 与{ ai + τ} ( 序列{ ai }向后平移τ位得到)在一个周期内对应位相同的位数与对应位不同的位数之差。当τ= 0时, R(τ) = 1; 当τ≠0 时, 称R(τ) 为异相自相关函数。这个自相关函数是为了比较序列在经过移位操作后与原序列的相似程度，因为从这个式子的意义出发，ai在移动τ位后，会处在ai+τ的位置上，此时ai+τ位置上的值是ai，而原来ai+τ的位置上是ai+τ，所以这个式子的每一项算的就是移位后，相同位置上的数字是否相同，如果相同，则这一项为1，不同为-1，然后逐项的结果相加。这个自相关函数可以衡量出移位操作前后，序列的相似程度，这样是为了防止通过移位找到序列的一些规律而造成序列的随机性遭到破坏。</p>
+<p>对于序列的随机性，Golomb(我也不知道咋读)这个人提出了他的看法，他认为，一个良好的伪随机序列应当满足如下三个随机性公设(将用到我们上面介绍的游程以及自相关函数的概念)：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/7.PNG" alt=""></p>
+<p>公设①说明{ ai }中0 与1 出现的概率基本上相同, ②说明0 与1 在序列中每一位置上出现的概率相同; ③意味着通过对序列与其平移后的序列做比较, 不能给出其他任何信息。从密码系统的角度看, 一个伪随机序列还应满足下面的条件:</p>
+<blockquote>
+<p>① { ai }的周期相当大。</p>
+<p>② { ai }的确定在计算上是容易的。</p>
+<p>③ 由密文及相应的明文的部分信息, 不能确定整个{ ai }。</p>
+</blockquote>
+<p>而我们研究的m序列就满足上面的3个随机性公设，因为，定理告诉我们，它是满足的：</p>
+<p>定理：GF(2 )上的n 长m 序列{ ai }具有如下性质:</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/8.PNG" alt=""></p>
+<p>我们来看定理的证明：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/9.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/10.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/11.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/12.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/13.PNG" alt=""></p>
+<p>可以看出，m序列很好的满足了3个随机性公设，也就是说它具有良好的伪随机性，也就是说这个序列可以用来做密钥流，所以当我们设计密钥流产生器时，我们可以使密钥的生成去尽量接近m序列。针对密钥流的构造，我们给定初始状态，以及状态转换函数应使接下来的状态尽量具有良好的伪随机性，这是流密码密钥设计的一个原则。</p>
+<h2 id="流密码的破解">流密码的破解</h2><p>有限域GF( 2)上的二元加法流密码是目前最为常用的流密码体制, 设滚动密钥生成器是线性反馈移位寄存器, 产生的密钥是m 序列，它具有良好的伪随机性，那么这时的流密码是不是就不能破解了？并不，我们来看看怎么破，又设Sh 和S h + 1是序列中两个连续的n 长向量，直接上图：</p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/13.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/14.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/15.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/16.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/17.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/18.PNG" alt=""></p>
+<p>对于流密码的理论部分，就暂时讲到这。。。下篇将流密码在现实中对应的具体算法</p>
+<p>下片预告：流密码在现实中的具体应用—A5算法和RC4算法</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x01_前情提要">0x01 前情提要</h1><p>本文不像前几篇一样，不会这么注重框架性和体系性。本文以及相关的后续blog的目的在于介绍各种你所耳熟能详的几种密码的具体姿势。鉴于朋友说前几篇blog太长，所以这里打算把密码写成一个系列，并且在排版上也会上点]]>
+    </summary>
+    
+      <category term="密码学" scheme="http://kenshichong.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
+    
+      <category term="cryptography" scheme="http://kenshichong.github.io/categories/cryptography/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[kenshichong的内心独白]]></title>

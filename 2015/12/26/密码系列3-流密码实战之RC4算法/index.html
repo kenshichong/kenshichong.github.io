@@ -1,0 +1,535 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>密码系列3-流密码实战之RC4算法 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x01 口胡RC4加密算法是大名鼎鼎的RSA三人组中的头号人物Ronald Rivest在1987年设计的密钥长度可变的流加密算法簇。之所以称其为簇，是由于其核心部分的S-box长度可为任意，但一般为256字节。该算法的速度可以达到DES加密的10倍左右，且具有很高级别的非线性。RC4起初是用于保护商业机密的。但是在1994年9月，它的算法被发布在互联网上，也就不再有什么商业机密了。RC4也被叫">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码系列3-流密码实战之RC4算法">
+<meta property="og:url" content="http://kenshichong.github.io/2015/12/26/密码系列3-流密码实战之RC4算法/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x01 口胡RC4加密算法是大名鼎鼎的RSA三人组中的头号人物Ronald Rivest在1987年设计的密钥长度可变的流加密算法簇。之所以称其为簇，是由于其核心部分的S-box长度可为任意，但一般为256字节。该算法的速度可以达到DES加密的10倍左右，且具有很高级别的非线性。RC4起初是用于保护商业机密的。但是在1994年9月，它的算法被发布在互联网上，也就不再有什么商业机密了。RC4也被叫">
+<meta property="og:updated_time" content="2015-12-28T07:30:53.837Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="密码系列3-流密码实战之RC4算法">
+<meta name="twitter:description" content="0x01 口胡RC4加密算法是大名鼎鼎的RSA三人组中的头号人物Ronald Rivest在1987年设计的密钥长度可变的流加密算法簇。之所以称其为簇，是由于其核心部分的S-box长度可为任意，但一般为256字节。该算法的速度可以达到DES加密的10倍左右，且具有很高级别的非线性。RC4起初是用于保护商业机密的。但是在1994年9月，它的算法被发布在互联网上，也就不再有什么商业机密了。RC4也被叫">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/26/密码系列3-流密码实战之RC4算法/" title="密码系列3-流密码实战之RC4算法" itemprop="url">密码系列3-流密码实战之RC4算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-26T09:01:09.000Z" itemprop="datePublished"> 发表于 2015-12-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x01 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_正片"><span class="toc-number">2.</span> <span class="toc-text">0x02 正片</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#main函数"><span class="toc-number">2.1.</span> <span class="toc-text">main函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rc4_init函数"><span class="toc-number">2.2.</span> <span class="toc-text">rc4_init函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rc4_crypt函数"><span class="toc-number">2.3.</span> <span class="toc-text">rc4_crypt函数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_rc4在现实中的具体应用"><span class="toc-number">3.</span> <span class="toc-text">0x03 rc4在现实中的具体应用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04_尾声"><span class="toc-number">4.</span> <span class="toc-text">0x04 尾声</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="0x01_口胡">0x01 口胡</h1><p>RC4加密算法是大名鼎鼎的RSA三人组中的头号人物Ronald Rivest在1987年设计的密钥长度可变的流加密算法簇。之所以称其为簇，是由于其核心部分的S-box长度可为任意，但一般为256字节。该算法的速度可以达到DES加密的10倍左右，且具有很高级别的非线性。RC4起初是用于保护商业机密的。但是在1994年9月，它的算法被发布在互联网上，也就不再有什么商业机密了。RC4也被叫做ARC4（Alleged RC4——所谓的RC4），因为RSA从来就没有正式发布过这个算法。</p>
+<p>一切的口胡都是苍白无力的，话不多说，都在代码里，直接进正片看代码。</p>
+<h1 id="0x02_正片">0x02 正片</h1><p>由于RC4算法的代码很少，所以下面会直接贴代码来说明RC4加密流程：</p>
+<h2 id="main函数">main函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> s[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;,s2[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;;    <span class="comment">//S-box</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">char</span> key[<span class="number">256</span>] = &#123;<span class="string">"just for test"</span>&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">char</span> pData[<span class="number">512</span>] = <span class="string">"Data"</span>;</span><br><span class="line"><span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line">ULONG len = <span class="built_in">strlen</span>(pData);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"pData = %s\n"</span>,pData);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"key = %s, length = %d\n\n"</span>,key,<span class="built_in">strlen</span>(key));</span><br><span class="line"> </span><br><span class="line">rc4_init(s,(<span class="keyword">unsigned</span> <span class="keyword">char</span> *)key,<span class="built_in">strlen</span>(key));   <span class="comment">//已经完成了初始化</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"完成对S[i]的初始化，如下：\n\n"</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;<span class="number">256</span>; i++)</span><br><span class="line"> </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"%-3d "</span>,s[i]);</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"\n\n"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">256</span>;i++)<span class="comment">//用s2[i]暂时保留经过初始化的s[i]，很重要的！！！</span></span><br><span class="line"><span class="comment">//这里之所以做保留是因为s在经过初始化后需要做一个备份，以保证在加解密的时候经过crypt函数生成的密钥流一样，只要使用相同的密钥流才能够保证数据在加密之后能够被正常解密，这也是流密码的一大特性</span></span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">s2[i]=s[i];</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"已经初始化，现在加密:\n\n"</span>);</span><br><span class="line"> </span><br><span class="line">rc4_crypt(s,(<span class="keyword">unsigned</span> <span class="keyword">char</span> *)pData,len);<span class="comment">//加密</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"pData = %s\n\n"</span>,pData);</span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"已经加密，现在解密:\n\n"</span>);</span><br><span class="line"> </span><br><span class="line">rc4_init(s,(<span class="keyword">unsigned</span> <span class="keyword">char</span> *)key, <span class="built_in">strlen</span>(key));   <span class="comment">//初始化密钥</span></span><br><span class="line"> </span><br><span class="line">rc4_crypt(s2,(<span class="keyword">unsigned</span> <span class="keyword">char</span> *)pData,len);<span class="comment">//解密</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"pData = %s\n\n"</span>,pData);</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>main的流程：</p>
+<ol>
+<li>声明两个S盒，两个S盒的大小都是256字节，并都被定义为0；</li>
+<li>声明并定义密钥(key)；</li>
+<li>声明并定义要加密的数据，即明文，这里的长度是随意的，长度范围为[0,255]；</li>
+<li>进入初始化函数rc4_init，我们来看下初始化函数的代码：</li>
+</ol>
+<h2 id="rc4_init函数">rc4_init函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rc4_init</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *s, <span class="keyword">unsigned</span> <span class="keyword">char</span> *key, <span class="keyword">unsigned</span> <span class="keyword">long</span> Len)</span> <span class="comment">//初始化函数</span></span><br><span class="line"><span class="comment">//初始化过程只是根据秘钥打乱了s这个0-255数组的顺序，具体怎么打乱的不需要知道</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> i =<span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">char</span> k[<span class="number">256</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> tmp = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">256</span>;i++)</span><br><span class="line"> </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">s[i]=i; <span class="comment">//s是0-255的数组</span></span><br><span class="line"> </span><br><span class="line">k[i]=key[i%Len]; <span class="comment">//k是根据秘钥生成的一个秘钥循环数组</span></span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> (i=<span class="number">0</span>; i&lt;<span class="number">256</span>; i++)</span><br><span class="line"> </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">j=(j+s[i]+k[i])%<span class="number">256</span>; <span class="comment">//根据秘钥去初始化(打乱)s数组的顺序</span></span><br><span class="line"> </span><br><span class="line">tmp = s[i];</span><br><span class="line"> </span><br><span class="line">s[i] = s[j]; <span class="comment">//交换s[i]和s[j]</span></span><br><span class="line"> </span><br><span class="line">s[j] = tmp;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>rc4_init的流程：</p>
+<ol>
+<li>非常简单的一个函数。首先要明确参数，main传进来的参数是S盒，密钥以及密钥的长度；</li>
+<li>第一个循环是对S盒进行初始赋值，将S盒赋值为0-255，然后根据密钥循环生成一个大小为256字节的密钥循环数组；</li>
+<li>第二个循环是根据密钥去打乱S盒的顺序，具体的打乱规则如代码所示，针对每一个s[i]，s[i]与k[i]混淆后产生一个要交换的索引j，然后s[i]与s[j]交换</li>
+</ol>
+<p>其实具体的交换规则我们不需要知道，没什么意思，我们只需要知道S盒经过rc4_init之后，生成了一个很乱的S盒，且这个S盒的生成与循环密钥数组有关，可以这样理解，将这个函数看做一个黑盒，全0的S盒和密钥循环数组k(由给定的密钥生成)被放进这个黑盒中，按下黑盒的搅拌开关，搅拌成功后黑盒吐出来一个面目全非的S盒，这个S盒会用于接下来的加密与解密操作。</p>
+<p>书接上文，接着来看main的流程：</p>
+<ol>
+<li>S盒经过rc4_init之后，得到一个全新的S盒，然后这个S盒会被copy一份存储在S2中，S2是新S盒的一个副本，S用于加密操作，S2用于解密操作，以保证在加解密的时候经过crypt函数生成的密钥流一样。</li>
+<li>进入rc4_crypt进行加密；</li>
+</ol>
+<h2 id="rc4_crypt函数">rc4_crypt函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rc4_crypt</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> *s, <span class="keyword">unsigned</span> <span class="keyword">char</span> *Data, <span class="keyword">unsigned</span> <span class="keyword">long</span> Len)</span> <span class="comment">//加解密</span></span><br><span class="line"><span class="comment">//打乱之后，在对s进行一系列的变换后当做密钥流</span></span><br><span class="line"></span>&#123;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>, t = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">long</span> k = <span class="number">0</span>;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> tmp;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span>(k=<span class="number">0</span>;k&lt;Len;k++)</span><br><span class="line"> </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">i=(i+<span class="number">1</span>)%<span class="number">256</span>;</span><br><span class="line"> </span><br><span class="line">j=(j+s[i])%<span class="number">256</span>;</span><br><span class="line"> </span><br><span class="line">tmp = s[i];</span><br><span class="line"> </span><br><span class="line">s[i] = s[j]; <span class="comment">//交换s[x]和s[y]</span></span><br><span class="line"> </span><br><span class="line">s[j] = tmp;</span><br><span class="line"> </span><br><span class="line">t=(s[i]+s[j])%<span class="number">256</span>;</span><br><span class="line"> </span><br><span class="line">Data[k] ^= s[t];</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>rc4_crypt的流程：</p>
+<p>函数就一个循环，该循环完成加密操作，这个循环对S盒又进行了一系列变换操作，然后才作为加密明文的密钥流，这里需要注意的是，对于每一次循环，明文只在最后一步跟S盒进行了异或操作，体现出流密码的特性.</p>
+<p>到这里rc4算法的加密过程就结束了，我们可以这样理解，不管是rc4_init还是rc4_crypt，这两个函数所做的很多工作都是根据给定的密钥经过一系列杂七杂八的操作去生成较为安全的密钥流，然后明文只需要跟密钥流异或一下就生成了明文</p>
+<p>书接上文，接着看main的流程：</p>
+<ol>
+<li>加密之后，解密操作就顺其自然了。还记得前面保存的S盒的副本S2吗，解密的过程就是通过S2产生相同的密钥流，然后与密文进行异或，由于异或的可逆性，所以相同的密钥流在与密文异或后会得到相应的明文。</li>
+</ol>
+<p>这就是rc4算法的整体流程</p>
+<hr>
+<h1 id="0x03_rc4在现实中的具体应用">0x03 rc4在现实中的具体应用</h1><p>是使用最广泛的软件流密码之一,并且广泛应用在SSL和WEP层协议中。</p>
+<p>让我们来看一下RC4算法在手机和AP的通信中应用：</p>
+<ol>
+<li>客户发出验证请求</li>
+<li>AP接到请求后AP产生一个随机数，该随机数会以明文方式发送给客户端</li>
+<li>客户端使用WEP密钥(该密钥是用户连入AP时需要输入的，是连入AP的凭证)用RC4算法(此时RC4算法的密钥就是用的前面的WEP密钥，该密钥为用户和AP共享的)加密数据包(携带着经过加密的随机数)并且将它发回</li>
+<li>AP 解密数据包(用共享密钥+rc4算法解密)并且同原始随机数比较</li>
+<li>AP 向客户端发出成功信息</li>
+</ol>
+<p>在SSL中的应用已经被废弃掉了，在今年9月份，三大浏览器厂商明确明年将放弃RC4加密支持，所以SSL中的应用就不说了</p>
+<h1 id="0x04_尾声">0x04 尾声</h1><p>对于rc4的破解，看到过一篇还不错的帖子，没来得及细看，先放着，留着以后看——<a href="http://bbs.pediy.com/showthread.php?t=174969" target="_blank" rel="external">RC4算法暴力破解的尝试</a></p>
+<hr>
+<p>关于流密码，就打算写到这了，下面开始转战分组密码。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/cryptography/">cryptography</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/密码学/">密码学</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2015/12/26/密码系列3-流密码实战之RC4算法/" data-title="密码系列3-流密码实战之RC4算法 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/12/28/密码系列4-分组密码之大名鼎鼎的DES/" title="密码系列4-分组密码之大名鼎鼎的DES">
+  <strong>上一篇：</strong><br/>
+  <span>
+  密码系列4-分组密码之大名鼎鼎的DES</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/12/26/密码系列2-流密码实战之A5算法/"  title="密码系列2-流密码实战之A5算法">
+ <strong>下一篇：</strong><br/> 
+ <span>密码系列2-流密码实战之A5算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x01 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_正片"><span class="toc-number">2.</span> <span class="toc-text">0x02 正片</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#main函数"><span class="toc-number">2.1.</span> <span class="toc-text">main函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rc4_init函数"><span class="toc-number">2.2.</span> <span class="toc-text">rc4_init函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#rc4_crypt函数"><span class="toc-number">2.3.</span> <span class="toc-text">rc4_crypt函数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_rc4在现实中的具体应用"><span class="toc-number">3.</span> <span class="toc-text">0x03 rc4在现实中的具体应用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04_尾声"><span class="toc-number">4.</span> <span class="toc-text">0x04 尾声</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
