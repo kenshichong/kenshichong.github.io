@@ -50,6 +50,13 @@ IDEA分组长度64比特。
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/20.PNG">
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/21.PNG">
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/22.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/28.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/14.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/29.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/30.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/31.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/32.PNG">
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/15.PNG">
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/16.PNG">
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/17.PNG">
@@ -60,7 +67,7 @@ IDEA分组长度64比特。
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/25.PNG">
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/26.PNG">
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列6-分组密码的尾声之IDEA和AES/27.PNG">
-<meta property="og:updated_time" content="2016-01-04T08:17:08.323Z">
+<meta property="og:updated_time" content="2016-01-08T14:21:46.597Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="密码系列6-分组密码的尾声之IDEA和AES">
 <meta name="twitter:description" content="0x00 口胡对于IDEA的介绍只是简单带过，重点介绍AES
@@ -142,7 +149,7 @@ IDEA分组长度64比特。
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_IDEA"><span class="toc-number">2.</span> <span class="toc-text">0x01 IDEA</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_AES"><span class="toc-number">3.</span> <span class="toc-text">0x02 AES</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#AES流程"><span class="toc-number">3.1.</span> <span class="toc-text">AES流程</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_IDEA"><span class="toc-number">2.</span> <span class="toc-text">0x01 IDEA</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_AES"><span class="toc-number">3.</span> <span class="toc-text">0x02 AES</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#AES流程"><span class="toc-number">3.1.</span> <span class="toc-text">AES流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#修改于_0x10-0x01-0x08"><span class="toc-number">4.</span> <span class="toc-text">修改于 0x10.0x01.0x08</span></a></li></ol>
 		
 		</div>
 		
@@ -201,6 +208,28 @@ IDEA分组长度64比特。
 <p>这里对于系数多项式，对于系数多项式的模乘运算，要说这本书真是写的烂，这些具体的计算细节啊原则啊什么的从来都不写出来，搞得我云里雾里的。。。从网上无意间发现了下面东西-<a href="http://www.mamicode.com/info-detail-514466.html" target="_blank" rel="external">密码算法详解——AES</a>其中有讲解系数多项式模乘运算的细节，直接截图：</p>
 <p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/20.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/21.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/22.PNG" alt=""></p>
 <p>这样，对于系数多项式的模乘我们就知道具体是如何计算了</p>
+<hr>
+<h1 id="修改于_0x10-0x01-0x08">修改于 0x10.0x01.0x08</h1><p>今天朋友看我blog，估计也就我这俩朋友看了，呵呵。。。<br>经朋友指点，我这里写的是不完整的，我忽略了书的一个重要内容，导致我的理解错了，不过书的排版真是有问题。</p>
+<p>这里和朋友讨论后，将多项式的乘法在这里从头到尾的捋一遍。</p>
+<p>怎么说呢，首先是对于单个字节，比如十进制数87，表示为二进制形式为1010111，它对应的多项式为x^6 + x^4 + x^2 + x + 1，相应的，再来个十进制数131，它对应的多项式为x^7 + x + 1，好了，对于单个字节对应的多项式的模乘应该怎么做呢，这里模是事先规定的，如x^8 + x^4 + x^3 + x + 1，下面直接给出计算方法，就是表示为二进制后再进行乘，然后用二进制结果去除模的二进制表示，得到的余数就是最后结果，上图：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/10.PNG" alt=""></p>
+<p>上面是单个字节对应的多项式的模乘运算，那么系数多项式呢？</p>
+<p>由于系数多项式是由4个字节构成的，形式为a3x^3+a2x^2+a1^x+a0，这里每个项的系数(a3,a2,a1,a0)各自对应一个字节，一个字节有8位，也就是说系数的取值范围是[0,255]，介绍完了系数多项式的格式，我们来看系数多项式是如何进行模乘运算的。</p>
+<p>给定两个系数多项式：a(x)= a3x^3+a2x^2+a1x+a0，b(x)= b3x^3+b2x^2+b1x+b0，我们定义系数多项式的模乘运算为c(x)= a(x)b(x)=c3x^3+c2x^2+c1^x+c0 (mod x^4+1)，这里模x^4+1是为了使得次数小于4 的多项式的乘积仍然是一个次数小于4 的多项式,这时<img src="/img/密码系列6-分组密码的尾声之IDEA和AES/28.PNG" alt="">，所以我们将上面的运算表示为</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/14.PNG" alt=""></p>
+<p>这就是模乘运算，根据这个定义我们可以得到c0=a0<em>b0+a3</em>b1+a2<em>b2+a1</em>b3(注意这里的+都是模2加)，但这里必须要强调的一点就是，一定要注意的一点就是对于系数相乘时采取时所采取的运算规则，即a0*b0怎么算？</p>
+<p>由于a0和b0的取值范围都是[0,255]，但他们两的乘法运算并不采用字节多项式采用的模乘运算法则，他们采用另一种运算法则，我们称之为x乘法，给出x乘法的运算法则：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/29.PNG" alt=""></p>
+<p>比如当a0=02，b0=c9时，x乘法对应的运算为：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/30.PNG" alt=""></p>
+<p>再来看个稍微复杂点的情况，a0=03,b0=6e时，x乘法对应的运算为：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/31.PNG" alt=""></p>
+<p>也就是说把03拆成了01 + 02(注意这里的加为异或运算，即模2加运算),然后分别用01乘6e，02乘6e(这里的乘都是x乘法),对于01和02的x乘法我们已经会了，最后结果就是将这两个的结果加起来(注意这里的加为异或运算，即模2加运算)，就是这样。</p>
+<p>再来看个一般的情况,比如a0=57(16进制)，b0=13(16进制)，这里我们可以这样算，首先我们选取两数中较小的数(0x13)，将他像上面的0x3一样，拆成几个2的指数倍的数异或的形式，因为0x13=0x1 xor 0x2 xor 0x10(0x10=0x2^4)，然后将拆开的数分别于另一个数(0x57)进行x乘法运算，在此例中，0x1和0x2与0x57的x乘法我们已经会了，那么0x10与0x57的x乘法怎么算呢？</p>
+<p>这样算：由于0x10是0x2^4，即0x10<em>0x57(这里的乘法是x乘法)=(0x2</em>(0x2<em>(0x2</em>(0x2<em>0x57))))，也就是说相当于向左移4位，根据x乘法的运算规则，在每一次和0x2相乘时都采用x乘法运算法则，描述为0x57</em>0x2进行x乘法，结果再与2进行x乘法，结果再与2进行x乘法，结果再与2进行x乘法，然后就得到了最终结果了，恩，就是这样。对于0x57和0x13的x乘法，给出下图：</p>
+<p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/32.PNG" alt=""></p>
+<p>这样，对于字节多项式的模乘运算以及系数多项式的模乘多项式我们就都搞清楚了，还是跟朋友讨论能得到姿势啊。。。</p>
+<hr>
 <p>对于上面提到的c(x)：</p>
 <p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/15.PNG" alt=""><br><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/16.PNG" alt=""></p>
 <p>对状态State 的所有列所做的列混合运算记为MixColumn( State )，列混合整体效果图：</p>
@@ -293,7 +322,7 @@ IDEA分组长度64比特。
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_IDEA"><span class="toc-number">2.</span> <span class="toc-text">0x01 IDEA</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_AES"><span class="toc-number">3.</span> <span class="toc-text">0x02 AES</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#AES流程"><span class="toc-number">3.1.</span> <span class="toc-text">AES流程</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_IDEA"><span class="toc-number">2.</span> <span class="toc-text">0x01 IDEA</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_AES"><span class="toc-number">3.</span> <span class="toc-text">0x02 AES</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#AES流程"><span class="toc-number">3.1.</span> <span class="toc-text">AES流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#修改于_0x10-0x01-0x08"><span class="toc-number">4.</span> <span class="toc-text">修改于 0x10.0x01.0x08</span></a></li></ol>
  
   </div>
 
@@ -310,7 +339,7 @@ IDEA分组长度64比特。
 		<ul>
 		
 		  
-			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>7</sup></a></li>
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
 		  
 		
 		  
@@ -331,7 +360,7 @@ IDEA分组长度64比特。
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/密码学/" title="密码学">密码学<sup>7</sup></a></li>
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
 			
 		
 			

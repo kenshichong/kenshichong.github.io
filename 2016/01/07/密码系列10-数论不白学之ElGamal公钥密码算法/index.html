@@ -4,23 +4,36 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>kenshichong的内心独白 | Dung Beetle</title>
+    <title>密码系列10-数论不白学之ElGamal公钥密码算法 | Dung Beetle</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="kenshichong">
     
 
     
-    <meta name="description" content="0xf.0xc.0x8今天得知自己的某门考试挂掉了，大学第一挂吧，作为一直优秀的我(至少在长辈眼中是)，这种结果对于我这种“好学生”来说应该是不能接受的吧。但是，除了有一丝小小的伤感外，我没有半点后悔。我知道我不是上天选中的人，但是我想以我的方式去活下去，我只想为我在意的东西去奋斗，为我真正感兴趣的东西去挥霍我的青春，如果不这样做，我才会真的后悔。我一直以来都很矛盾，从小到大，自己桀骜不驯，大家也">
+    <meta name="description" content="0x00 口胡前面我们对公钥密码体制进行了一个总体的介绍，然后对公钥密码的一个典型代表-RSA进行了详细介绍，知道了为什么好多从事密码事业的人并不是计算机相关专业科班出身，而是数学专业科班出身。反正你数学不好，你想在密码上有所造诣，不是说没可能，我只能说难，好吧(语气词)。
+RSA的安全性来自于求一对大素数的乘积很容易，但要对这个乘积进行因式分解则非常困难，也就是所谓的大整数分解问题。
+而我们今天">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kenshichong的内心独白">
-<meta property="og:url" content="http://kenshichong.github.io/2015/12/16/hello-world/index.html">
+<meta property="og:title" content="密码系列10-数论不白学之ElGamal公钥密码算法">
+<meta property="og:url" content="http://kenshichong.github.io/2016/01/07/密码系列10-数论不白学之ElGamal公钥密码算法/index.html">
 <meta property="og:site_name" content="Dung Beetle">
-<meta property="og:description" content="0xf.0xc.0x8今天得知自己的某门考试挂掉了，大学第一挂吧，作为一直优秀的我(至少在长辈眼中是)，这种结果对于我这种“好学生”来说应该是不能接受的吧。但是，除了有一丝小小的伤感外，我没有半点后悔。我知道我不是上天选中的人，但是我想以我的方式去活下去，我只想为我在意的东西去奋斗，为我真正感兴趣的东西去挥霍我的青春，如果不这样做，我才会真的后悔。我一直以来都很矛盾，从小到大，自己桀骜不驯，大家也">
-<meta property="og:updated_time" content="2015-12-16T15:31:39.974Z">
+<meta property="og:description" content="0x00 口胡前面我们对公钥密码体制进行了一个总体的介绍，然后对公钥密码的一个典型代表-RSA进行了详细介绍，知道了为什么好多从事密码事业的人并不是计算机相关专业科班出身，而是数学专业科班出身。反正你数学不好，你想在密码上有所造诣，不是说没可能，我只能说难，好吧(语气词)。
+RSA的安全性来自于求一对大素数的乘积很容易，但要对这个乘积进行因式分解则非常困难，也就是所谓的大整数分解问题。
+而我们今天">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/6.PNG">
+<meta property="og:updated_time" content="2016-01-08T02:38:04.811Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kenshichong的内心独白">
-<meta name="twitter:description" content="0xf.0xc.0x8今天得知自己的某门考试挂掉了，大学第一挂吧，作为一直优秀的我(至少在长辈眼中是)，这种结果对于我这种“好学生”来说应该是不能接受的吧。但是，除了有一丝小小的伤感外，我没有半点后悔。我知道我不是上天选中的人，但是我想以我的方式去活下去，我只想为我在意的东西去奋斗，为我真正感兴趣的东西去挥霍我的青春，如果不这样做，我才会真的后悔。我一直以来都很矛盾，从小到大，自己桀骜不驯，大家也">
+<meta name="twitter:title" content="密码系列10-数论不白学之ElGamal公钥密码算法">
+<meta name="twitter:description" content="0x00 口胡前面我们对公钥密码体制进行了一个总体的介绍，然后对公钥密码的一个典型代表-RSA进行了详细介绍，知道了为什么好多从事密码事业的人并不是计算机相关专业科班出身，而是数学专业科班出身。反正你数学不好，你想在密码上有所造诣，不是说没可能，我只能说难，好吧(语气词)。
+RSA的安全性来自于求一对大素数的乘积很容易，但要对这个乘积进行因式分解则非常困难，也就是所谓的大整数分解问题。
+而我们今天">
 
     
     <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
@@ -76,14 +89,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/12/16/hello-world/" title="kenshichong的内心独白" itemprop="url">kenshichong的内心独白</a>
+      <a href="/2016/01/07/密码系列10-数论不白学之ElGamal公钥密码算法/" title="密码系列10-数论不白学之ElGamal公钥密码算法" itemprop="url">密码系列10-数论不白学之ElGamal公钥密码算法</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
 		
   <p class="article-time">
-    <time datetime="2015-12-16T15:31:39.974Z" itemprop="datePublished"> 发表于 2015-12-16</time>
+    <time datetime="2016-01-07T14:47:11.000Z" itemprop="datePublished"> 发表于 2016-01-07</time>
     
   </p>
 </header>
@@ -92,25 +105,41 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0xf-0xc-0x8"><span class="toc-number">1.</span> <span class="toc-text">0xf.0xc.0x8</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0xf-0xc-0xf"><span class="toc-number">2.</span> <span class="toc-text">0xf.0xc.0xf</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0xf-0xc-0x10"><span class="toc-number">3.</span> <span class="toc-text">0xf.0xc.0x10</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_ElGamal算法流程"><span class="toc-number">2.</span> <span class="toc-text">0x01 ElGamal算法流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_密钥产生过程"><span class="toc-number">2.1.</span> <span class="toc-text">1. 密钥产生过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_加密过程"><span class="toc-number">2.2.</span> <span class="toc-text">2. 加密过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_解密过程"><span class="toc-number">2.3.</span> <span class="toc-text">3. 解密过程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_ElGamal与RSA的对比"><span class="toc-number">3.</span> <span class="toc-text">0x02 ElGamal与RSA的对比</span></a></li></ol>
 		
 		</div>
 		
-		<h1 id="0xf-0xc-0x8">0xf.0xc.0x8</h1><p>今天得知自己的某门考试挂掉了，大学第一挂吧，作为一直优秀的我(至少在长辈眼中是)，这种结果对于我这种“好学生”来说应该是不能接受的吧。但是，除了有一丝小小的伤感外，我没有半点后悔。我知道我不是上天选中的人，但是我想以我的方式去活下去，我只想为我在意的东西去奋斗，为我真正感兴趣的东西去挥霍我的青春，如果不这样做，我才会真的后悔。我一直以来都很矛盾，从小到大，自己桀骜不驯，大家也知道，在当今教育体制下，成绩不能说100%吧，但最起码社会看一个学生90%都是以成绩来衡量，这样的例子我见的太多了，自己也因为从小到大成绩好而被优待着，是真正意义上的优待。有了自己的思想后，我开始觉着自己很贱，仅仅因为成绩好就被别人用不一样的眼光来看待，我一直很欣赏那些成绩不好的学生，因为他们往往有着不一样的棱角，相反，很多成绩好的都被生活磨平了棱角，生活按部就班的走。我的很多死党从小到大都是班里垫底的，成绩好的真心朋友几乎没有，我喜欢他们身上的那种敢于对生活说fuck的精神，喜欢他们无所谓的态度，喜欢他们为了自己真正喜爱的东西去追逐的精神，尽管他们被生活折磨，但我很羡慕他们的生活，也不能说是羡慕吧，总之就是很佩服的感觉。高中时，就开始厌学，总觉着这种生活如同行尸走肉，每天干着违背内心的事情，但是没办法，当时就想着为了父母，为了迎合别人好学生的眼光，自己得硬着头皮学下去，好在自己成绩不算差，考上了这个985，希望能够找到让自己能够一生为之付出的东西吧。</p>
-<p>我现在找到了，现在的我着迷于技术，每天5个小时的睡眠，但我依然能够充满活力去做的事，那就是我所深爱的技术了，我深爱着它，就像我所说的，要有技术至死的癫狂和信仰，我崇尚这种境界，我真的是好不容易找到了自己想要去为之付出的东西，我不愿放弃，我也不会放弃，活了20年，都在为别人而活，现在真心想为自己活一把，去追求，就算被生活打压，就算去要饭，我只想说那时的我虽然会流泪，但我不会后悔，因为这是我想要的生活，我在干着我喜欢的事情。。。</p>
-<p>我会证明技术的力量，用我这一生。。。</p>
-<p>kenshichong不曾后悔，不会回头</p>
-<p>kenshichong始终相信技术宅定会改变世界</p>
-<p>莫名的哽咽了。。。</p>
-<h1 id="0xf-0xc-0xf">0xf.0xc.0xf</h1><p>不想让自己的心太早死去啊。。。</p>
-<p>志趣相投者，知己也，少也少也</p>
-<p>我是嗜血的复仇者，这种并不被看好的感觉好久没体验过了，哈哈哈</p>
-<h1 id="0xf-0xc-0x10">0xf.0xc.0x10</h1><p>趁年轻能输的时候输一把又何妨，况且万一赢了呢，那就赚大了，而且怎么感觉赢的可能性还很大呢，嗯哼嗯哼蹦擦擦。</p>
+		<h1 id="0x00_口胡">0x00 口胡</h1><p>前面我们对公钥密码体制进行了一个总体的介绍，然后对公钥密码的一个典型代表-RSA进行了详细介绍，知道了为什么好多从事密码事业的人并不是计算机相关专业科班出身，而是数学专业科班出身。反正你数学不好，你想在密码上有所造诣，不是说没可能，我只能说难，好吧(语气词)。</p>
+<p>RSA的安全性来自于求一对大素数的乘积很容易，但要对这个乘积进行因式分解则非常困难，也就是所谓的大整数分解问题。</p>
+<p>而我们今天的主角ElGamal公钥密码算法，它的安全性来源于另一个数学难题-离散对数难题，即已知g为Zp*(乘法群)的生成元(对于乘法群的生成元的概念，给两个链接-<a href="http://www.zhihu.com/question/23353412" target="_blank" rel="external">1</a>、<a href="http://zhidao.baidu.com/link?url=bGc3UiaExw2yYeMHPGjQxOAkk-O6G9BqevgOiStiw1WSWql5l9vVis1iZ_Hd_akv3K7f78L8VcAd9ZDxVc9BYfbsVAPcMhafIlabO_faosK" target="_blank" rel="external">2</a>)，y∈ Zp ，求x使得y=g^x mod p，这个x在现阶段是不可求的，这就是ElGamal公钥密码算法安全性的来源，如果求离散对数问题是容易的，则获得y能够解出x，则这类算法完全破译</p>
+<h1 id="0x01_ElGamal算法流程">0x01 ElGamal算法流程</h1><h2 id="1-_密钥产生过程">1. 密钥产生过程</h2><p>首先选择一大素数p, 原根g和小于p的随机数x，计算y≡g^x mod p，以(y, g, p)作为公开密钥，x作为秘密密钥.<br>这里说明一下，g是模p的原根，原根的概念，数论姿势那有讲，再补充一点，原根是乘法群的一个生成元，所以说ElGamal公钥密码算法中生成元一般取原根</p>
+<h2 id="2-_加密过程">2. 加密过程</h2><p>设欲加密明文消息为M(如果M长度超过p则进行分组) . 随机选与p-1互素的整数k，1&lt; k&lt;p-1<br>计算密文对: C = {C1,C2}, 发送给接收者.C1≡g^k mod p,   C2≡(y^k)*M mod p.</p>
+<h2 id="3-_解密过程">3. 解密过程</h2><p>直接po图：<br><img src="/img/密码系列10-数论不白学之ElGamal公钥密码算法/0.PNG" alt=""></p>
+<p>这里对图中说的k 需要永久保密，且不能重复使用进行说明：</p>
+<ol>
+<li>攻击者若已知k，可以计算y^k,然后用C2/y^k就得到明文；</li>
+<li>若是k重复使用，则C2/C2’=M/M’,知道其中的一个明文，另一个可求。</li>
+</ol>
+<p>下面我们举一个比较贴近现实(就是数字很大)的例子:<br><img src="/img/密码系列10-数论不白学之ElGamal公钥密码算法/1.PNG" alt=""><br><img src="/img/密码系列10-数论不白学之ElGamal公钥密码算法/2.PNG" alt=""><br><img src="/img/密码系列10-数论不白学之ElGamal公钥密码算法/3.PNG" alt=""></p>
+<p>这可以算是ElGamal公钥密码算法的具体应用了，下面我们再以一个数字较小的例子来直观的感受下，里面的运算涉及到幂运算，求逆元，这些都是前面介绍过的。</p>
+<p><img src="/img/密码系列10-数论不白学之ElGamal公钥密码算法/4.PNG" alt=""><br><img src="/img/密码系列10-数论不白学之ElGamal公钥密码算法/5.PNG" alt=""></p>
+<h1 id="0x02_ElGamal与RSA的对比">0x02 ElGamal与RSA的对比</h1><p>到这，ElGamal公钥密码算法就算介绍完了，最后po张ElGamal与RSA的对比图：</p>
+<p><img src="/img/密码系列10-数论不白学之ElGamal公钥密码算法/6.PNG" alt=""></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/cryptography/">cryptography</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/密码学/">密码学</a>
+  </div>
 
 </div>
 
@@ -118,7 +147,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://kenshichong.github.io/2015/12/16/hello-world/" data-title="kenshichong的内心独白 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  <div data-url="http://kenshichong.github.io/2016/01/07/密码系列10-数论不白学之ElGamal公钥密码算法/" data-title="密码系列10-数论不白学之ElGamal公钥密码算法 | Dung Beetle" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -132,18 +161,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/12/22/密码初探-玩bin的人怎么能不懂密码呢/" title="密码初探-玩bin的人怎么能不懂密码呢">
+ <a href="/2016/01/08/密码系列11-数论不白学之椭圆曲线公钥密码算法/" title="密码系列11-数论不白学之椭圆曲线公钥密码算法">
   <strong>上一篇：</strong><br/>
   <span>
-  密码初探-玩bin的人怎么能不懂密码呢</span>
+  密码系列11-数论不白学之椭圆曲线公钥密码算法</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2015/12/14/if-I-were-a-OS-续-操作系统相关策略的实现/"  title="if-I-were-a-OS(续)-操作系统相关策略的实现">
+<a href="/2016/01/07/密码系列9-数论不白学之RSA/"  title="密码系列9-数论不白学之RSA">
  <strong>下一篇：</strong><br/> 
- <span>if-I-were-a-OS(续)-操作系统相关策略的实现
+ <span>密码系列9-数论不白学之RSA
 </span>
 </a>
 </div>
@@ -158,7 +187,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0xf-0xc-0x8"><span class="toc-number">1.</span> <span class="toc-text">0xf.0xc.0x8</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0xf-0xc-0xf"><span class="toc-number">2.</span> <span class="toc-text">0xf.0xc.0xf</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0xf-0xc-0x10"><span class="toc-number">3.</span> <span class="toc-text">0xf.0xc.0x10</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_ElGamal算法流程"><span class="toc-number">2.</span> <span class="toc-text">0x01 ElGamal算法流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_密钥产生过程"><span class="toc-number">2.1.</span> <span class="toc-text">1. 密钥产生过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_加密过程"><span class="toc-number">2.2.</span> <span class="toc-text">2. 加密过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_解密过程"><span class="toc-number">2.3.</span> <span class="toc-text">3. 解密过程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_ElGamal与RSA的对比"><span class="toc-number">3.</span> <span class="toc-text">0x02 ElGamal与RSA的对比</span></a></li></ol>
  
   </div>
 
@@ -175,7 +204,7 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>7</sup></a></li>
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
 		  
 		
 		  
@@ -196,7 +225,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/密码学/" title="密码学">密码学<sup>7</sup></a></li>
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
 			
 		
 			

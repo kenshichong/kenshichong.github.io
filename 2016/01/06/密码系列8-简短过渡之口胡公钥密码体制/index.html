@@ -1,0 +1,532 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>密码系列8-简短过渡之口胡公钥密码体制 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 公钥密码体制概念在公钥密码体制以前的整个密码学史中, 所有的密码算法, 包括原始手工计算的、由机械设备实现的以及由计算机实现的, 都是基于代换和置换这两个基本工具。而公钥密码体制则为密码学的发展提供了新的理论和技术基础, 一方面公钥密码算法的基本工具不再是代换和置换, 而是数学函数;另一方面公钥密码算法是以非对称的形式使用两个密钥, 两个密钥的使用对保密性、密钥分配、认证等都有着深刻的意">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码系列8-简短过渡之口胡公钥密码体制">
+<meta property="og:url" content="http://kenshichong.github.io/2016/01/06/密码系列8-简短过渡之口胡公钥密码体制/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 公钥密码体制概念在公钥密码体制以前的整个密码学史中, 所有的密码算法, 包括原始手工计算的、由机械设备实现的以及由计算机实现的, 都是基于代换和置换这两个基本工具。而公钥密码体制则为密码学的发展提供了新的理论和技术基础, 一方面公钥密码算法的基本工具不再是代换和置换, 而是数学函数;另一方面公钥密码算法是以非对称的形式使用两个密钥, 两个密钥的使用对保密性、密钥分配、认证等都有着深刻的意">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列8-简短过渡之口胡公钥密码体制/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列8-简短过渡之口胡公钥密码体制/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列8-简短过渡之口胡公钥密码体制/2.PNG">
+<meta property="og:updated_time" content="2016-01-07T08:11:18.046Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="密码系列8-简短过渡之口胡公钥密码体制">
+<meta name="twitter:description" content="0x00 公钥密码体制概念在公钥密码体制以前的整个密码学史中, 所有的密码算法, 包括原始手工计算的、由机械设备实现的以及由计算机实现的, 都是基于代换和置换这两个基本工具。而公钥密码体制则为密码学的发展提供了新的理论和技术基础, 一方面公钥密码算法的基本工具不再是代换和置换, 而是数学函数;另一方面公钥密码算法是以非对称的形式使用两个密钥, 两个密钥的使用对保密性、密钥分配、认证等都有着深刻的意">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/06/密码系列8-简短过渡之口胡公钥密码体制/" title="密码系列8-简短过渡之口胡公钥密码体制" itemprop="url">密码系列8-简短过渡之口胡公钥密码体制</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-01-06T13:35:08.000Z" itemprop="datePublished"> 发表于 2016-01-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_公钥密码体制概念"><span class="toc-number">1.</span> <span class="toc-text">0x00 公钥密码体制概念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_公钥密码体制的原理"><span class="toc-number">2.</span> <span class="toc-text">0x01 公钥密码体制的原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_公钥密码算法应满足的要求"><span class="toc-number">3.</span> <span class="toc-text">0x02 公钥密码算法应满足的要求</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_对公钥密码体制的攻击"><span class="toc-number">4.</span> <span class="toc-text">0x03 对公钥密码体制的攻击</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_公钥密码体制概念">0x00 公钥密码体制概念</h1><p>在公钥密码体制以前的整个密码学史中, 所有的密码算法, 包括原始手工计算的、由机械设备实现的以及由计算机实现的, 都是基于代换和置换这两个基本工具。而公钥密码体制则为密码学的发展提供了新的理论和技术基础, 一方面公钥密码算法的基本工具不再是代换和置换, 而是数学函数;另一方面公钥密码算法是以非对称的形式使用两个密钥, 两个密钥的使用对保密性、密钥分配、认证等都有着深刻的意义。可以说公钥密码体制的出现在密码学史上是迄今为止最大的而且是惟一真正的革命。公钥密码体制的概念是在解决单钥密码体制中最难解决的两个问题时提出的, 这两个问题是密钥分配和数字签字。单钥密码体制在进行密钥分配时, 要求通信双方或者已经有一个共享的密钥, 或者可借助于一个密钥分配中心。对第1 个要求, 常常可用人工方式传送双方最初共享的密钥, 这种方法成本很高, 而且还完全依赖于信使的可靠性。第2 个要求则完全依赖于密钥分配中心的可靠性。第2 个问题数字签字考虑的是如何为数字化的消息或文件提供一种类似于为书面文件手书签字的方法。1976 年W .Diffie 和M .Hellman 对解决上述两个问题有了突破, 从而提出了公钥密码体制。</p>
+<h1 id="0x01_公钥密码体制的原理">0x01 公钥密码体制的原理</h1><p>公钥密码算法的最大特点是采用两个相关密钥将加密和解密能力分开, 其中一个密钥是公开的, 称为公开密钥, 简称公开钥, 用于加密; 另一个密钥是为用户专用, 因而是保密的, 称为秘密密钥, 简称秘密钥, 用于解密。因此公钥密码体制也称为双钥密码体制。算法有以下重要特性: 已知密码算法和加密密钥, 求解密密钥在计算上是不可行的。</p>
+<p>下图是公钥体制加密的框图</p>
+<p><img src="/img/密码系列8-简短过渡之口胡公钥密码体制/0.PNG" alt=""></p>
+<p>加密过程有以下几步:</p>
+<ol>
+<li>要求接收消息的端系统, 产生一对用来加密和解密的密钥, 如图中的接收者B, 产生一对密钥PKB , SKB , 其中PKB 是公开钥, SKB 是秘密钥。</li>
+<li>端系统B 将加密密钥( 如图中的PKB ) 予以公开。另一密钥则被保密( 图中的SKB )。</li>
+<li>A要想向B发送消息m，则使用B的公开钥加密m，表示为c=EPKB[m],其中c是密文，E是加密算法。<br>4.B收到密文c后，用自己的秘密钥SKB解密，表示为m=DSKB[c]，其中D是解密算法。<br>因为只有B 知道SKB , 所以其他人都无法对c 解密。</li>
+</ol>
+<p>公钥加密算法不仅能用于加、解密, 还能用于对发方A 发送的消息m 提供认证, 如下图：</p>
+<p><img src="/img/密码系列8-简短过渡之口胡公钥密码体制/1.PNG" alt=""></p>
+<ol>
+<li>用户A用自己的秘密钥SKA对m加密，表示为c=ESKA[m]，将c发往B。</li>
+<li>B用A的公开钥PKA对c解密m=DPKA[c]因为从m得到c是经过A的秘密钥SKA加密，只有A才能做到。因此c可当做A对m的数字签字。另一方面，任何人只要得不到A的秘密钥SKA就不能篡改m，所以获得了对消息来源和消息完整性的认证。</li>
+</ol>
+<p>在实际应用中, 特别是用户数目很多时, 以上认证方法需要很大的存储空间, 因为每个文件都必须以明文形式存储以方便实际使用, 同时还必须存储每个文件被加密后的密文形式即数字签字, 以便在有争议时用来认证文件的来源和内容。改进的方法是减小文件的数字签字的大小, 即先将文件经过一个函数压缩成长度较小的比特串, 得到的比特串称为认证符。认证符具有这样一个性质: 如果保持认证符的值不变而修改文件这在计算上是不可行的。用发送者的秘密钥对认证符加密, 加密后的结果为原文件的数字签字。</p>
+<p>就是现在说的数字签名技术，数字签名技术是将摘要信息用发送者的私钥加密，与原文一起传送给接收者。接收者只有用发送者的公钥才能解密被加密的摘要信息，然后用HASH函数对收到的原文产生一个摘要信息，与解密的摘要信息对比。如果相同，则说明收到的信息是完整的，在传输过程中没有被修改，否则说明信息被修改过，因此数字签名能够验证信息的完整性。数字签名是个加密的过程，数字签名验证是个解密的过程。这样说应该很清楚了</p>
+<p>口胡一下，就是比如A给B一份文件，这个文件B拿到的就是这个文件的明文，而非文件的加密，现在的问题是B并不知道这个文件是不是A给他的，也可能有人假传圣旨，这时B不必慌张，因为随着该文件一块到的还有该文件的数字签名，数字签名的产生是该文件经过一个hash函数产生一个能够代表该文件的文件摘要，然后A用它的私钥对该摘要进行加密后生成的，相当于A用自己的私钥在这份文件上盖了个戳，说这是我A发的，那么B如何验证呢？B会用A公布的公钥对这个数字签名进行解密，然后B会用同样的hash对该文件生成文件摘要，然后比对该文件摘要与解密的文件摘要是否一致，一致则说明该文件确实来源于A，这个过程其实也保证了文件数据的完整性，因为一旦有人篡改文件，那么该文件的文件摘要就会改变，那么在B处生成的文件摘要就无法与解密数字签名后的文件摘要进行匹配，这时B就会知道该文件出了问题，然后采取相应的措施。</p>
+<p>以上认证过程中, 由于消息是由用户自己的秘密钥加密的, 所以消息不能被他人篡改, 但却能被他人窃听。这是因为任何人都能用用户的公开钥对消息解密得到明文信息。为了同时提供认证功能和保密性, 可使用双重加、解密。如下图所示：</p>
+<p><img src="/img/密码系列8-简短过渡之口胡公钥密码体制/2.PNG" alt=""></p>
+<p>发方首先用自己的秘密钥SKA对消息m加密，用于提供数字签字。再用收方的公开钥PKB第2次加密，表示为c=EPKB[ESKA[m]]<br>解密过程为m=DPKA[DSKB[c]]，即收方先用自己的秘密钥,再用发方的公开钥对收到的密文两次解密。</p>
+<h1 id="0x02_公钥密码算法应满足的要求">0x02 公钥密码算法应满足的要求</h1><ol>
+<li>接收方B产生密钥对（公开钥PKB和秘密钥SKB）在计算上是容易的。</li>
+<li>发方A用收方的公开钥对消息m加密以产生密文c，即c=EPKB[m]在计算上是容易的。</li>
+<li>收方B用自己的秘密钥对c解密，即m=DSKB[c]在计算上是容易的。</li>
+<li>敌手由B的公开钥PKB求秘密钥SKB在计算上是不可行的。</li>
+<li>敌手由密文c和B的公开钥PKB恢复明文m在计算上是不可行的。</li>
+<li>加、解密次序可换，即EPKB[DSKB(m)]=DSKB[EPKB(m)]<br>(其中最后一条虽然非常有用，但不是对所有的算法都作要求。)</li>
+</ol>
+<p>以上要求的本质之处在于要求一个陷门单向函数。单向函数是两个集合X、Y 之间的一个映射, 使得Y 中每一元素y 都有惟一的一个原像x∈ X, 且由x 易于计算它的像y ,由y 计算它的原像x 是不可行的。这里所说的易于计算是指函数值能在其输入长度的多项式时间内求出, 即如果输入长n 比特, 则求函数值的计算时间是na 的某个倍数, 其中a 是一固定的常数。这时称求函数值的算法属于多项式类P , 否则就是不可行的。例如,函数的输入是n 比特, 如果求函数值所用的时间是2n 的某个倍数, 则认为求函数值是不可行的。注意这里的易于计算和不可行两个概念与计算复杂性理论中复杂度的概念极为相似, 然而又存在着本质的区别。在复杂性理论中, 算法的复杂度是以算法在最坏情况或平均情况时的复杂度来度量的。而在此所说的两个概念是指算法在几乎所有情况下的情形。称一个函数是陷门单向函数, 是指该函数是易于计算的, 但求它的逆是不可行的, 除非再已知某些附加信息。当附加信息给定后, 求逆可在多项式时间完成。总结为: 陷门单向函数是一族可逆函数f k , 满足：</p>
+<ol>
+<li>k和X已知时，Y=fk(X)易于计算。</li>
+<li>k和Y已知时，X=f-1k(Y)易于计算。</li>
+<li>Y已知但k未知，X=f-1k(Y)计算上是不可行的。</li>
+</ol>
+<p>因此, 研究公钥密码算法就是要找出合适的陷门单向函数。</p>
+<h1 id="0x03_对公钥密码体制的攻击">0x03 对公钥密码体制的攻击</h1><p>和单钥密码体制一样, 如果密钥太短, 公钥密码体制也易受到穷搜索攻击。因此密钥必须足够长才能抗击穷搜索攻击。然而又由于公钥密码体制所使用的可逆函数的计算复杂性与密钥长度常常不是呈线性关系, 而是增大得更快。所以密钥长度太大又会使得加解密运算太慢而不实用。因此公钥密码体制目前主要用于密钥管理和数字签字。</p>
+<p>对公钥密码算法的第2 种攻击法是寻找从公开钥计算秘密钥的方法。目前为止, 对常用公钥算法还都未能够证明这种攻击是不可行的。</p>
+<p>还有一种仅适用于对公钥密码算法的攻击法, 称为可能字攻击。例如对56 比特的DES 密钥用公钥密码算法加密后发送, 敌手用算法的公开钥对所有可能的密钥加密后与截获的密文相比较。如果一样, 则相应的明文即DES 密钥就被找出。因此不管公钥算法的密钥多长, 这种攻击的本质是对56 比特DES 密钥的穷搜索攻击。抵抗方法是在欲发送的明文消息后添加一些随机比特。</p>
+<p>由于是简短的过渡blog，所以就口胡到这。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/cryptography/">cryptography</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/密码学/">密码学</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2016/01/06/密码系列8-简短过渡之口胡公钥密码体制/" data-title="密码系列8-简短过渡之口胡公钥密码体制 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/01/07/hello-world/" title="kenshichong的内心独白">
+  <strong>上一篇：</strong><br/>
+  <span>
+  kenshichong的内心独白</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/01/04/密码系列7-公钥密码之从RSA看数论/"  title="密码系列7-公钥密码之从RSA看数论">
+ <strong>下一篇：</strong><br/> 
+ <span>密码系列7-公钥密码之从RSA看数论
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_公钥密码体制概念"><span class="toc-number">1.</span> <span class="toc-text">0x00 公钥密码体制概念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_公钥密码体制的原理"><span class="toc-number">2.</span> <span class="toc-text">0x01 公钥密码体制的原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_公钥密码算法应满足的要求"><span class="toc-number">3.</span> <span class="toc-text">0x02 公钥密码算法应满足的要求</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_对公钥密码体制的攻击"><span class="toc-number">4.</span> <span class="toc-text">0x03 对公钥密码体制的攻击</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

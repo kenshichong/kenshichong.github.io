@@ -1,0 +1,572 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>密码系列11-数论不白学之椭圆曲线公钥密码算法 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 口胡背景Neal Koblitz和Victor Miller在1985年分别提出了椭圆曲线密码体制(ECC)，它是迄今为止被实践证明安全有效的三类公钥密码体制之一。1998年被ISO/IEC定为数字签名标准，2000年2月定为IEEE标准椭圆曲线公钥密码算法跟我们上篇介绍的ElGamal有点类似，安全性都是基于离散对数问题，不过椭圆曲线公钥密码算法的离散对数问题有些特殊
+0x01 椭圆曲">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码系列11-数论不白学之椭圆曲线公钥密码算法">
+<meta property="og:url" content="http://kenshichong.github.io/2016/01/08/密码系列11-数论不白学之椭圆曲线公钥密码算法/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 口胡背景Neal Koblitz和Victor Miller在1985年分别提出了椭圆曲线密码体制(ECC)，它是迄今为止被实践证明安全有效的三类公钥密码体制之一。1998年被ISO/IEC定为数字签名标准，2000年2月定为IEEE标准椭圆曲线公钥密码算法跟我们上篇介绍的ElGamal有点类似，安全性都是基于离散对数问题，不过椭圆曲线公钥密码算法的离散对数问题有些特殊
+0x01 椭圆曲">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/6.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/7.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/8.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/9.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/11.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/12.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/13.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/14.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/15.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/16.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/17.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/18.PNG">
+<meta property="og:updated_time" content="2016-01-08T13:09:54.218Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="密码系列11-数论不白学之椭圆曲线公钥密码算法">
+<meta name="twitter:description" content="0x00 口胡背景Neal Koblitz和Victor Miller在1985年分别提出了椭圆曲线密码体制(ECC)，它是迄今为止被实践证明安全有效的三类公钥密码体制之一。1998年被ISO/IEC定为数字签名标准，2000年2月定为IEEE标准椭圆曲线公钥密码算法跟我们上篇介绍的ElGamal有点类似，安全性都是基于离散对数问题，不过椭圆曲线公钥密码算法的离散对数问题有些特殊
+0x01 椭圆曲">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/08/密码系列11-数论不白学之椭圆曲线公钥密码算法/" title="密码系列11-数论不白学之椭圆曲线公钥密码算法" itemprop="url">密码系列11-数论不白学之椭圆曲线公钥密码算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-01-08T02:41:43.000Z" itemprop="datePublished"> 发表于 2016-01-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡背景"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_椭圆曲线密码相关概念"><span class="toc-number">2.</span> <span class="toc-text">0x01 椭圆曲线密码相关概念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_椭圆曲线密码流程"><span class="toc-number">3.</span> <span class="toc-text">0x02 椭圆曲线密码流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_密钥生成"><span class="toc-number">3.1.</span> <span class="toc-text">1. 密钥生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_加密运算"><span class="toc-number">3.2.</span> <span class="toc-text">2. 加密运算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_解密运算"><span class="toc-number">3.3.</span> <span class="toc-text">3. 解密运算</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_椭圆曲线密码体制优点"><span class="toc-number">4.</span> <span class="toc-text">0x03 椭圆曲线密码体制优点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04_公钥密码与对称密码比较之各有千秋"><span class="toc-number">5.</span> <span class="toc-text">0x04 公钥密码与对称密码比较之各有千秋</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_口胡背景">0x00 口胡背景</h1><p>Neal Koblitz和Victor Miller在1985年分别提出了椭圆曲线密码体制(ECC)，它是迄今为止被实践证明安全有效的三类公钥密码体制之一。<br>1998年被ISO/IEC定为数字签名标准，2000年2月定为IEEE标准<br>椭圆曲线公钥密码算法跟我们上篇介绍的ElGamal有点类似，安全性都是基于离散对数问题，不过椭圆曲线公钥密码算法的离散对数问题有些特殊</p>
+<h1 id="0x01_椭圆曲线密码相关概念">0x01 椭圆曲线密码相关概念</h1><ol>
+<li>椭圆曲线的定义：</li>
+</ol>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/0.PNG" alt=""></p>
+<p>在二维坐标系中表示为：</p>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/1.PNG" alt=""></p>
+<ol>
+<li>椭圆曲线公钥密码算法所需运算：</li>
+</ol>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/2.PNG" alt=""></p>
+<p>点的加法运算并不是空穴来风，随便定义了一个运算法则，在图上它是有具体意义的，显得很直观：</p>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/4.PNG" alt=""></p>
+<p>p和q的加法描述为：过p，q两点做一条直线，这条直线与椭圆曲线的另一交点(除p，q外的交点)关于x轴的对称点定义为p+q得到的点s。</p>
+<p>但是，在椭圆曲线公钥密码算法中，该椭圆曲线上的点我们并不是全部用到，我们只用整数，椭圆曲线上的整数点定义的集合：</p>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/5.PNG" alt=""></p>
+<p>但并不是所有的整数点都满足我们的要求，我们还要对这些整数点进行筛选，下面给出Ep(a,b)集合的生成方法：</p>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/6.PNG" alt=""></p>
+<p>也就是说，在椭圆曲线密码算法中，我们只用到了上面所说的Ep(a,b)集合中的点，我们只对这些点进行相应的运算，比如我们上面介绍的加法运算。</p>
+<p>举个E23(1,1)的例子：</p>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/7.PNG" alt=""></p>
+<p>还记得我们上面在刚开始提到的椭圆曲线上的无穷远点O吗，我们来看加法运算加入无穷远点后会有什么变化：</p>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/8.PNG" alt=""></p>
+<p>举个最简单的计算例子：</p>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/9.PNG" alt=""><br><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/10.PNG" alt=""></p>
+<p>既然我们上面详细介绍了椭圆曲线上的加法运算，那么下面密码算法中肯定是要用到的，为了下面的应用，我们再给两个定义：</p>
+<ol>
+<li>mP = P + P +…+ P (m个P)</li>
+<li>P是椭圆曲线E上的一个点，若存在最小的正整数n，使得nP = O，则称n是P的阶数。</li>
+</ol>
+<p>OK，有了这些前置姿势，我们已经有资格来揭开椭圆曲线公钥密码算法的真面目了。。。</p>
+<h1 id="0x02_椭圆曲线密码流程">0x02 椭圆曲线密码流程</h1><h2 id="1-_密钥生成">1. 密钥生成</h2><p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/11.PNG" alt=""></p>
+<h2 id="2-_加密运算">2. 加密运算</h2><p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/12.PNG" alt=""></p>
+<h2 id="3-_解密运算">3. 解密运算</h2><p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/13.PNG" alt=""></p>
+<p>又是例子。。。</p>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/14.PNG" alt=""></p>
+<p>看到例子是不是有点疑惑？欲发往A的消息嵌入到椭圆曲线上的点Pm=(562,201)是什么鬼？</p>
+<p>由于椭圆曲线密码算法是在集合Ep(a,b)上进行的运算，所以，我们想要用椭圆曲线对明文加密，我们首先要将明文转化为我们要使用的椭圆曲线上的点。</p>
+<p>还记得我们前面介绍的二次剩余吗？好像现在就它没用到了吧。什么叫不白学，学了就会用好吧。给出如下明文到椭圆曲线上的点的转化规则：</p>
+<p><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/15.PNG" alt=""></p>
+<p>流程就是这么简单。</p>
+<h1 id="0x03_椭圆曲线密码体制优点">0x03 椭圆曲线密码体制优点</h1><p>首先来谈谈椭圆曲线密码的安全性，前面也说过了安全性基于离散对数问题。具体描述为：在椭圆曲线群Ep(a,b)上考虑方程Q=kP，其中P，Q∈Ep(a,b)，k&lt;p，则由k和P易求Q，但由P、Q求k则是困难的。<br>这就是椭圆曲线上的离散对数问题，可应用于公钥密码体制.</p>
+<p>优点都是对比出来的，这里的对比对象是基于有限域上离散对数问题的公钥体制。与基于有限域上离散对数问题的公钥体制相比，椭圆曲线密码体制有如下优点:</p>
+<ol>
+<li>安全性高：<img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/16.PNG" alt=""></li>
+<li>密钥量小：<img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/17.PNG" alt=""></li>
+</ol>
+<p>计算量小、处理速度快，这里的处理速度快是指在私钥的处理速度上(解密和签名)，ECC远比RSA快得多，但是公钥加密速度椭圆曲线更慢。</p>
+<ol>
+<li>灵活性好：p一定的情况下，其上的集合是确定的. 而椭圆曲线Ep(a,b)可以通过改变曲线参数，得到不同的曲线，具有丰富的多选择性.</li>
+</ol>
+<h1 id="0x04_公钥密码与对称密码比较之各有千秋">0x04 公钥密码与对称密码比较之各有千秋</h1><ol>
+<li>公钥密码体制产生密钥很麻烦，比如RSA受到素数产生技术的限制</li>
+<li>公钥密码体制速度慢，较对称密码算法慢几个数量级</li>
+<li>对称密码算法，密钥短，速度快</li>
+<li>公钥密码算法，密钥长，速度慢</li>
+<li>对称密码算法用于大量明文加密</li>
+<li>公钥密码算法用于少量数据加密，如DES密钥的加密</li>
+</ol>
+<p>两者各有用处，我们要发挥他们各自的优势来为我们服务：<br><img src="/img/密码系列11-数论不白学之椭圆曲线公钥密码算法/18.PNG" alt=""></p>
+<hr>
+<p>公钥密码体制到这就告一段落了，本来想再补充一下基于身份的密码体制的，但自己也没理解透，所以就不误导大家了，这里留两个链接日后看吧-<a href="https://www.zhihu.com/question/26533817/answer/33165735" target="_blank" rel="external">[1]</a>、<a href="http://wenku.baidu.com/link?url=xhCcnLatLhZSMGFLTUHlPUHvLTfYfME9gesW-7VA4CeW0izeCPW5e_qHi8LX9x2mPPX_t_PzlFbyMkGlQDYZyDEY3O6C1yeDpf3t-pocYKG" target="_blank" rel="external">[2]</a></p>
+<p>就这样，下面进入消息认证机制，主要是介绍一些杂凑函数。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/cryptography/">cryptography</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/密码学/">密码学</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2016/01/08/密码系列11-数论不白学之椭圆曲线公钥密码算法/" data-title="密码系列11-数论不白学之椭圆曲线公钥密码算法 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/01/08/密码系列12-消息认证机制/" title="密码系列12-消息认证机制">
+  <strong>上一篇：</strong><br/>
+  <span>
+  密码系列12-消息认证机制</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/01/07/密码系列10-数论不白学之ElGamal公钥密码算法/"  title="密码系列10-数论不白学之ElGamal公钥密码算法">
+ <strong>下一篇：</strong><br/> 
+ <span>密码系列10-数论不白学之ElGamal公钥密码算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡背景"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_椭圆曲线密码相关概念"><span class="toc-number">2.</span> <span class="toc-text">0x01 椭圆曲线密码相关概念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_椭圆曲线密码流程"><span class="toc-number">3.</span> <span class="toc-text">0x02 椭圆曲线密码流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_密钥生成"><span class="toc-number">3.1.</span> <span class="toc-text">1. 密钥生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_加密运算"><span class="toc-number">3.2.</span> <span class="toc-text">2. 加密运算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_解密运算"><span class="toc-number">3.3.</span> <span class="toc-text">3. 解密运算</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_椭圆曲线密码体制优点"><span class="toc-number">4.</span> <span class="toc-text">0x03 椭圆曲线密码体制优点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04_公钥密码与对称密码比较之各有千秋"><span class="toc-number">5.</span> <span class="toc-text">0x04 公钥密码与对称密码比较之各有千秋</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
