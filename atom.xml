@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Be a machine]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kenshichong.github.io/"/>
-  <updated>2016-01-09T08:18:26.240Z</updated>
+  <updated>2016-01-10T15:06:47.957Z</updated>
   <id>http://kenshichong.github.io/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://kenshichong.github.io/2016/01/08/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%9712-%E6%B6%88%E6%81%AF%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6/"/>
     <id>http://kenshichong.github.io/2016/01/08/密码系列12-消息认证机制/</id>
     <published>2016-01-08T13:09:12.000Z</published>
-    <updated>2016-01-09T08:18:26.240Z</updated>
+    <updated>2016-01-10T15:06:47.957Z</updated>
     <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>截至目前为止，我们已经讨论了对称密码体制和公钥密码体制，对称密码体制主要用于保护数据的机密性，公钥密码体制分为公钥加密和数字签名，其中公钥加密主要用于保护数据的机密性，数字签名用于保护数据的不可否认性和真实性，但是这两大体制并不能提供对数据完整性的保护，这时就需要消息认证机制来承担起对数据完整性的保护。</p>
 <p><img src="/img/密码系列12-消息认证机制/0.PNG" alt=""></p>
 <h1 id="0x01_消息认证机制概述">0x01 消息认证机制概述</h1><p>消息认证是一个过程，用以验证接收消息的完整性（未被篡改、插入、删除）。认证是一个过程，消息认证机制有消息认证码（MAC)和散列函数(hash)两大类。</p>
@@ -49,7 +49,7 @@
 <p><img src="/img/密码系列12-消息认证机制/4.PNG" alt=""></p>
 <p>目前使用的大多数散列函数其结构都是迭代型的，如图所示。其中函数的输入M被分为L个分组Y0,Y1,…,YL-1，每一个分组的长度为b比特，最后一个分组的长度不够的话，需对其做填充。</p>
 <p>对上图的说明：IV = 初始值；CV = 链接值；Yi = 第i 个输入数据块；f = 压缩算法；n = 散列码的长度;b = 输入块的长度</p>
-<h1 id="0x02_几种常用的杂凑算法">0x02 几种常用的杂凑算法</h1><p>##1. MD5杂凑算法 ##<br>由Ron Rivest(没错，就是RSA的那个R)于1992年4月公布（RFC 1320，1321）称为MD5。<br>算法的输入为任意长的消息，分为512比特长的分组，输出为128比特的消息摘要。</p>
+<h1 id="0x02_几种常用的杂凑算法">0x02 几种常用的杂凑算法</h1><h2 id="1-_MD5杂凑算法">1. MD5杂凑算法</h2><p>由Ron Rivest(没错，就是RSA的那个R)于1992年4月公布（RFC 1320，1321）称为MD5。<br>算法的输入为任意长的消息，分为512比特长的分组，输出为128比特的消息摘要。</p>
 <h2 id="MD5算法流程">MD5算法流程</h2><p><strong>明文分组 </strong></p>
 <p><img src="/img/密码系列12-消息认证机制/5.PNG" alt=""></p>
 <p>对明文的处理分以下两步：</p>
@@ -293,12 +293,12 @@
     <link href="http://kenshichong.github.io/2016/01/07/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%9710-%E6%95%B0%E8%AE%BA%E4%B8%8D%E7%99%BD%E5%AD%A6%E4%B9%8BElGamal%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95/"/>
     <id>http://kenshichong.github.io/2016/01/07/密码系列10-数论不白学之ElGamal公钥密码算法/</id>
     <published>2016-01-07T14:47:11.000Z</published>
-    <updated>2016-01-08T02:38:04.811Z</updated>
+    <updated>2016-01-10T15:38:59.595Z</updated>
     <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>前面我们对公钥密码体制进行了一个总体的介绍，然后对公钥密码的一个典型代表-RSA进行了详细介绍，知道了为什么好多从事密码事业的人并不是计算机相关专业科班出身，而是数学专业科班出身。反正你数学不好，你想在密码上有所造诣，不是说没可能，我只能说难，好吧(语气词)。</p>
 <p>RSA的安全性来自于求一对大素数的乘积很容易，但要对这个乘积进行因式分解则非常困难，也就是所谓的大整数分解问题。</p>
 <p>而我们今天的主角ElGamal公钥密码算法，它的安全性来源于另一个数学难题-离散对数难题，即已知g为Zp*(乘法群)的生成元(对于乘法群的生成元的概念，给两个链接-<a href="http://www.zhihu.com/question/23353412" target="_blank" rel="external">1</a>、<a href="http://zhidao.baidu.com/link?url=bGc3UiaExw2yYeMHPGjQxOAkk-O6G9BqevgOiStiw1WSWql5l9vVis1iZ_Hd_akv3K7f78L8VcAd9ZDxVc9BYfbsVAPcMhafIlabO_faosK" target="_blank" rel="external">2</a>)，y∈ Zp ，求x使得y=g^x mod p，这个x在现阶段是不可求的，这就是ElGamal公钥密码算法安全性的来源，如果求离散对数问题是容易的，则获得y能够解出x，则这类算法完全破译</p>
 <h1 id="0x01_ElGamal算法流程">0x01 ElGamal算法流程</h1><h2 id="1-_密钥产生过程">1. 密钥产生过程</h2><p>首先选择一大素数p, 原根g和小于p的随机数x，计算y≡g^x mod p，以(y, g, p)作为公开密钥，x作为秘密密钥.<br>这里说明一下，g是模p的原根，原根的概念，数论姿势那有讲，再补充一点，原根是乘法群的一个生成元，所以说ElGamal公钥密码算法中生成元一般取原根</p>
-<h2 id="2-_加密过程">2. 加密过程</h2><p>设欲加密明文消息为M(如果M长度超过p则进行分组) . 随机选与p-1互素的整数k，1&lt; k&lt;p-1<br>计算密文对: C = {C1,C2}, 发送给接收者.C1≡g^k mod p,   C2≡(y^k)*M mod p.</p>
+<h2 id="2-_加密过程">2. 加密过程</h2><p>设欲加密明文消息为M(如果M长度超过p则进行分组) . 随机选与p-1互素的整数k，1&lt; k&lt;p-1<br>计算密文对: C = {C1,C2}, 发送给接收者.C1≡g^k mod p,   C2≡(y^k) x M mod p.</p>
 <h2 id="3-_解密过程">3. 解密过程</h2><p>直接po图：<br><img src="/img/密码系列10-数论不白学之ElGamal公钥密码算法/0.PNG" alt=""></p>
 <p>这里对图中说的k 需要永久保密，且不能重复使用进行说明：</p>
 <ol>
@@ -482,12 +482,11 @@
     <link href="http://kenshichong.github.io/2016/01/04/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%977-%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81%E4%B9%8B%E4%BB%8ERSA%E7%9C%8B%E6%95%B0%E8%AE%BA/"/>
     <id>http://kenshichong.github.io/2016/01/04/密码系列7-公钥密码之从RSA看数论/</id>
     <published>2016-01-04T08:53:45.000Z</published>
-    <updated>2016-01-07T11:46:30.836Z</updated>
+    <updated>2016-01-10T15:18:31.221Z</updated>
     <content type="html"><![CDATA[<h1 id="0x00_背景介绍">0x00 背景介绍</h1><p>本篇主要是由RSA算法的流程引入公钥密码体制所需的数论姿势，也就是说，没错，会让你脑袋疼的东西，反正我是脑袋疼。。。</p>
 <h1 id="0x01_RSA流程">0x01 RSA流程</h1><p><img src="/img/密码系列7-公钥密码之从RSA看数论/0.PNG" alt=""></p>
 <p>没错，非常简洁的一个算法，流程什么的很容易懂，但是如果细究其中的每一步的细节，那么结果就是-脑子疼。但是，作为共产主义接班人，我们要迎难而上，下面就让我们由简到难来看下其中所涉及到的数论姿势</p>
-<h1 id="0x02_各种脑瓜疼的数论姿势">0x02 各种脑瓜疼的数论姿势</h1><p>##数论姿势1-如何求最大公约数(公因子)</p>
-<ol>
+<h1 id="0x02_各种脑瓜疼的数论姿势">0x02 各种脑瓜疼的数论姿势</h1><h2 id="数论姿势1-如何求最大公约数(公因子)">数论姿势1-如何求最大公约数(公因子)</h2><ol>
 <li>整除：设a, b为整数,  b ≠ 0,如果存在整数c, 使得a=bc,  则称b整除a(记为b | a), 否则称b不整除a</li>
 <li>最大公约数：若d | a1，d | a2，则称d是a1，a2的一个公因数，其中最大的称为最大公因数，记为(a1，a2)。若(a1，a2)=1，则称a1，a2互质(素)，其他公因子一定是最大公因子的因子(可以用反证法证得，若不是，则二者互质，则二者相乘可以得到更大的公因子，矛盾)</li>
 <li>最大公约数的概念不仅仅局限于两个数，最大公约数概念扩展：</li>
@@ -504,7 +503,7 @@
 <li>关于最大公约数的一些性质：</li>
 </ol>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/3.PNG" alt=""></p>
-<p>##数论姿势2-最小公倍数##<br>整数a1, a2, ···, ak的公共倍数称为a1, a2, ···, ak的公倍数。a1, a2, ····, ak的正公倍数中的最小的一个叫做a1, a2, ···, ak的最小公倍数，记为[a1, a2, ···, ak]。<br>一些最小公倍数的基本性质：</p>
+<h2 id="数论姿势2-最小公倍数">数论姿势2-最小公倍数</h2><p>整数a1, a2, ···, ak的公共倍数称为a1, a2, ···, ak的公倍数。a1, a2, ····, ak的正公倍数中的最小的一个叫做a1, a2, ···, ak的最小公倍数，记为[a1, a2, ···, ak]。<br>一些最小公倍数的基本性质：</p>
 <ol>
 <li>[a, 1] = |a|，[a, a] = |a|；</li>
 <li>[a, b] = [b, a]；</li>
@@ -512,7 +511,7 @@
 <li>若a | b，则[a, b] = |b|。</li>
 <li><img src="/img/密码系列7-公钥密码之从RSA看数论/4.PNG" alt=""></li>
 </ol>
-<p>##数论姿势3-整数模运算和同余概念##<br><img src="/img/密码系列7-公钥密码之从RSA看数论/5.PNG" alt=""></p>
+<h2 id="数论姿势3-整数模运算和同余概念">数论姿势3-整数模运算和同余概念</h2><p><img src="/img/密码系列7-公钥密码之从RSA看数论/5.PNG" alt=""></p>
 <p>注意同余的符号，同余的概念非常重要，下面来看关于同余的性质：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/6.PNG" alt=""></p>
 <ol>
@@ -521,15 +520,14 @@
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/7.PNG" alt=""></p>
 <p>那么如何求模同余逆元呢？需要以下理论技巧：1.我们前面提到的辗转相除法：<img src="/img/密码系列7-公钥密码之从RSA看数论/8.PNG" alt=""><br>2.最大公约数的线性表示：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/9.PNG" alt=""></p>
 <p>解锁了这两个姿势，我们就可以求出模同余逆元了：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/10.PNG" alt=""></p>
-<p>##数论姿势4-欧拉的故事##<br>不得不说，有点佩服这个数学家，虽然他使得我们的学生生活过的并不轻松，但不得不承认他是天才，称之为艺术家不为过。失明过后各种心算，没谁了，我只想说我服。。。<br><strong>欧拉定理</strong><br><img src="/img/密码系列7-公钥密码之从RSA看数论/11.PNG" alt=""><br>利用欧拉定理解题：<br>今天星期三， 313^159天后是星期几?<br>好久没做数学题，所以当时做这个题时是拒绝的，这个题会用到上面的很多同余运算的性质，所以还是有必要做下的。解题过程为：</p>
+<h2 id="数论姿势4-欧拉的故事">数论姿势4-欧拉的故事</h2><p>不得不说，有点佩服这个数学家，虽然他使得我们的学生生活过的并不轻松，但不得不承认他是天才，称之为艺术家不为过。失明过后各种心算，没谁了，我只想说我服。。。<br><strong>欧拉定理</strong><br><img src="/img/密码系列7-公钥密码之从RSA看数论/11.PNG" alt=""><br>利用欧拉定理解题：<br>今天星期三， 313^159天后是星期几?<br>好久没做数学题，所以当时做这个题时是拒绝的，这个题会用到上面的很多同余运算的性质，所以还是有必要做下的。解题过程为：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/12.PNG" alt=""></p>
-<p>让我来解释一下，要想求星期几，由于这个数太大，所以我们要尽量缩小它，当然mod7是很好的选择，因为减去7的倍数会在数字缩小的前提下不影响我们判断是星期几。(7k+5)的159次方展开之后，除了5的159次方外，其余项都是带7的，所以可以不用顾忌的直接弃掉，也就是说原来的数与5的159次方是模7同余的，接着使用欧拉定理对5的159次方进行缩小，由于5和7是互质的，所以5的6次方是与1模7同余的，还记得同余运算的性质吗？a与c模m同余，b与d模m同余，则ab与cd模m同余，运用这条性质，可得5的26*6次方与1模7也是同余的，而5的3次方是与5的3次方模7同余的，再次运用性质，可得5的159次方是与5的3次方模7同余的，而5的3次方就很容易计算了，他与6模7同余，这样就算出了最后答案。</p>
+<p>让我来解释一下，要想求星期几，由于这个数太大，所以我们要尽量缩小它，当然mod7是很好的选择，因为减去7的倍数会在数字缩小的前提下不影响我们判断是星期几。(7k+5)的159次方展开之后，除了5的159次方外，其余项都是带7的，所以可以不用顾忌的直接弃掉，也就是说原来的数与5的159次方是模7同余的，接着使用欧拉定理对5的159次方进行缩小，由于5和7是互质的，所以5的6次方是与1模7同余的，还记得同余运算的性质吗？a与c模m同余，b与d模m同余，则ab与cd模m同余，运用这条性质，可得5的26 x 6次方与1模7也是同余的，而5的3次方是与5的3次方模7同余的，再次运用性质，可得5的159次方是与5的3次方模7同余的，而5的3次方就很容易计算了，他与6模7同余，这样就算出了最后答案。</p>
 <p>对于m的欧拉函数的求法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/13.PNG" alt=""></p>
 <p>再介绍一条重要的相似的定理，可以说是欧拉定理的推论：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/14.PNG" alt=""></p>
-<p>##数论姿势5-同余方程组##<br><img src="/img/密码系列7-公钥密码之从RSA看数论/15.PNG" alt=""><br><strong>解一次同余方程组之孙子定理</strong><br><img src="/img/密码系列7-公钥密码之从RSA看数论/16.PNG" alt=""></p>
+<h2 id="数论姿势5-同余方程组">数论姿势5-同余方程组</h2><p><img src="/img/密码系列7-公钥密码之从RSA看数论/15.PNG" alt=""><br><strong>解一次同余方程组之孙子定理</strong><br><img src="/img/密码系列7-公钥密码之从RSA看数论/16.PNG" alt=""></p>
 <p>举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/17.PNG" alt=""></p>
-<p>##数论姿势6-二次剩余##</p>
-<p><img src="/img/密码系列7-公钥密码之从RSA看数论/18.PNG" alt=""></p>
+<h2 id="数论姿势6-二次剩余">数论姿势6-二次剩余</h2><p><img src="/img/密码系列7-公钥密码之从RSA看数论/18.PNG" alt=""></p>
 <p>我们先来讨论下二次剩余，大部分内容参考了blog-<a href="http://blog.sina.com.cn/s/blog_a661ecd50101ayas.html" target="_blank" rel="external">数论学习笔记（5）：二次剩余</a>，我这里会对这篇blog里面的内容写一些我自己的理解。</p>
 <p>对于二次剩余方程，其中 a 为整数， p 为奇素数， x 为未知整数。当然，我们不妨限定 a,x 均在 0,1,2,3,…,p-1 内。不过，为了叙述方便我们又经常把 0 去掉（当 a=0 时显然有唯一解 x=0 ）。这里将a，x限定在0,1,2,3,…,p-1 内，按我的理解，因为是模p运算，所以说大于p的所有数经过模p运算后得到的都是小于p的数字，所以因为模p运算，所以我们只需要讨论小于p的数字就ok了，就是说任何大于p的数字都可以在小于p的这个集合中找到等价的数字。</p>
 <p>因为我们的最终目的是在小于p的这个数字集合中找到所有的二次剩余嘛，那么，现在我们就很自然的想到了一个问题，对于哪些 a 方程有解？如果有的话有几个解？</p>
@@ -543,7 +541,7 @@
 <p>说到这，我们已经可以求任意一个奇素数的二次剩余了，而且编程也是易于实现的。但是对于奇素数p，当我们随意给定一个a∈[1,p-1]时，我们如何判断这个a是不是该p的二次剩余呢？难道要把所有的二次剩余都求出来后，然后看给定的a是否属于这个集合吗？虽然可以实现，但这样未免效率太低了。艺术家欧拉给出了他的判别条件：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/20.PNG" alt=""></p>
 <p>对于这个定理，我不做证明，因为我不会证明，但是它很好用就是了。这个定理也给出了我们求二次剩余和非二次剩余的另一种方法，即对于[1,p-1]，从1开始考虑，逐个判断[1,p-1]中的数是否满足二次剩余判断条件，这样也可以把所有的二次剩余找出来。</p>
-<p>##数论姿势7-素性测试##<br>RSA算法中有生成大素数的需要，那么如何产生一个大素数还得保证该大素数的随机性？我们的思路是随机产生一个大正整数，判断其是不是素数，如果是即为需要的大素数，否则重新产生素数。那么这个随机产生的大正整数是素数的概率是多大呢？如果太小的话，那么这种思路就是不值得的，好在这个概率还可以。数论中有著名的素数定理: 不超过x的素数的个数大约为x/lnx。举个例子：任选一个512位的随机正整数p, 它是素数的概率大约为1/lnp ≈ 1/177, 即平均177个具有适当规模的随机正整数p中将有一个素数。从概率学加计算机的角度来看，这个思路是可取的。那么问题就变成了如何判定这个大正整数是不是素数了，我们称之为素性检测。素性检测可以分为两大类：</p>
+<h2 id="数论姿势7-素性测试">数论姿势7-素性测试</h2><p>RSA算法中有生成大素数的需要，那么如何产生一个大素数还得保证该大素数的随机性？我们的思路是随机产生一个大正整数，判断其是不是素数，如果是即为需要的大素数，否则重新产生素数。那么这个随机产生的大正整数是素数的概率是多大呢？如果太小的话，那么这种思路就是不值得的，好在这个概率还可以。数论中有著名的素数定理: 不超过x的素数的个数大约为x/lnx。举个例子：任选一个512位的随机正整数p, 它是素数的概率大约为1/lnp ≈ 1/177, 即平均177个具有适当规模的随机正整数p中将有一个素数。从概率学加计算机的角度来看，这个思路是可取的。那么问题就变成了如何判定这个大正整数是不是素数了，我们称之为素性检测。素性检测可以分为两大类：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/21.PNG" alt=""></p>
 <p>确定性算法：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/22.PNG" alt=""></p>
@@ -553,7 +551,7 @@
 <p>现阶段常用的素性检测算法是Miller-Rabin概率型素性测试算法，对这个定理我也不会证明，并不想证明，会用就行：Miller-Rabin素性检测的理论依据：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/26.PNG" alt=""></p>
 <p>对于给定要测试的数n，可以求出该n对应的s和m的值，由此可得Miller-Rabin素性检测算法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/27.PNG" alt=""></p>
 <p>有了较为可靠的素性检测算法后，我们上面的思路就易于实现了，产生素数的步骤可为：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/28.PNG" alt=""></p>
-<p>##数论姿势8-整数的阶##<br><img src="/img/密码系列7-公钥密码之从RSA看数论/29.PNG" alt=""></p>
+<h2 id="数论姿势8-整数的阶">数论姿势8-整数的阶</h2><p><img src="/img/密码系列7-公钥密码之从RSA看数论/29.PNG" alt=""></p>
 <p>这里说明为什么整数的阶一定存在，由条件可知(a，m)=1，想到了什么？没错，就是欧拉定理，描述为a的m的欧拉数次方与1是模m同余的，也就是说，l是一定存在的，至于l是不是m的欧拉数，这个就不知道了，反正一定存在，意思就是l是在不行还可以取m的欧拉数嘛。</p>
 <p>关于整数的阶的性质：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/30.PNG" alt=""></p>
@@ -561,25 +559,25 @@
 <p>第二第三条性质同样可以简化运算，例子说话：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/32.PNG" alt=""></p>
 <p>整数的阶的另外两个重要性质：</p>
-<p><img src="/img/密码系列7-公钥密码之从RSA看数论/32.PNG" alt=""></p>
+<p><img src="/img/密码系列7-公钥密码之从RSA看数论/45.PNG" alt=""></p>
 <p>这个性质其实是对上面的第三条性质的扩充，我们暂且称它为第四条性质，是一个扩展，意思就是，当我们计算a相对于一个较大的模数m的整数阶时，我们可以对m进行质因数分解，然后分别求较小的因数的阶，最后求这些阶的最小公倍数即可得到原来的那个较大的数的整数阶，这个性质运用的前提是对m进行标准分解，什么是标准分解呢，就是分解成由最简单的质因数连乘的形式，大家小学时应该都学过，反正我小学学过。举个例子：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/33.PNG" alt=""></p>
 <p>可以看出运用以上性质简化了运算。在运用这个性质时，还有一点需要注意，那就是对于这个式子：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/37.PNG" alt=""></p>
-<p>这个性质不可以被重用，什么意思呢，假设m被分解成有一个因式是2^3(即pi=2，ji=3)，则对于<img src="/img/密码系列7-公钥密码之从RSA看数论/37.PNG" alt="">这个式子的计算，不能把2^3拆成2<em>2</em>2，然后分别计算a模2的整数阶，最后再求这3个整数阶的最小公倍数，这样得到的结果并不是a模2^3的整数阶，这样做是不对的，至于如何处理这种形式，就需要下面即将讲到的性质。还有个性质，我们暂且称为第5条性质：</p>
+<p>这个性质不可以被重用，什么意思呢，假设m被分解成有一个因式是2^3(即pi=2，ji=3)，则对于<img src="/img/密码系列7-公钥密码之从RSA看数论/37.PNG" alt="">这个式子的计算，不能把2^3拆成2x2x2，然后分别计算a模2的整数阶，最后再求这3个整数阶的最小公倍数，这样得到的结果并不是a模2^3的整数阶，这样做是不对的，至于如何处理这种形式，就需要下面即将讲到的性质。还有个性质，我们暂且称为第5条性质：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/34.PNG" alt=""><br><img src="/img/密码系列7-公钥密码之从RSA看数论/35.PNG" alt=""></p>
 <p>这个性质其实是对上面性质的一个补充，上面也说到了，就是当我们面临标准分解中有次幂这种因子时，应该怎么求，就是用上面的性质求。</p>
 <p>对于上面性质的白话解释，先以5^3(p=5,j=3)的情况来说明，这里p=5≠2，那么先计算f2，f2就是a模5^2的整数阶，然后根据性质中说的a的f2次方-1可以整除p^i，而不能整除p^i+1，找到这个临界的i，即可使用这个性质，看j值所属的范围即可得到fj，再啰嗦一下2^3(p=2,j=3)的情况，此时看a的值，然后得到相应的r值，再根据r和j值得到fj。</p>
 <p>这样我们在面临要求a模一个较大的m的整数阶时，我们就有了相应的化简方法，实际上就是把m进行标准分解，然后看有没有标准分解中有没有带幂的因子，对于带幂的因子，采用第5条性质先转化为不带幂的，然后根据前面说的前三条性质简化求出不带幂的，然后根据第5条性质就可以得到该带幂因子的整数阶，不带幂的因子用刚开始说的前三条性质简化求出整数阶，这样每一个因子的整数阶就都求出来了，最后再根据第四条性质得出最后的整数阶是标准分解的各因子整数阶的最小公倍数，就是这样。举个例子：</p>
 <p><img src="/img/密码系列7-公钥密码之从RSA看数论/38.PNG" alt=""></p>
-<p>##数论姿势9-原根##<br>原根的定义：<img src="/img/密码系列7-公钥密码之从RSA看数论/39.PNG" alt=""><br>另一个等价的定义：假设一个数g对于P来说是原根，那么g^i mod P的结果两两不同,且有 1&lt;g&lt;P, 1&lt;i&lt;P,那么g可以称为是P的一个原根。简单来说，g^i mod p ≠ g^j mod p （p为素数）其中i≠j且i, j介於1至(p-1)之间则g为p的原根。简单的来说，如果g是P的原根，那么g的（1…P-1）次幂mod P的结果一定互不相同。</p>
-<p>这样对于原根的定义就有两个了，一是g模p的整数阶等于p的欧拉函数时，g称为p的一个原根；另一个是g的（1…P-1）次幂mod P的结果一定互不相同时，g称为p的一个原根。为什么说这两个是等价定义呢，让我来解释一下，两者是可以等价互导的，也就是说g模p的整数阶等于p的欧拉函数时，g的（1…P-1）次幂mod P的结果一定互不相同，反过来亦成立。这里只说明由第二个定义导出第一个定义，至于反过来导，看我导完这个应该不是问题，留给大家自己导着玩。g的（1…P-1）次幂mod P的结果互不相同时，g模p的整数阶一定等于p的欧拉函数。为什么这句话是对的呢？用反证法来证，假设存在两个数a∈[1,p-1],b∈[1,p-1]，且不妨设a&gt;b满足(g^a)modP=(g^b)modP,即g^≡(g^b)modp。这说明什么呢？因为没有同余等式两边同除以一个数同余等式依然成立的性质，事实上是我不知道存不存在，只有乘法，没关系，我们回归同余运算最基本的定义，由g^a≡(g^b)modp这个式子可以得到g^a-g^b=p<em>k(k为整数)，设g^a=p</em>m+t,g^b=p<em>n+t,显然t&lt;p,则这个式子可以变形为g^b(g^(a-b)-1)=p</em>(m-n),进一步变形为(p<em>n+t)(g^(a-b)-1)=p</em>(m-n)，再变p<em>(n</em>g^(a-b)-n)+t<em>(g^(a-b)-1)=p</em>(m-n),再来t<em>(g^(a-b)-1)=p</em>(m-n-n<em>g^(a-b)+n)=p</em>(m-n<em>g^(a-b)),即t</em>(g^(a-b)-1)=p<em>(m-n</em>g^(a-b))，到这就差不多了，由于t&lt;p,g^(a-b)-1必存在因子p，所以g^(a-b)-1=p*l(l为整数),即g^(a-b)与1模p同余，这与原根的定义矛盾，即如果存在两个数a∈[1,p-1],b∈[1,p-1]，g的a，b次幂mod P的结果相同时，通过上面的证明可以知道由于a-b&lt;p的欧拉函数，所以此时g模p的整数的阶就变成了a-b，而非原根定义要求的必须是p的欧拉函数值，所以从原根的定义出发，g的（1…P-1）次幂mod P的结果一定互不相同时，g模p的整数阶才等于p的欧拉函数，这样的g才能被称为原根，就是说如果g的（1…P-1）次幂mod P的结果存在两个相同的值的时候，g是不能被称为原根的。好像说了半天，越说越糊涂，总之就是想证明一下，为什么g模p的整数阶等于p的欧拉函数时一定会满足g的（1…P-1）次幂mod P的结果一定互不相同，查了好多资料都没说，只能自己硬生生证明了，就这样。</p>
+<h2 id="数论姿势9-原根">数论姿势9-原根</h2><p>原根的定义：<img src="/img/密码系列7-公钥密码之从RSA看数论/39.PNG" alt=""><br>另一个等价的定义：假设一个数g对于P来说是原根，那么g^i mod P的结果两两不同,且有 1&lt;g&lt;P, 1&lt;i&lt;P,那么g可以称为是P的一个原根。简单来说，g^i mod p ≠ g^j mod p （p为素数）其中i≠j且i, j介於1至(p-1)之间则g为p的原根。简单的来说，如果g是P的原根，那么g的（1…P-1）次幂mod P的结果一定互不相同。</p>
+<p>这样对于原根的定义就有两个了，一是g模p的整数阶等于p的欧拉函数时，g称为p的一个原根；另一个是g的（1…P-1）次幂mod P的结果一定互不相同时，g称为p的一个原根。为什么说这两个是等价定义呢，让我来解释一下，两者是可以等价互导的，也就是说g模p的整数阶等于p的欧拉函数时，g的（1…P-1）次幂mod P的结果一定互不相同，反过来亦成立。这里只说明由第二个定义导出第一个定义，至于反过来导，看我导完这个应该不是问题，留给大家自己导着玩。g的（1…P-1）次幂mod P的结果互不相同时，g模p的整数阶一定等于p的欧拉函数。为什么这句话是对的呢？用反证法来证，假设存在两个数a∈[1,p-1],b∈[1,p-1]，且不妨设a&gt;b满足(g^a)modP=(g^b)modP,即g^≡(g^b)modp。这说明什么呢？因为没有同余等式两边同除以一个数同余等式依然成立的性质，事实上是我不知道存不存在，只有乘法，没关系，我们回归同余运算最基本的定义，由g^a≡(g^b)modp这个式子可以得到g^a-g^b=p x k(k为整数)，设g^a=p x m+t,g^b=p x n+t,显然t&lt;p,则这个式子可以变形为g^b(g^(a-b)-1)=p x (m-n),进一步变形为(p x n+t)(g^(a-b)-1)=p x (m-n)，再变p x (n x g^(a-b)-n)+t x (g^(a-b)-1)=p x (m-n),再来t x (g^(a-b)-1)=p x (m-n-n x g^(a-b)+n)=p x (m-n x g^(a-b)),即t x (g^(a-b)-1)=p x (m-n x g^(a-b))，到这就差不多了，由于t&lt;p,g^(a-b)-1必存在因子p，所以g^(a-b)-1=p x l(l为整数),即g^(a-b)与1模p同余，这与原根的定义矛盾，即如果存在两个数a∈[1,p-1],b∈[1,p-1]，g的a，b次幂mod P的结果相同时，通过上面的证明可以知道由于a-b&lt;p的欧拉函数，所以此时g模p的整数的阶就变成了a-b，而非原根定义要求的必须是p的欧拉函数值，所以从原根的定义出发，g的（1…P-1）次幂mod P的结果一定互不相同时，g模p的整数阶才等于p的欧拉函数，这样的g才能被称为原根，就是说如果g的（1…P-1）次幂mod P的结果存在两个相同的值的时候，g是不能被称为原根的。好像说了半天，越说越糊涂，总之就是想证明一下，为什么g模p的整数阶等于p的欧拉函数时一定会满足g的（1…P-1）次幂mod P的结果一定互不相同，查了好多资料都没说，只能自己硬生生证明了，就这样。</p>
 <p>现在我们已经对原根的概念有了个大体的认识，知道了要想成为原根应该具备什么资格。</p>
 <p>原根的性质：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/40.PNG" alt=""></p>
 <p>举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/41.PNG" alt=""></p>
 <p>这是直接对一个奇素数求原根，当我们知道一个奇素数的原根时，如果要求这个奇素数的幂的原根，这时需要用到下面一条性质：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/42.PNG" alt=""></p>
 <p>举个例子：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/43.PNG" alt=""></p>
-<p>在密码应用中，通常需要产生一个很大的素数的原根，根据上面的第一个性质我们可以知道，当p的欧拉数只能分解成两个素数乘积的时候找原根的速度会很快，所以当我们可以故意产生一个p，使得他的欧拉数只能分解成两个素数乘积的形式，一般采用的形式是p=q*2+1<br>下面给出具体的算法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/44.PNG" alt=""></p>
+<p>在密码应用中，通常需要产生一个很大的素数的原根，根据上面的第一个性质我们可以知道，当p的欧拉数只能分解成两个素数乘积的时候找原根的速度会很快，所以当我们可以故意产生一个p，使得他的欧拉数只能分解成两个素数乘积的形式，一般采用的形式是p=q x 2+1<br>下面给出具体的算法：<br><img src="/img/密码系列7-公钥密码之从RSA看数论/44.PNG" alt=""></p>
 <hr>
 <p>数论的姿势就先科普到这里，下面进入真正的公钥密码算法。。。</p>
 ]]></content>
@@ -599,7 +597,7 @@
     <link href="http://kenshichong.github.io/2016/01/01/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%976-%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E7%9A%84%E5%B0%BE%E5%A3%B0%E4%B9%8BIDEA%E5%92%8CAES/"/>
     <id>http://kenshichong.github.io/2016/01/01/密码系列6-分组密码的尾声之IDEA和AES/</id>
     <published>2016-01-01T13:33:58.000Z</published>
-    <updated>2016-01-08T14:21:46.597Z</updated>
+    <updated>2016-01-10T15:37:27.919Z</updated>
     <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>对于IDEA的介绍只是简单带过，重点介绍AES</p>
 <h1 id="0x01_IDEA">0x01 IDEA</h1><ol>
 <li>IDEA分组长度64比特。</li>
@@ -635,7 +633,7 @@
 <p>我们在来看乘法逆元：<br>对任何次数小于8 的多项式b( x ) , 可用推广的欧几里得算法得b( x) a( x ) + m( x) c( x) = 1即a( x) ·b( x ) = 1 mod m( x) , 因此a( x )是b( x) 的乘法逆元。<br>对于乘法逆元的求法，就是用大名鼎鼎的扩展欧几里得算法(又称辗转相除法)了，自行google。这里要用到欧几里得算法的逆推过程，给出求逆元的伪代码：</p>
 <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Extended Euclid (d，f)<span class="comment"> //算法求d关于模f的乘法逆元d-1 ，即 d* d-1 mod f = 1</span></span><br><span class="line"><span class="number">1</span> 。(X1，X2，X3) := (<span class="number">1</span>，<span class="number">0</span>，f)； (Y1，Y2，Y3) := (<span class="number">0</span>，<span class="number">1</span>，d)</span><br><span class="line"><span class="number">2</span>。 <span class="keyword">if</span> (Y3=<span class="number">0</span>) <span class="keyword">then</span> <span class="constant">return</span> d-<span class="number">1</span> = <span class="constant">null</span><span class="comment"> //无逆元</span></span><br><span class="line"><span class="number">3</span>。 <span class="keyword">if</span> (Y3=<span class="number">1</span>) <span class="keyword">then</span> <span class="constant">return</span> d-<span class="number">1</span> = Y2<span class="comment"> //Y2为逆元</span></span><br><span class="line"><span class="number">4</span>。 Q := X3 <span class="operator">div</span> Y3<span class="comment"> //整除</span></span><br><span class="line"><span class="number">5</span>。 (T1，T2，T3) := (X1 - Q*Y1，X2 - Q*Y2，X3 - Q*Y3)</span><br><span class="line"><span class="number">6</span> 。(X1，X2，X3) := (Y1，Y2，Y3)</span><br><span class="line"><span class="number">7</span>。 (Y1，Y2，Y3) := (T1，T2，T3)</span><br><span class="line"><span class="number">8</span>。 goto <span class="number">2</span></span><br></pre></td></tr></table></figure>
 <p>C++代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="title">extend_gcd</span><span class="params">(<span class="keyword">long</span> <span class="keyword">long</span> a,<span class="keyword">long</span> <span class="keyword">long</span> b,<span class="keyword">long</span> <span class="keyword">long</span> &amp;x,<span class="keyword">long</span> <span class="keyword">long</span> &amp;y)</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">if</span>(a==<span class="number">0</span>&amp;&amp;b==<span class="number">0</span>)</span><br><span class="line"><span class="keyword">return</span> -<span class="number">1l</span>l;</span><br><span class="line"><span class="keyword">if</span>(b==<span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">x=<span class="number">1l</span>l;</span><br><span class="line">y=<span class="number">0l</span>l;</span><br><span class="line"><span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> d=extend_gcd(b,a%b,y,x);</span><br><span class="line">y-=a/b*x;</span><br><span class="line"><span class="keyword">return</span> d;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">long</span> <span class="keyword">long</span> <span class="title">mod_reverse</span><span class="params">(<span class="keyword">long</span> <span class="keyword">long</span> a,<span class="keyword">long</span> <span class="keyword">long</span> n)</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">long</span> <span class="keyword">long</span> x,y,d=extend_gcd(a,n,x,y);</span><br><span class="line"><span class="keyword">if</span>(d==<span class="number">1</span>)</span><br><span class="line"><span class="keyword">return</span> (x%n+n)%n;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="keyword">return</span> -<span class="number">1l</span>l;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>补充说明：<br>若ax≡1 mod f, 则称a关于模f的乘法逆元为x。也可表示为ax≡1(mod f)。当a与f互素时，a关于模f的乘法逆元有唯一解。如果不互素，则无解。如果f为素数，则从1到f-1的任意数都与f互素，即在1到f-1之间都恰好有一个关于模f的乘法逆元。<br>对于上面的C++代码，当d==1时，说明二者是互素的，即二者的最大公约数是1，扩展的欧几里得算法实际上是通过辗转相除法来求得两个数的最大公约数，只不过上面不论是伪代码还是C++代码，都是在将这个辗转相相除的中间过程记录下来，以便后面反向迭代求逆元时用。给出一个具体的例子，比如我们要求5关于模14的乘法逆元。首先我们通过辗转相除法来做，14/5=2余4，5/4=1余1，4/1=4余0，到这里，我们可以确定gcd(14,5)=gcd(4,1)=1，即14和5互素，则5关于模14的乘法逆元有唯一解，那么如何求乘法逆元呢，答案就是将辗转相除的过程反向迭代回去，上面代码也是通过递归体现一个反向迭代的过程。有一个定理忘了叫什么了，就是说两个数的最大公约数可以写成两个数的线性表示，比如a，b的最大公约数是c，则c=ma+nb，其中m，n是整数。那么上面14和5的最大公约数是1，所以1=m<em>14+n</em>5，由乘法逆元的定义可知，n就是5的乘法逆元，n由反向迭代求出。1=5-4<em>1=5-(14-5</em>2)<em>1=5</em>3-14；(就这样一直向上迭代，直到迭代到最上层的式子时停止，此时所得到的较小数的系数就是要求的小数关于大数的模逆元)。其实，你仔细总结还会发现，最后得到的两个数的系数是有一定规律的，下面是我根据规律写的python代码，没有递归来的那么直观和便于理解，仅供参考：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">re_gcd</span><span class="params">(a,b)</span>:</span></span><br><span class="line">    temp_a=a</span><br><span class="line">    temp_b=b</span><br><span class="line">    result=list()</span><br><span class="line">    <span class="keyword">if</span>(a%b==<span class="number">0</span>):</span><br><span class="line">        result.append(<span class="number">1</span>)</span><br><span class="line">        result.append(-(int(a/b)-<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        count=<span class="number">0</span></span><br><span class="line">        c=list()</span><br><span class="line">        <span class="keyword">while</span>(a%b!=<span class="number">0</span>):</span><br><span class="line">            c.append(int(a/b))</span><br><span class="line">            temp=b</span><br><span class="line">            b=a%b</span><br><span class="line">            a=temp</span><br><span class="line">            count+=<span class="number">1</span></span><br><span class="line"><span class="comment">##        print(count)</span></span><br><span class="line"><span class="comment">##        print(c)</span></span><br><span class="line">        <span class="keyword">if</span>(count==<span class="number">1</span>):</span><br><span class="line">            result.append(<span class="number">1</span>)</span><br><span class="line">            result.append(-int(temp_a/temp_b))</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">elif</span>(count%<span class="number">2</span>!=<span class="number">0</span>):</span><br><span class="line">            t=c[count-<span class="number">1</span>]</span><br><span class="line">            <span class="keyword">while</span>(count-<span class="number">1</span>!=<span class="number">0</span>):</span><br><span class="line">                s=t</span><br><span class="line">                t=t*c[count-<span class="number">2</span>]+<span class="number">1</span></span><br><span class="line">                count-=<span class="number">1</span></span><br><span class="line">            result.append(s)</span><br><span class="line">            result.append(-t)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            t=c[count-<span class="number">1</span>]</span><br><span class="line">            <span class="keyword">while</span>(count-<span class="number">1</span>!=<span class="number">0</span>):</span><br><span class="line">                s=t</span><br><span class="line">                t=t*c[count-<span class="number">2</span>]+<span class="number">1</span></span><br><span class="line">                count-=<span class="number">1</span></span><br><span class="line">            result.append(-s)</span><br><span class="line">            result.append(t)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">a=<span class="number">18</span></span><br><span class="line">b=<span class="number">12</span></span><br><span class="line"><span class="keyword">if</span>(a&gt;=b):</span><br><span class="line">    re=re_gcd(a,b)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    re=re_gcd(b,a)</span><br><span class="line">print(<span class="string">"s=%d\nt=%d\n"</span>%(re[<span class="number">0</span>],re[<span class="number">1</span>]))</span><br></pre></td></tr></table></figure></p>
+<p>补充说明：<br>若ax≡1 mod f, 则称a关于模f的乘法逆元为x。也可表示为ax≡1(mod f)。当a与f互素时，a关于模f的乘法逆元有唯一解。如果不互素，则无解。如果f为素数，则从1到f-1的任意数都与f互素，即在1到f-1之间都恰好有一个关于模f的乘法逆元。<br>对于上面的C++代码，当d==1时，说明二者是互素的，即二者的最大公约数是1，扩展的欧几里得算法实际上是通过辗转相除法来求得两个数的最大公约数，只不过上面不论是伪代码还是C++代码，都是在将这个辗转相相除的中间过程记录下来，以便后面反向迭代求逆元时用。给出一个具体的例子，比如我们要求5关于模14的乘法逆元。首先我们通过辗转相除法来做，14/5=2余4，5/4=1余1，4/1=4余0，到这里，我们可以确定gcd(14,5)=gcd(4,1)=1，即14和5互素，则5关于模14的乘法逆元有唯一解，那么如何求乘法逆元呢，答案就是将辗转相除的过程反向迭代回去，上面代码也是通过递归体现一个反向迭代的过程。有一个定理忘了叫什么了，就是说两个数的最大公约数可以写成两个数的线性表示，比如a，b的最大公约数是c，则c=ma+nb，其中m，n是整数。那么上面14和5的最大公约数是1，所以1=m x 14+n x 5，由乘法逆元的定义可知，n就是5的乘法逆元，n由反向迭代求出。1=5-4 x 1=5-(14-5 x 2) x 1=5 x 3-14；(就这样一直向上迭代，直到迭代到最上层的式子时停止，此时所得到的较小数的系数就是要求的小数关于大数的模逆元)。其实，你仔细总结还会发现，最后得到的两个数的系数是有一定规律的，下面是我根据规律写的python代码，没有递归来的那么直观和便于理解，仅供参考：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">re_gcd</span><span class="params">(a,b)</span>:</span></span><br><span class="line">    temp_a=a</span><br><span class="line">    temp_b=b</span><br><span class="line">    result=list()</span><br><span class="line">    <span class="keyword">if</span>(a%b==<span class="number">0</span>):</span><br><span class="line">        result.append(<span class="number">1</span>)</span><br><span class="line">        result.append(-(int(a/b)-<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        count=<span class="number">0</span></span><br><span class="line">        c=list()</span><br><span class="line">        <span class="keyword">while</span>(a%b!=<span class="number">0</span>):</span><br><span class="line">            c.append(int(a/b))</span><br><span class="line">            temp=b</span><br><span class="line">            b=a%b</span><br><span class="line">            a=temp</span><br><span class="line">            count+=<span class="number">1</span></span><br><span class="line"><span class="comment">##        print(count)</span></span><br><span class="line"><span class="comment">##        print(c)</span></span><br><span class="line">        <span class="keyword">if</span>(count==<span class="number">1</span>):</span><br><span class="line">            result.append(<span class="number">1</span>)</span><br><span class="line">            result.append(-int(temp_a/temp_b))</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">elif</span>(count%<span class="number">2</span>!=<span class="number">0</span>):</span><br><span class="line">            t=c[count-<span class="number">1</span>]</span><br><span class="line">            <span class="keyword">while</span>(count-<span class="number">1</span>!=<span class="number">0</span>):</span><br><span class="line">                s=t</span><br><span class="line">                t=t*c[count-<span class="number">2</span>]+<span class="number">1</span></span><br><span class="line">                count-=<span class="number">1</span></span><br><span class="line">            result.append(s)</span><br><span class="line">            result.append(-t)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            t=c[count-<span class="number">1</span>]</span><br><span class="line">            <span class="keyword">while</span>(count-<span class="number">1</span>!=<span class="number">0</span>):</span><br><span class="line">                s=t</span><br><span class="line">                t=t*c[count-<span class="number">2</span>]+<span class="number">1</span></span><br><span class="line">                count-=<span class="number">1</span></span><br><span class="line">            result.append(-s)</span><br><span class="line">            result.append(t)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">a=<span class="number">18</span></span><br><span class="line">b=<span class="number">12</span></span><br><span class="line"><span class="keyword">if</span>(a&gt;=b):</span><br><span class="line">    re=re_gcd(a,b)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    re=re_gcd(b,a)</span><br><span class="line">print(<span class="string">"s=%d\nt=%d\n"</span>%(re[<span class="number">0</span>],re[<span class="number">1</span>]))</span><br></pre></td></tr></table></figure></p>
 <hr>
 <p>强势介绍了一波数学姿势，我们有必要来条分割线压压惊。。。</p>
 <hr>
@@ -664,7 +662,7 @@
 <p>由于系数多项式是由4个字节构成的，形式为a3x^3+a2x^2+a1^x+a0，这里每个项的系数(a3,a2,a1,a0)各自对应一个字节，一个字节有8位，也就是说系数的取值范围是[0,255]，介绍完了系数多项式的格式，我们来看系数多项式是如何进行模乘运算的。</p>
 <p>给定两个系数多项式：a(x)= a3x^3+a2x^2+a1x+a0，b(x)= b3x^3+b2x^2+b1x+b0，我们定义系数多项式的模乘运算为c(x)= a(x)b(x)=c3x^3+c2x^2+c1^x+c0 (mod x^4+1)，这里模x^4+1是为了使得次数小于4 的多项式的乘积仍然是一个次数小于4 的多项式,这时<img src="/img/密码系列6-分组密码的尾声之IDEA和AES/28.PNG" alt="">，所以我们将上面的运算表示为</p>
 <p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/14.PNG" alt=""></p>
-<p>这就是模乘运算，根据这个定义我们可以得到c0=a0<em>b0+a3</em>b1+a2<em>b2+a1</em>b3(注意这里的+都是模2加)，但这里必须要强调的一点就是，一定要注意的一点就是对于系数相乘时采取时所采取的运算规则，即a0*b0怎么算？</p>
+<p>这就是模乘运算，根据这个定义我们可以得到c0=a0 x b0+a3 x b1+a2 x b2+a1 x b3(注意这里的+都是模2加)，但这里必须要强调的一点就是，一定要注意的一点就是对于系数相乘时采取时所采取的运算规则，即a0 x b0怎么算？</p>
 <p>由于a0和b0的取值范围都是[0,255]，但他们两的乘法运算并不采用字节多项式采用的模乘运算法则，他们采用另一种运算法则，我们称之为x乘法，给出x乘法的运算法则：</p>
 <p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/29.PNG" alt=""></p>
 <p>比如当a0=02，b0=c9时，x乘法对应的运算为：</p>
@@ -673,7 +671,7 @@
 <p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/31.PNG" alt=""></p>
 <p>也就是说把03拆成了01 + 02(注意这里的加为异或运算，即模2加运算),然后分别用01乘6e，02乘6e(这里的乘都是x乘法),对于01和02的x乘法我们已经会了，最后结果就是将这两个的结果加起来(注意这里的加为异或运算，即模2加运算)，就是这样。</p>
 <p>再来看个一般的情况,比如a0=57(16进制)，b0=13(16进制)，这里我们可以这样算，首先我们选取两数中较小的数(0x13)，将他像上面的0x3一样，拆成几个2的指数倍的数异或的形式，因为0x13=0x1 xor 0x2 xor 0x10(0x10=0x2^4)，然后将拆开的数分别于另一个数(0x57)进行x乘法运算，在此例中，0x1和0x2与0x57的x乘法我们已经会了，那么0x10与0x57的x乘法怎么算呢？</p>
-<p>这样算：由于0x10是0x2^4，即0x10<em>0x57(这里的乘法是x乘法)=(0x2</em>(0x2<em>(0x2</em>(0x2<em>0x57))))，也就是说相当于向左移4位，根据x乘法的运算规则，在每一次和0x2相乘时都采用x乘法运算法则，描述为0x57</em>0x2进行x乘法，结果再与2进行x乘法，结果再与2进行x乘法，结果再与2进行x乘法，然后就得到了最终结果了，恩，就是这样。对于0x57和0x13的x乘法，给出下图：</p>
+<p>这样算：由于0x10是0x2^4，即0x10 x 0x57(这里的乘法是x乘法)=(0x2 x (0x2 x (0x2 x (0x2 x 0x57))))，也就是说相当于向左移4位，根据x乘法的运算规则，在每一次和0x2相乘时都采用x乘法运算法则，描述为0x57 x 0x2进行x乘法，结果再与2进行x乘法，结果再与2进行x乘法，结果再与2进行x乘法，然后就得到了最终结果了，恩，就是这样。对于0x57和0x13的x乘法，给出下图：</p>
 <p><img src="/img/密码系列6-分组密码的尾声之IDEA和AES/32.PNG" alt=""></p>
 <p>这样，对于字节多项式的模乘运算以及系数多项式的模乘多项式我们就都搞清楚了，还是跟朋友讨论能得到姿势啊。。。</p>
 <hr>
@@ -798,7 +796,7 @@
     <link href="http://kenshichong.github.io/2015/12/28/%E5%AF%86%E7%A0%81%E7%B3%BB%E5%88%974-%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E4%B9%8B%E5%A4%A7%E5%90%8D%E9%BC%8E%E9%BC%8E%E7%9A%84DES/"/>
     <id>http://kenshichong.github.io/2015/12/28/密码系列4-分组密码之大名鼎鼎的DES/</id>
     <published>2015-12-28T07:48:18.000Z</published>
-    <updated>2015-12-30T07:57:33.502Z</updated>
+    <updated>2016-01-10T15:32:06.572Z</updated>
     <content type="html"><![CDATA[<h1 id="0x00_分组密码的概述">0x00 分组密码的概述</h1><p>除流密码外，分组密码是对称密码体系的又一大分支。</p>
 <h2 id="什么是分组密码">什么是分组密码</h2><p>分组密码（block cipher）：将明文消息序列划分成等长的消息组,在密钥 的控制下按固定的加密算法一组一组进行加密，输出一组一组密文。</p>
 <p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/0.PNG" alt=""></p>
@@ -809,7 +807,7 @@
 <p>如果敌手知道明文的某些统计特性，如消息中不同字母出现的频率、可能出现的特定单词或短语，而且这些统计特性以某种方式在密文中反映出来，那么敌手就有可能得出加密密钥或其一部分，或者得出包含加密密钥的一个可能的密钥集合。在Shannon称之为理想密码的密码系统中，密文的所有统计特性都与所使用的密钥独立。</p>
 <p>下面说几个具体的设计准则：</p>
 <ol>
-<li>分组长度n要足够大，使分组代换字母表中的元素个数2n足够大，防止明文穷举攻击法奏效。DES、IDEA、FEAL和LOKI等分组密码都采用n=64。</li>
+<li>分组长度n要足够大，使分组代换字母表中的元素个数2^n足够大，防止明文穷举攻击法奏效。DES、IDEA、FEAL和LOKI等分组密码都采用n=64。</li>
 <li>密钥量要足够大，以防止密钥穷举攻击奏效。但密钥又不能过长，以便于密钥的管理。DES采用56比特密钥，看来太短了，IDEA采用128比特密钥，据估计，在今后30～40年内采用80 比特密钥是足够安全的。</li>
 <li>由密钥确定置换的算法要足够复杂，充分实现明文与密钥的扩散和混淆，没有简单的关系可循，能抗击各种已知的攻击，如差分攻击和线性攻击；有高的非线性阶数，实现复杂的密码变换；使对手破译时,除穷举无捷径。(这句我也有好多不太懂的。。。)</li>
 <li>加密和解密运算简单，易于软件和硬件高速实现。<br>应选用简单的运算，如加、乘、移位等实现<br>加密和解密就可用同一器件实现<br>设计的算法采用规则的模块结构，如多轮迭代等，以便于软件和VLSI快速实现.</li>
@@ -878,7 +876,7 @@
 <p><strong>针对二重DES的攻击</strong><br>假设对任意两个密钥K1 和K2 , 能够找出另一密钥K3 , 使得EK2 [ EK1 [ P] ] = EK3 [ P]那么, 二重DES 以及多重DES 都没有意义, 因为它们与56 比特密钥的单重DES 等价, 好在这种假设对DES 并不成立。原因：将DES 加密过程64 比特分组到64 比特分组的映射看作一个置换, 如果考虑2的64次方个所有可能的输入分组, 则密钥给定后, DES 的加密将把每个输入分组映射到一个惟一的输出分组。否则, 如果有两个输入分组被映射到同一分组, 则解密过程就无法实施。另一方面, 对每个不同的密钥,DES 也都定义了一个映射。因此, 可假定用两个不同的密钥两次使用DES, 可得一个新映射, 而且这一新映射不出现在单重DES 定义的映射中。这一假定已于1992 年被证明。所以使用二重DES 产生的映射不会等价于单重DES 加密。那二重DES这么一说不就挺好的了，112bit长度的密钥我们可以接受，是不是可以放心使用了？其实并不，对二重DES 有以下一种称为中途相遇攻击的攻击方案, 这种攻击不依赖于DES 的任何特性, 因而可用于攻击任何分组密码。</p>
 <p><strong>中途相遇攻击</strong> </p>
 <p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/17.PNG" alt=""></p>
-<p>基本思想如下:如果有C = EK2 [ EK1 [ P] ]那么( 见图3 -8)X = EK1 [ P] = DK2 [ C]如果已知一个明文密文对( P, C) , 攻击的实施可如下进行: 首先, 用256 个所有可能的K1对P 加密, 将加密结果存入一表并对表按X 排序, 然后用256 个所有可能的K2 对C 解密, 在上述表中查找与C 解密结果相匹配的项, 如果找到, 则记下相应的K1 和K2 。最后再用一新的明文密文对( P′, C′)检验上面找到的K1 和K2 , 用K1 和K2 对P′两次加密,若结果等于C′, 就可确定K1 和K2 是所要找的密钥。对已知的明文P, 二重DES 能产生2的64次方个可能的密文, 而可能的密钥个数为2的112次方 , 所以平均来说, 对一个已知的明文, 有2的112次方 / 2的64次方 = 2的48次方个密钥可产生已知的密文。而再经过另外一对明文密文的检验, 误报率将下降到2的(48 - 64)次方= 2的(-16)次方 。所以在实施中途相遇攻击时, 如果已知两个明文密文对, 则找到正确密钥的概率为1 - 2(-16)次方 。</p>
+<p>基本思想如下:如果有C = EK2 [ EK1 [ P] ]那么( 见图3 -8)X = EK1 [ P] = DK2 [ C]如果已知一个明文密文对( P, C) , 攻击的实施可如下进行: 首先, 用2^56 个所有可能的K1对P 加密, 将加密结果存入一表并对表按X 排序, 然后用2^56 个所有可能的K2 对C 解密, 在上述表中查找与C 解密结果相匹配的项, 如果找到, 则记下相应的K1 和K2 。最后再用一新的明文密文对( P′, C′)检验上面找到的K1 和K2 , 用K1 和K2 对P′两次加密,若结果等于C′, 就可确定K1 和K2 是所要找的密钥。对已知的明文P, 二重DES 能产生2的64次方个可能的密文, 而可能的密钥个数为2的112次方 , 所以平均来说, 对一个已知的明文, 有2的112次方 / 2的64次方 = 2的48次方个密钥可产生已知的密文。而再经过另外一对明文密文的检验, 误报率将下降到2的(48 - 64)次方= 2的(-16)次方 。所以在实施中途相遇攻击时, 如果已知两个明文密文对, 则找到正确密钥的概率为1 - 2(-16)次方 。</p>
 <p>可见，由于二重DES的对称性，加上2的64次方数量级的计算对于现代计算机来说可以实现，并不是什么难事，所以导致他不能避免中途相遇攻击，那么三重DES应运而生</p>
 <h2 id="三重DES">三重DES</h2><p>三重DES可以抵抗中途相遇攻击。三重DES使用3 个不同的密钥做3 次加密, 从而可使已知明文攻击的代价增加到2的112次方 。但这样又会使密钥长度增加到56×3 = 168 比特, 因而过于笨重。一种实用的方法是仅使用两个密钥做3 次加密, 实现方式为加密-解密-加密, 简记为EDE( enc rypt-decrypt-encrypt )如图：</p>
 <p><img src="/img/密码系列4-分组密码之大名鼎鼎的DES/18.PNG" alt=""></p>
@@ -1043,7 +1041,7 @@
     <link href="http://kenshichong.github.io/2015/12/22/%E5%AF%86%E7%A0%81%E5%88%9D%E6%8E%A2-%E7%8E%A9bin%E7%9A%84%E4%BA%BA%E6%80%8E%E4%B9%88%E8%83%BD%E4%B8%8D%E6%87%82%E5%AF%86%E7%A0%81%E5%91%A2/"/>
     <id>http://kenshichong.github.io/2015/12/22/密码初探-玩bin的人怎么能不懂密码呢/</id>
     <published>2015-12-21T16:24:03.000Z</published>
-    <updated>2015-12-25T15:03:56.292Z</updated>
+    <updated>2016-01-09T15:41:32.220Z</updated>
     <content type="html"><![CDATA[<h1 id="0x01_前情提要">0x01 前情提要</h1><p>本文不像前几篇一样，不会这么注重框架性和体系性。本文以及相关的后续blog的目的在于介绍各种你所耳熟能详的几种密码的具体姿势。鉴于朋友说前几篇blog太长，所以这里打算把密码写成一个系列，并且在排版上也会上点心。。。</p>
 <h1 id="0x02_正片">0x02 正片</h1><p>说到密码，每个人都有每个人的第一印象。其实在很久以前，人们就有了对信息加密的意识，这里，古典密码不得不提。</p>
 <h2 id="古典密码">古典密码</h2><p>古典密码的加密体现的是一种代换的思想。包括单表代换密码和多表代换密码，单表代换如经典的恺撒密码，移位变换，仿射变换等。这里简单说一下，恺撒密码，加密时每个字母后移3位，然后mod26，解密时，每个字母前移3位，然后mod26，其中3就是加解密所用的密钥。移位变换是移k位，仿射变换（该图来自百度百科）:</p>
@@ -1065,11 +1063,11 @@
 <p>根据加密器中记忆元件的存储状态σi 是否依赖于输入的明文字符, 流密码可进一步分成同步和自同步两种。σi 独立于明文字符的叫做同步流密码, 否则叫做自同步流密码。由于自同步流密码的密钥流的产生与明文有关, 因而较难从理论上进行分析，目前大多数研究成果都是关于同步流密码的，因此同步流密码也是我们讨论的重点。</p>
 <p>可见同步流密码的关键是密钥流产生器。目前最为流行和实用的密钥流产生器是通过线性反馈移位寄存器来实现密钥的产生。移位寄存器是流密码产生密钥流的一个主要组成部分。GF(2 )上一个n 级反馈移位<br>寄存器由n 个二元存储器与一个反馈函数f ( a1 , a2 , ⋯ , an )组成，如图：</p>
 <p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/4.PNG" alt=""></p>
-<p>每一存储器称为移位寄存器的一级, 在任一时刻, 这些级的内容构成该反馈移位寄存器的状态, 每一状态对应于GF( 2)上的一个n 维向量, 共有2n 种可能的状态。每一时刻的状态可用n 长序列a1 , a2 , ⋯ , an或n 维向量( a1 , a2 , ⋯ , an )表示, 其中ai 是第i 级存储器的内容。初始状态由用户确定, 当第i 个移位时钟脉冲到来时, 每一级存储器ai 都将其内容向下一级ai - 1 传递, 并根据寄存器此时的状态a1 , a2 , ⋯ ,an 计算f ( a1 , a2 , ⋯ , an ) , 作为下一时刻的an 。反馈函数f ( a1 , a2 , ⋯ , an )是n 元布尔函数, 即n 个变元a1 , a2 , ⋯ , an 可以独立地取0 和1 这两个可能的值, 函数中的运算有逻辑与、逻辑或、逻辑补等运算, 最后的函数值也为0 或1。</p>
-<p>其实上面的过程可以形象的想象成鸡下蛋的过程，鸡肚子中存储的蛋的数量是有限的。首先，用户，没错，就是你，你让鸡怀上了鸡所能承受的最多的蛋，然后鸡开始下蛋，并且鸡没下一个蛋(认为产生了一个密钥位)，你或者其他什么东西又会立马使它怀上一个蛋，且这个蛋的产生与这只鸡还没生蛋前的所有肚子里的蛋有关系，至于是什么关系，这是用户，没错，还是你，可以去定义的，这样，鸡就会一直下蛋，相当于一个密钥流产生器。</p>
+<p>每一存储器称为移位寄存器的一级, 在任一时刻, 这些级的内容构成该反馈移位寄存器的状态, 每一状态对应于GF( 2)上的一个n 维向量, 共有2^n 种可能的状态。每一时刻的状态可用n 长序列a1 , a2 , ⋯ , an或n 维向量( a1 , a2 , ⋯ , an )表示, 其中ai 是第i 级存储器的内容。初始状态由用户确定, 当第i 个移位时钟脉冲到来时, 每一级存储器ai 都将其内容向下一级ai - 1 传递, 并根据寄存器此时的状态a1 , a2 , ⋯ ,an 计算f ( a1 , a2 , ⋯ , an ) , 作为下一时刻的an 。反馈函数f ( a1 , a2 , ⋯ , an )是n 元布尔函数, 即n 个变元a1 , a2 , ⋯ , an 可以独立地取0 和1 这两个可能的值, 函数中的运算有逻辑与、逻辑或、逻辑补等运算, 最后的函数值也为0 或1。</p>
+<p>其实上面的过程可以形象的想象成鸡下蛋的过程，鸡肚子中存储的蛋的数量是有限的。首先，用户，没错，就是你，你让鸡怀上了鸡所能承受的最多的蛋，然后鸡开始下蛋，并且鸡每下一个蛋(认为产生了一个密钥位)，你或者其他什么东西又会立马使它怀上一个蛋，且这个蛋的产生与这只鸡还没生蛋前的所有肚子里的蛋有关系，至于是什么关系，这是用户，没错，还是你，可以去定义的，这样，鸡就会一直下蛋，相当于一个密钥流产生器。</p>
 <p>如果移位寄存器的反馈函数f ( a1 , a2 , ⋯ , an ) 是a1 , a2 , ⋯ , an 的线性函数, 则称之为线性反馈移位寄存器LFSR( linear feedback shiftregister ) 。这里我们需要注意的是，由于线性反馈寄存器都是按位来计算的，所以这里的线性函数中各个项之间的运算基本上都是模2加，即异或操作。此时f 可写为f ( a1 , a2 , ⋯ , an ) = cn a1 + cn - 1 a2 + ⋯ + c1 an其中常数ci = 0 或1 ,+是模2 加法。ci = 0 或1 可用实际电路的开关的断开和闭合来实现,如图：</p>
 <p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/5.PNG" alt=""></p>
-<p>则，输出序列{ at }满足：an + t = cn at + cn - 1 at+ 1 + ⋯ + c1 an + t - 1，线性反馈移位寄存器因其实现简单、速度快、有较为成熟的理论等优点而成为构造密钥流生成器的最重要的部件之一。在线性反馈移位寄存器中总是假定c1 , c2 , ⋯ , cn 中至少有一个不为0 , 否则f ( a1 ,a2 , ⋯ , an )≡0 , 这样的话, 在n 个脉冲后状态必然是00⋯0 , 且这个状态必将一直持续下去。若只有一个系数不为0 , 设仅有cj 不为0 , 实际上是一种延迟装置。一般对于n 级线性反馈移位寄存器, 总是假定cn = 1。线性反馈移位寄存器输出序列的性质完全由其反馈函数决定。n 级线性反馈移位寄存器最多有2n 个不同的状态。若其初始状态为0 , 则其状态恒为0。若其初始状态非0 ,则其后继状态不会为0。因此n 级线性反馈移位寄存器的状态周期小于等于2n - 1。其输出序列的周期与状态周期相等, 也小于等于2n - 1。只要选择合适的反馈函数便可使序列的周期达到最大值2n - 1 , 周期达到最大值的序列称为m 序列。</p>
+<p>则，输出序列{ at }满足：an + t = cn at + cn - 1 at+ 1 + ⋯ + c1 an + t - 1，线性反馈移位寄存器因其实现简单、速度快、有较为成熟的理论等优点而成为构造密钥流生成器的最重要的部件之一。在线性反馈移位寄存器中总是假定c1 , c2 , ⋯ , cn 中至少有一个不为0 , 否则f ( a1 ,a2 , ⋯ , an )≡0 , 这样的话, 在n 个脉冲后状态必然是00⋯0 , 且这个状态必将一直持续下去。若只有一个系数不为0 , 设仅有cj 不为0 , 实际上是一种延迟装置。一般对于n 级线性反馈移位寄存器, 总是假定cn = 1。线性反馈移位寄存器输出序列的性质完全由其反馈函数决定。n 级线性反馈移位寄存器最多有2^n 个不同的状态。若其初始状态为0 , 则其状态恒为0。若其初始状态非0 ,则其后继状态不会为0。因此n 级线性反馈移位寄存器的状态周期小于等于2^n - 1。其输出序列的周期与状态周期相等, 也小于等于2^n - 1。只要选择合适的反馈函数便可使序列的周期达到最大值2^n - 1 , 周期达到最大值的序列称为m 序列。</p>
 <p>流密码的安全性取决于密钥流的安全性, 要求密钥流序列有好的随机性, 以使密码分析者对它无法预测。也就是说, 即使截获其中一段, 也无法推测后面是什么。如果密钥流是周期的, 要完全做到随机性是困难的。严格地说, 这样的序列不可能做随机, 只能要求截获比周期短的一段密钥流时不会泄露更多信息, 这样的序列称为伪随序列。为讨论m 序列的随机性, 先要讨论随机序列的一般特性。</p>
 <p>前方数学高能，先来个分割线压压惊。</p>
 <hr>
@@ -1092,7 +1090,7 @@
 <p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/9.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/10.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/11.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/12.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/13.PNG" alt=""></p>
 <p>可以看出，m序列很好的满足了3个随机性公设，也就是说它具有良好的伪随机性，也就是说这个序列可以用来做密钥流，所以当我们设计密钥流产生器时，我们可以使密钥的生成去尽量接近m序列。针对密钥流的构造，我们给定初始状态，以及状态转换函数应使接下来的状态尽量具有良好的伪随机性，这是流密码密钥设计的一个原则。</p>
 <h2 id="流密码的破解">流密码的破解</h2><p>有限域GF( 2)上的二元加法流密码是目前最为常用的流密码体制, 设滚动密钥生成器是线性反馈移位寄存器, 产生的密钥是m 序列，它具有良好的伪随机性，那么这时的流密码是不是就不能破解了？并不，我们来看看怎么破，又设Sh 和S h + 1是序列中两个连续的n 长向量，直接上图：</p>
-<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/13.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/14.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/15.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/16.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/17.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/18.PNG" alt=""></p>
+<p><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/14.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/15.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/16.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/17.PNG" alt=""><br><img src="/img/密码初探-玩bin的人怎么能不懂密码呢/18.PNG" alt=""></p>
 <p>对于流密码的理论部分，就暂时讲到这。。。下篇将流密码在现实中对应的具体算法</p>
 <p>下片预告：流密码在现实中的具体应用—A5算法和RC4算法</p>
 ]]></content>

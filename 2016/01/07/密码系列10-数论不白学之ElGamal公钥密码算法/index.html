@@ -28,7 +28,7 @@ RSA的安全性来自于求一对大素数的乘积很容易，但要对这个�
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/4.PNG">
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/5.PNG">
 <meta property="og:image" content="http://kenshichong.github.io/img/密码系列10-数论不白学之ElGamal公钥密码算法/6.PNG">
-<meta property="og:updated_time" content="2016-01-08T02:38:04.811Z">
+<meta property="og:updated_time" content="2016-01-10T15:38:59.595Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="密码系列10-数论不白学之ElGamal公钥密码算法">
 <meta name="twitter:description" content="0x00 口胡前面我们对公钥密码体制进行了一个总体的介绍，然后对公钥密码的一个典型代表-RSA进行了详细介绍，知道了为什么好多从事密码事业的人并不是计算机相关专业科班出身，而是数学专业科班出身。反正你数学不好，你想在密码上有所造诣，不是说没可能，我只能说难，好吧(语气词)。
@@ -113,7 +113,7 @@ RSA的安全性来自于求一对大素数的乘积很容易，但要对这个�
 <p>RSA的安全性来自于求一对大素数的乘积很容易，但要对这个乘积进行因式分解则非常困难，也就是所谓的大整数分解问题。</p>
 <p>而我们今天的主角ElGamal公钥密码算法，它的安全性来源于另一个数学难题-离散对数难题，即已知g为Zp*(乘法群)的生成元(对于乘法群的生成元的概念，给两个链接-<a href="http://www.zhihu.com/question/23353412" target="_blank" rel="external">1</a>、<a href="http://zhidao.baidu.com/link?url=bGc3UiaExw2yYeMHPGjQxOAkk-O6G9BqevgOiStiw1WSWql5l9vVis1iZ_Hd_akv3K7f78L8VcAd9ZDxVc9BYfbsVAPcMhafIlabO_faosK" target="_blank" rel="external">2</a>)，y∈ Zp ，求x使得y=g^x mod p，这个x在现阶段是不可求的，这就是ElGamal公钥密码算法安全性的来源，如果求离散对数问题是容易的，则获得y能够解出x，则这类算法完全破译</p>
 <h1 id="0x01_ElGamal算法流程">0x01 ElGamal算法流程</h1><h2 id="1-_密钥产生过程">1. 密钥产生过程</h2><p>首先选择一大素数p, 原根g和小于p的随机数x，计算y≡g^x mod p，以(y, g, p)作为公开密钥，x作为秘密密钥.<br>这里说明一下，g是模p的原根，原根的概念，数论姿势那有讲，再补充一点，原根是乘法群的一个生成元，所以说ElGamal公钥密码算法中生成元一般取原根</p>
-<h2 id="2-_加密过程">2. 加密过程</h2><p>设欲加密明文消息为M(如果M长度超过p则进行分组) . 随机选与p-1互素的整数k，1&lt; k&lt;p-1<br>计算密文对: C = {C1,C2}, 发送给接收者.C1≡g^k mod p,   C2≡(y^k)*M mod p.</p>
+<h2 id="2-_加密过程">2. 加密过程</h2><p>设欲加密明文消息为M(如果M长度超过p则进行分组) . 随机选与p-1互素的整数k，1&lt; k&lt;p-1<br>计算密文对: C = {C1,C2}, 发送给接收者.C1≡g^k mod p,   C2≡(y^k) x M mod p.</p>
 <h2 id="3-_解密过程">3. 解密过程</h2><p>直接po图：<br><img src="/img/密码系列10-数论不白学之ElGamal公钥密码算法/0.PNG" alt=""></p>
 <p>这里对图中说的k 需要永久保密，且不能重复使用进行说明：</p>
 <ol>
