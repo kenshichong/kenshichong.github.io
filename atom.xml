@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Be a machine]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kenshichong.github.io/"/>
-  <updated>2016-01-10T15:06:47.957Z</updated>
+  <updated>2016-01-16T04:53:00.764Z</updated>
   <id>http://kenshichong.github.io/</id>
   
   <author>
@@ -13,6 +13,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[想起来啥写啥]]></title>
+    <link href="http://kenshichong.github.io/2016/01/16/hello-world/"/>
+    <id>http://kenshichong.github.io/2016/01/16/hello-world/</id>
+    <published>2016-01-16T04:53:00.764Z</published>
+    <updated>2016-01-16T04:53:00.764Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x10-0x01-0x0A">0x10.0x01.0x0A</h1><p>新年新气象，感觉kenshichong这个id不会跟自己太长时间，起源来自于朋友的一句话，“你们牛逼就行了，我就默默的啃屎”，联想到屎壳郎这种动物，就用了kenshichong这个id。。。所以今天决定换id，就是beet1e了</p>
+<p>接下来的计划就是：</p>
+<h2 id="0x00">0x00</h2><p>把最近一直在看的书做好总结，看了好多心目中菊苣的blog，感觉理论还是挺重要的，但自己只动脑不动手的习惯得改-_-~!</p>
+<h2 id="0x01">0x01</h2><p>打xctf，开始接触misc，crypt，为小队多出点力，争取进线下，能够和各种菊苣见见；</p>
+<h2 id="0x02">0x02</h2><p>安卓</p>
+<h2 id="0x03">0x03</h2><p>GEEK，智能家电，物联网之类的</p>
+<p>希望这些计划都能实现，新的一年，干劲满满，gan ba lei</p>
+<h1 id="0x10-0x01-0x07">0x10.0x01.0x07</h1><p>不要走别人认为你走这条路比较好的路，没什么j8意思。。。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x10-0x01-0x0A">0x10.0x01.0x0A</h1><p>新年新气象，感觉kenshichong这个id不会跟自己太长时间，起源来自于朋友的一句话，“你们牛逼就行了，我就默默的啃屎”，联想到屎壳郎这种动物，就用了kenshichong这个id。。]]>
+    </summary>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[密码系列12-消息认证机制]]></title>
@@ -391,31 +412,6 @@
       <category term="密码学" scheme="http://kenshichong.github.io/tags/%E5%AF%86%E7%A0%81%E5%AD%A6/"/>
     
       <category term="cryptography" scheme="http://kenshichong.github.io/categories/cryptography/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[kenshichong的内心独白]]></title>
-    <link href="http://kenshichong.github.io/2016/01/07/hello-world/"/>
-    <id>http://kenshichong.github.io/2016/01/07/hello-world/</id>
-    <published>2016-01-07T02:44:09.575Z</published>
-    <updated>2016-01-07T02:44:09.575Z</updated>
-    <content type="html"><![CDATA[<h1 id="0x10-0x01-0x07">0x10.0x01.0x07</h1><p>不要走别人认为你走这条路比较好的路，没什么j8意思。。。</p>
-<h1 id="0xf-0xc-0x10">0xf.0xc.0x10</h1><p>趁年轻能输的时候输一把又何妨，况且万一赢了呢，那就赚大了，而且怎么感觉赢的可能性还很大呢，嗯哼嗯哼蹦擦擦。</p>
-<h1 id="0xf-0xc-0xf">0xf.0xc.0xf</h1><p>不想让自己的心太早死去啊。。。</p>
-<p>志趣相投者，知己也，少也少也</p>
-<p>我是嗜血的复仇者，这种并不被看好的感觉好久没体验过了，哈哈哈</p>
-<h1 id="0xf-0xc-0x8">0xf.0xc.0x8</h1><p>今天得知自己的某门考试挂掉了，大学第一挂吧，作为一直优秀的我(至少在长辈眼中是)，这种结果对于我这种“好学生”来说应该是不能接受的吧。但是，除了有一丝小小的伤感外，我没有半点后悔。我知道我不是上天选中的人，但是我想以我的方式去活下去，我只想为我在意的东西去奋斗，为我真正感兴趣的东西去挥霍我的青春，如果不这样做，我才会真的后悔。我一直以来都很矛盾，从小到大，自己桀骜不驯，大家也知道，在当今教育体制下，成绩不能说100%吧，但最起码社会看一个学生90%都是以成绩来衡量，这样的例子我见的太多了，自己也因为从小到大成绩好而被优待着，是真正意义上的优待。有了自己的思想后，我开始觉着自己很贱，仅仅因为成绩好就被别人用不一样的眼光来看待，我一直很欣赏那些成绩不好的学生，因为他们往往有着不一样的棱角，相反，很多成绩好的都被生活磨平了棱角，生活按部就班的走。我的很多死党从小到大都是班里垫底的，成绩好的真心朋友几乎没有，我喜欢他们身上的那种敢于对生活说fuck的精神，喜欢他们无所谓的态度，喜欢他们为了自己真正喜爱的东西去追逐的精神，尽管他们被生活折磨，但我很羡慕他们的生活，也不能说是羡慕吧，总之就是很佩服的感觉。高中时，就开始厌学，总觉着这种生活如同行尸走肉，每天干着违背内心的事情，但是没办法，当时就想着为了父母，为了迎合别人好学生的眼光，自己得硬着头皮学下去，好在自己成绩不算差，考上了这个985，希望能够找到让自己能够一生为之付出的东西吧。</p>
-<p>我现在找到了，现在的我着迷于技术，每天5个小时的睡眠，但我依然能够充满活力去做的事，那就是我所深爱的技术了，我深爱着它，就像我所说的，要有技术至死的癫狂和信仰，我崇尚这种境界，我真的是好不容易找到了自己想要去为之付出的东西，我不愿放弃，我也不会放弃，活了20年，都在为别人而活，现在真心想为自己活一把，去追求，就算被生活打压，就算去要饭，我只想说那时的我虽然会流泪，但我不会后悔，因为这是我想要的生活，我在干着我喜欢的事情。。。</p>
-<p>我会证明技术的力量，用我这一生。。。</p>
-<p>kenshichong不曾后悔，不会回头</p>
-<p>kenshichong始终相信技术宅定会改变世界</p>
-<p>莫名的哽咽了。。。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<h1 id="0x10-0x01-0x07">0x10.0x01.0x07</h1><p>不要走别人认为你走这条路比较好的路，没什么j8意思。。。</p>
-<h1 id="0xf-0xc-0x10">0xf.0xc.0x10</h1><p>趁年轻能输的时候输一把又何妨，况且万一]]>
-    </summary>
     
   </entry>
   
