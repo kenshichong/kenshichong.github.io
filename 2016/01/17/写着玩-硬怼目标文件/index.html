@@ -1,0 +1,607 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>写着玩-硬怼目标文件 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 口胡最近dota有点上头，就是怼，马上就能回家跟基友回家黑店了，我是屌屌的3号位，哈哈哈。。。目标文件，怼起。。。
+0x01 目标文件的格式还记得我们前面所说的后缀是.o的文件，就是他了，他就是目标文件的一种，其实他已经很接近可执行文件了，不，它已经可以执行了，只要你给他创造相应的条件的话。所以，我们将目标文件与可执行文件看成是一种类型的文件也未尝不可。在windows下，我们统称为PE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="写着玩-硬怼目标文件">
+<meta property="og:url" content="http://kenshichong.github.io/2016/01/17/写着玩-硬怼目标文件/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 口胡最近dota有点上头，就是怼，马上就能回家跟基友回家黑店了，我是屌屌的3号位，哈哈哈。。。目标文件，怼起。。。
+0x01 目标文件的格式还记得我们前面所说的后缀是.o的文件，就是他了，他就是目标文件的一种，其实他已经很接近可执行文件了，不，它已经可以执行了，只要你给他创造相应的条件的话。所以，我们将目标文件与可执行文件看成是一种类型的文件也未尝不可。在windows下，我们统称为PE">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/6.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/7.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/8.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/9.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/11.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/12.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/13.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/14.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/15.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/16.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/17.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/18.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/19.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/27.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/20.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/21.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/22.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/23.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/24.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/25.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/26.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/28.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/29.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/30.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/31.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/32.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/33.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/34.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/35.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/36.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/37.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/38.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/39.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/40.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/41.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/42.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/43.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/44.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/45.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/46.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/47.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/48.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/49.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/50.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/51.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/52.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/53.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/54.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-硬怼目标文件/55.PNG">
+<meta property="og:updated_time" content="2016-01-18T10:59:47.041Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="写着玩-硬怼目标文件">
+<meta name="twitter:description" content="0x00 口胡最近dota有点上头，就是怼，马上就能回家跟基友回家黑店了，我是屌屌的3号位，哈哈哈。。。目标文件，怼起。。。
+0x01 目标文件的格式还记得我们前面所说的后缀是.o的文件，就是他了，他就是目标文件的一种，其实他已经很接近可执行文件了，不，它已经可以执行了，只要你给他创造相应的条件的话。所以，我们将目标文件与可执行文件看成是一种类型的文件也未尝不可。在windows下，我们统称为PE">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/17/写着玩-硬怼目标文件/" title="写着玩-硬怼目标文件" itemprop="url">写着玩-硬怼目标文件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-01-17T12:50:32.000Z" itemprop="datePublished"> 发表于 2016-01-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_目标文件的格式"><span class="toc-number">2.</span> <span class="toc-text">0x01 目标文件的格式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_ELF文件结构"><span class="toc-number">3.</span> <span class="toc-text">0x02 ELF文件结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_文件头"><span class="toc-number">3.1.</span> <span class="toc-text">1. 文件头</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_段表"><span class="toc-number">3.2.</span> <span class="toc-text">2. 段表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_重定位表"><span class="toc-number">3.3.</span> <span class="toc-text">3. 重定位表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-_字符串表"><span class="toc-number">3.4.</span> <span class="toc-text">4. 字符串表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-_链接的接口-符号"><span class="toc-number">3.5.</span> <span class="toc-text">5. 链接的接口-符号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-_调试信息"><span class="toc-number">3.6.</span> <span class="toc-text">6. 调试信息</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_小结"><span class="toc-number">4.</span> <span class="toc-text">0x03 小结</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_口胡">0x00 口胡</h1><p>最近dota有点上头，就是怼，马上就能回家跟基友回家黑店了，我是屌屌的3号位，哈哈哈。。。<br>目标文件，怼起。。。</p>
+<h1 id="0x01_目标文件的格式">0x01 目标文件的格式</h1><p>还记得我们前面所说的后缀是.o的文件，就是他了，他就是目标文件的一种，其实他已经很接近可执行文件了，不，它已经可以执行了，只要你给他创造相应的条件的话。所以，我们将目标文件与可执行文件看成是一种类型的文件也未尝不可。在windows下，我们统称为PE-COFF文件格式，在linux下，统称为ELF文件。</p>
+<p>还有动态链接库-（DLL &amp; .so），静态链接库-（windows下的.lib,linux的.a）也都是可执行文件的格式，但是静态链接库稍有不同，它是把很多目标文件捆绑在一起形成一个文件，再加上一些索引，可以简单的理解为一个包含有很多目标文件的文件包。</p>
+<p>ELF文件类型：<br><img src="/img/写着玩-硬怼目标文件/0.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/1.PNG" alt=""></p>
+<h1 id="0x02_ELF文件结构">0x02 ELF文件结构</h1><p>ELF文件基本结构图：<br><img src="/img/写着玩-硬怼目标文件/2.PNG" alt=""></p>
+<p>ELF目标文件格式的最前部是ELF文件头(ELF Header)，它包含了描述整个文件的基本属性。比如ELF文件版本、目标机器型号、程序入口地址等。紧接着是ELF文件各个段。其中ELF文件中与段有关的重要结构是段表(Section Header Table)，该表描述了ELF文件包含的所有段的信息。比如每个段的段名、段的长度、在文件中的偏移、读写权限及段的其他属性。</p>
+<h2 id="1-_文件头">1. 文件头</h2><p>可以用readelf命令来详细查看ELF文件：</p>
+<p><img src="/img/写着玩-硬怼目标文件/3.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/4.PNG" alt=""></p>
+<p><strong><em>ELF文件头(ELF_Ehdr)结构的具体定义：</em></strong><br><img src="/img/写着玩-硬怼目标文件/5.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/6.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/7.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/8.PNG" alt=""></p>
+<p><strong><em>ELF文件头结构成员具体含义：</em></strong><br><img src="/img/写着玩-硬怼目标文件/9.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/10.PNG" alt=""></p>
+<p><strong><em>ELF文件头中的魔数(前16字节e_ident含义)：</em></strong><br><img src="/img/写着玩-硬怼目标文件/11.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/12.PNG" alt=""></p>
+<p><strong><em>文件类型</em></strong><br><img src="/img/写着玩-硬怼目标文件/13.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/14.PNG" alt=""></p>
+<p><strong><em>机器类型</em></strong><br><img src="/img/写着玩-硬怼目标文件/15.PNG" alt=""></p>
+<h2 id="2-_段表">2. 段表</h2><p><strong><em>段表总体描述</em></strong><br><img src="/img/写着玩-硬怼目标文件/16.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/17.PNG" alt=""></p>
+<p>所以，段表就是一个数组。</p>
+<p><strong><em>数组成员(ELF32_Shdr结构定义)</em></strong><br><img src="/img/写着玩-硬怼目标文件/18.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/19.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/27.PNG" alt=""></p>
+<p><strong><em>由段表视角出发得到的ELF文件布局</em></strong><br><img src="/img/写着玩-硬怼目标文件/20.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/21.PNG" alt=""></p>
+<p><strong><em>段描述符(ELF32-Shdr)各字段具体含义</em></strong></p>
+<p><strong>段的类型(sh_types)</strong><br><img src="/img/写着玩-硬怼目标文件/22.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/23.PNG" alt=""></p>
+<p><strong>段的标志位(sh_flag)</strong><br><img src="/img/写着玩-硬怼目标文件/24.PNG" alt=""></p>
+<p>对于系统保留段，下表列出了他们的属性</p>
+<p><img src="/img/写着玩-硬怼目标文件/25.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/26.PNG" alt=""></p>
+<p><strong>段的链接信息</strong><br><img src="/img/写着玩-硬怼目标文件/28.PNG" alt=""></p>
+<h2 id="3-_重定位表">3. 重定位表</h2><p><img src="/img/写着玩-硬怼目标文件/29.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/30.PNG" alt=""></p>
+<p>在介绍链接的过程的时候，会详细的介绍重定位表的作用</p>
+<h2 id="4-_字符串表">4. 字符串表</h2><p>这是个很重要的表，对于我们把整个ELF文件结构框架搭建起来必不可少<br><img src="/img/写着玩-硬怼目标文件/31.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/32.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/33.PNG" alt=""></p>
+<p>即：ELF文件头(e_shstrndx)-&gt;段表中的段表字符串表信息-&gt;段表字符串表-&gt;解析各个段。具体的索引想一下就知道了，这里就口胡下，首先拿到文件头中的e_shstrndx字段的值，得知下标和段表的起始位置，则由段表的起始位置+段表数组的成员大小(40 byte)*下标，可以得到段表字符串表的一些列信息，什么起始偏移，大小啊什么的，那么就可以找到段表字符串表的具体位置了，这时可以把段表字符串表拿到内存，供以后解析各个段时使用，然后再返回段表去解析各个段。</p>
+<h2 id="5-_链接的接口-符号">5. 链接的接口-符号</h2><p>每个函数或变量都有自己独特的名字，才能避免链接过程中不同变量和函数之间的混淆。在链接中，我们将函数和变量统称为符号，函数名或变量名就是符号名。</p>
+<p><strong><em>符号概述</em></strong><br><img src="/img/写着玩-硬怼目标文件/34.PNG" alt=""></p>
+<p>由于局部符号、段名、行号等对于其他目标文件来说是”不可见的”，在链接过程中无关紧要，我们只关心全局符号。我们可以使用很多命令来查看ELF文件的符号表，比如上面介绍的readelf、objdump，当然还有nm。</p>
+<p><img src="/img/写着玩-硬怼目标文件/35.PNG" alt=""></p>
+<p>ELF文件中的符号表往往是文件中的一个段，段名一般叫”.symtab”.符号表的结构很简单，它是一个ELF32_sym结构的数组，每个ELF32_sym结构对应一个符号。这个数组的第一个元素，也就是下标为0的元素为无效的”未定义”符号</p>
+<p><strong><em>ELF32_sym结构定义</em></strong><br><img src="/img/写着玩-硬怼目标文件/36.PNG" alt=""><br><strong><em>各字段含义</em></strong><br><img src="/img/写着玩-硬怼目标文件/37.PNG" alt=""></p>
+<p>对一些字段的详解：<br><strong>符号类型和绑定信息(st_info)</strong><br>该成员低4位表示符号的类型，高28位表示符号绑定信息，见下表：<br><img src="/img/写着玩-硬怼目标文件/38.PNG" alt=""></p>
+<p><strong>符号所在段(st_shndx)</strong><br>如果符号定义在本目标文件中，那么这个成员表示符号所在的段在段表中的下标；但是如果符号不是定义在本目标文件中，或者对于有些特殊符号，sh_shndx的值有些特殊，见下表：<br><img src="/img/写着玩-硬怼目标文件/39.PNG" alt=""></p>
+<p><strong>符号值(st_value)</strong><br><img src="/img/写着玩-硬怼目标文件/40.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/41.PNG" alt=""></p>
+<p>通过上图中划红线的步骤可以找到该符号所对应的具体内容，比如，函数的话可以找到该函数所对应的具体代码处，而全局初始化变量的话，则可以找到全局初始化变量所对应的具体值。</p>
+<p>还是以SimpleSection.o为例：<br><img src="/img/写着玩-硬怼目标文件/42.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/43.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/44.PNG" alt=""></p>
+<p><strong><em>符号修饰和函数签名</em></strong><br>对于符号修饰和函数签名问题，它是为了解决符号名冲突问题。很久以前，UNIX下的C语言就规定，C语言源代码文件中的所有全局的变量和函数经过编译以后，相对应的符号名前加上下划线”<em>“。而Fortran语言的源代码经过编译后，所有的符号名前面加上”</em>“，后面也加上”<em>“。现在linux下的GCC编译器，默认去掉了在C语言符号前加”</em>“的这种方式；但是windows平台下的编译器还保持着。VC++编译器，GCC在windows下的版本(cygwin,mingw)都会加”_”。GCC编译器可以通过参数选项”-fleading-underscore”或”-fno-leading-underscore”来打开和关闭是否在C语言符号前加上下划线。</p>
+<p><strong>C++符号修饰</strong><br>C++都用过，强大而又复杂。他的很多机制都为符号的管理带来了很多麻烦。比如类、继承、虚机制、重载、名称空间等特性。为了支持这些特性，发明了符号修饰或符号改编的机制。</p>
+<p><em>对于函数重载</em><br>给例子：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">func</span><span class="params">(<span class="keyword">float</span>)</span></span>;</span><br><span class="line"><span class="keyword">class</span> C &#123;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	<span class="keyword">class</span> C2&#123;</span><br><span class="line">		<span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> N &#123;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	<span class="keyword">class</span> C &#123;</span><br><span class="line">		<span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这段代码中有6个同名函数叫func，但他们的返回类型和参数及所在的名称空间不同。我们引入函数签名以及修饰后名称的概念。一个函数签名对应一个修饰后名称。C++的源代码编译后的目标文件中所使用的符号名是相应的函数和变量的修饰后名称。上面的6个函数的函数签名以及修饰后名称是：</p>
+<p><img src="/img/写着玩-硬怼目标文件/45.PNG" alt=""></p>
+<p>下面解释下不同的函数签名是怎样修饰的。GCC的基本C++名称修饰方法如下：所有的符号都以”_Z”开头，对于嵌套的名字(在名称空间或在类里面的)，后面紧跟”N”，然后是各个名称空间和类的名字，每个名字前是名字字符串长度，在以”E”结尾。比如N::C::func经过名称修饰以后就是_ZN1N1C4funcE。对于一个函数来说，他的参数列表紧跟在”E”后面。对于int类型来说，就是字母”i”。所以整个N::C::func(int)函数签名经过修饰为_ZN1N1C4funcEi。更为具体的修饰方法在这不介绍，可以去查GCC名称修饰标准。有工具可以帮我们解析被修饰过的名称，比如：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ c++filt _ZN1N1C4funcEi</span><br><span class="line">N::C::func(int)</span><br></pre></td></tr></table></figure></p>
+<p>这种修饰机制不光用到函数名上，他也被用到全局变量和静态变量上。但有一点需要注意，那就是变量的类型是没有被加入到修饰后名称中的，所以不论这个变量是整形还是浮点型甚至是一个全局对象，他们的名称都是一样的。</p>
+<p>不同的编译器厂商的名称修饰方法可能不同，在Visual C++下：</p>
+<p><img src="/img/写着玩-硬怼目标文件/46.PNG" alt=""></p>
+<p>以int N::C::func(int)这个函数签名来说明VC++修饰规则，其实我们都能猜出来→_→修饰名字由”?”开头，接着是函数名”@”符号结尾的函数名；后面跟着由”@”结尾的类名”C”和名称空间”N”，再一个”@”表示函数的名称空间结束，第一个”A”表示函数调用类型为”__cdecl”(函数调用类型会在以后说)，接着是函数的参数类型及返回值，由”@”结束，最后由”Z”结尾。</p>
+<p>其实，VC++的名称修饰规则并没有对外公开。MS提供了一个UNDecorateSymbolName()的API，可以将休市后名称转换成函数签名。</p>
+<p>由于不同的编译器采用不同的名字修饰方法，必然会导致由不用编译器编译产生的目标文件无法正常相互链接，这是导致不同编译器之间不能相互操作的主要原因之一(被坑过T_T)。。。</p>
+<p><strong><em>extern “C”</em></strong><br><img src="/img/写着玩-硬怼目标文件/47.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/48.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/49.PNG" alt=""></p>
+<p><strong><em>弱符号与强符号</em></strong><br><img src="/img/写着玩-硬怼目标文件/50.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/51.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/52.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/53.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/54.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/55.PNG" alt=""></p>
+<h2 id="6-_调试信息">6. 调试信息</h2><p>在GCC编译时加上”-g”参数编译器就会在产生的目标文件里面加上调试信息</p>
+<h1 id="0x03_小结">0x03 小结</h1><p>主要分析了各种目标文件的格式，对于ELF文件的代码段、数据段和BSS段没有过多阐述。详细介绍了ELF文件的文件头、段表、重定位表、字符串表、符号表、调试表等相关结构。</p>
+<p>无路时可执行文件、目标文件还是库，他们实际上都是基于段的文件或是这种文件的集合，程序的源代码经过编译以后，按照代码和数据分别存放到相应的段中、编译器(汇编器)还会将一些辅助信息，比如符号、重定位信息等也按照表的方式存放到目标文件中，通常情况下，一个表就是一个段。</p>
+<p>有了这些目标文件后，接下来就是如何将他们合起来，形成一个可以使用的程序或更得模块，这就是静态链接的问题，下面会在静态链接的续集介绍</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/reverse-related/">reverse related</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/人丑就要多读书/">人丑就要多读书</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2016/01/17/写着玩-硬怼目标文件/" data-title="写着玩-硬怼目标文件 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/01/18/写着玩-强撸静态链接（续）/" title="写着玩-强撸静态链接（续）">
+  <strong>上一篇：</strong><br/>
+  <span>
+  写着玩-强撸静态链接（续）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/01/17/写着玩-强撸静态链接/"  title="写着玩-强撸静态链接">
+ <strong>下一篇：</strong><br/> 
+ <span>写着玩-强撸静态链接
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_目标文件的格式"><span class="toc-number">2.</span> <span class="toc-text">0x01 目标文件的格式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_ELF文件结构"><span class="toc-number">3.</span> <span class="toc-text">0x02 ELF文件结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_文件头"><span class="toc-number">3.1.</span> <span class="toc-text">1. 文件头</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_段表"><span class="toc-number">3.2.</span> <span class="toc-text">2. 段表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_重定位表"><span class="toc-number">3.3.</span> <span class="toc-text">3. 重定位表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-_字符串表"><span class="toc-number">3.4.</span> <span class="toc-text">4. 字符串表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-_链接的接口-符号"><span class="toc-number">3.5.</span> <span class="toc-text">5. 链接的接口-符号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-_调试信息"><span class="toc-number">3.6.</span> <span class="toc-text">6. 调试信息</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_小结"><span class="toc-number">4.</span> <span class="toc-text">0x03 小结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/人丑就要多读书/" title="人丑就要多读书">人丑就要多读书<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

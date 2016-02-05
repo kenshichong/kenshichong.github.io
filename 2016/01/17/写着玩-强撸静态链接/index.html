@@ -1,0 +1,529 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>写着玩-强撸静态链接 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 口胡我写代码，以C的hello world为例，第一遍写时是用VC6，当时就傻逼的抄代码，然后F7，然后就F5，然后就输出了，当时就觉着自己好屌，也觉着VC6好屌。现在长大了，开始学着装逼了，用VS，用gcc，g++，但还是觉着VC6好用，没办法，自己太菜，而且也没写过太多代码，VC6够用了，而且也都习惯了。。。
+学了编译之后，才算大体上理解从代码文本到可执行的二进制程序是怎样的一个过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="写着玩-强撸静态链接">
+<meta property="og:url" content="http://kenshichong.github.io/2016/01/17/写着玩-强撸静态链接/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 口胡我写代码，以C的hello world为例，第一遍写时是用VC6，当时就傻逼的抄代码，然后F7，然后就F5，然后就输出了，当时就觉着自己好屌，也觉着VC6好屌。现在长大了，开始学着装逼了，用VS，用gcc，g++，但还是觉着VC6好用，没办法，自己太菜，而且也没写过太多代码，VC6够用了，而且也都习惯了。。。
+学了编译之后，才算大体上理解从代码文本到可执行的二进制程序是怎样的一个过程">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-强撸静态链接/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-强撸静态链接/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-强撸静态链接/2.PNG">
+<meta property="og:updated_time" content="2016-01-17T12:49:12.748Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="写着玩-强撸静态链接">
+<meta name="twitter:description" content="0x00 口胡我写代码，以C的hello world为例，第一遍写时是用VC6，当时就傻逼的抄代码，然后F7，然后就F5，然后就输出了，当时就觉着自己好屌，也觉着VC6好屌。现在长大了，开始学着装逼了，用VS，用gcc，g++，但还是觉着VC6好用，没办法，自己太菜，而且也没写过太多代码，VC6够用了，而且也都习惯了。。。
+学了编译之后，才算大体上理解从代码文本到可执行的二进制程序是怎样的一个过程">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/17/写着玩-强撸静态链接/" title="写着玩-强撸静态链接" itemprop="url">写着玩-强撸静态链接</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-01-17T11:48:38.000Z" itemprop="datePublished"> 发表于 2016-01-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_这条命令干了啥"><span class="toc-number">2.</span> <span class="toc-text">0x01 这条命令干了啥</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_预编译"><span class="toc-number">2.1.</span> <span class="toc-text">1. 预编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_编译"><span class="toc-number">2.2.</span> <span class="toc-text">2. 编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_汇编"><span class="toc-number">2.3.</span> <span class="toc-text">3. 汇编</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-_链接"><span class="toc-number">2.4.</span> <span class="toc-text">4. 链接</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_口胡">0x00 口胡</h1><p>我写代码，以C的hello world为例，第一遍写时是用VC6，当时就傻逼的抄代码，然后F7，然后就F5，然后就输出了，当时就觉着自己好屌，也觉着VC6好屌。现在长大了，开始学着装逼了，用VS，用gcc，g++，但还是觉着VC6好用，没办法，自己太菜，而且也没写过太多代码，VC6够用了，而且也都习惯了。。。</p>
+<p>学了编译之后，才算大体上理解从代码文本到可执行的二进制程序是怎样的一个过程，但是也只是知道了个大概，毕竟现实中真正在用的编译器那都是有好多好多功能的，是很强大的，他的具体过程也远没我想的那么简单，既然学了编译，有了大体框架，那么，现在就来丰富细节吧。。。</p>
+<p>编程时，都是写完代码，然后一个按钮，或者一行命令，然后就生成了可执行程序，但这个按钮或命令是做了很多事的，大体分为四个步骤：预处理、编译、汇编、链接。</p>
+<p>给张图：</p>
+<p><img src="/img/写着玩-强撸静态链接/0.PNG" alt=""></p>
+<p>没啥好说的，直接撸。。。</p>
+<h1 id="0x01_这条命令干了啥">0x01 这条命令干了啥</h1><p><strong><em>gcc hello.c</em></strong></p>
+<h2 id="1-_预编译">1. 预编译</h2><p><img src="/img/写着玩-强撸静态链接/1.PNG" alt=""></p>
+<p>预编译过程主要处理那些源代码文件中的以”#”开始的预编译指令。比如”#include”、”#define”等，主要规则如下（这就不截图了，手打加深印象）：</p>
+<ol>
+<li>将所有的”#define”删除，并且展开所有的宏定义</li>
+<li>处理所有条件预编译指令，比如”#if”、”#ifdef”、”#elif”、”#else”、”#endif”。</li>
+<li>处理”#include”预编译指令，将被包含的文件插入到该预编译指令的位置。注意，这个过程是递归进行的，也就是说被包含的文件可能还包含其它文件</li>
+<li>删除所有的注释”//“和”/**/“。</li>
+<li>添加行号和文件名标识，比如#2”hello.c”2，以便于编译时编译器产生调试用的行号信息及用于编译时产生编译错误或警告时能够显示行号。</li>
+<li>保留所有的#pragma编译器指令，因为编译器要使用</li>
+</ol>
+<p>经过预编译后的.i文件不包含任何宏定义，因为所有的宏已经被展开，并且包含的文件也已经被插入到.i文件中。所以当我们无法判断宏定义是否正确或头文件包含是否正确时，可以查看预编译后的文件来确定问题(小技巧get)</p>
+<h2 id="2-_编译">2. 编译</h2><p>编译过程就是把预处理完的文件进行一系列词法分析、语法分析、语义分析以及优化后生成相应的汇编代码文件。该过程相当于如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -S hello.i -o hello.s</span><br></pre></td></tr></table></figure></p>
+<p>现在版本的GCC把预编译和编译两个步骤合并成一个步骤，使用一个叫做cc1的程序，位于/usr/lib/gcc/i486-linux-gnu/4.1/，所以<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cc1 hello.c</span><br></pre></td></tr></table></figure></p>
+<p>可以达到相同的效果，或<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -S hello.c -o hello.s</span><br></pre></td></tr></table></figure></p>
+<p>这些都可以得到汇编文件hello.s。对于C语言，这个预编译和编译的程序是ccl，对于C++，是cclplus；Objective-C是cclobj；fortan是f771；java是jc1。所以实际上gcc这个命令只是这些后台程序的包装，它会根据不同的参数要求去调用预编译程序cc1、汇编器as、链接器ld。</p>
+<h2 id="3-_汇编">3. 汇编</h2><p>汇编器是将汇编代码转变成机器可以执行的指令，每一个汇编语句几乎都对应一条机器指令。就是根据汇编指令和机器指令的对照表意义翻译就行。对应的指令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">as hello.s -o hello.o</span><br></pre></td></tr></table></figure></p>
+<p>或<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c hello.s -o hello.o</span><br></pre></td></tr></table></figure></p>
+<p>或</p>
+<pre><code class="bash">gcc -c hello.c -o hello.o
+</code></pre>
+<h2 id="4-_链接">4. 链接</h2><p>懒，直接上图：</p>
+<p><img src="/img/写着玩-强撸静态链接/2.PNG" alt=""></p>
+<p>下面就是一堆编译器到底干了什么的东西，具体的可以参考我以前写的blog，好像是第一篇吧。。。</p>
+<p>先到这。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/reverse-related/">reverse related</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/人丑就要多读书/">人丑就要多读书</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2016/01/17/写着玩-强撸静态链接/" data-title="写着玩-强撸静态链接 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/01/17/写着玩-硬怼目标文件/" title="写着玩-硬怼目标文件">
+  <strong>上一篇：</strong><br/>
+  <span>
+  写着玩-硬怼目标文件</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/01/17/程序员的自我修养/"  title="程序员的自我修养">
+ <strong>下一篇：</strong><br/> 
+ <span>程序员的自我修养
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_这条命令干了啥"><span class="toc-number">2.</span> <span class="toc-text">0x01 这条命令干了啥</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_预编译"><span class="toc-number">2.1.</span> <span class="toc-text">1. 预编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_编译"><span class="toc-number">2.2.</span> <span class="toc-text">2. 编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_汇编"><span class="toc-number">2.3.</span> <span class="toc-text">3. 汇编</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-_链接"><span class="toc-number">2.4.</span> <span class="toc-text">4. 链接</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/人丑就要多读书/" title="人丑就要多读书">人丑就要多读书<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

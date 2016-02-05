@@ -1,0 +1,543 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>程序员的自我修养 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 口胡最近也算是闲下来了，把最近一直想总结的exp给总结完后，就想着找点事干。。。
+这两天就去看各个大大的blog，理解了哈希长度扩展攻击，看了一些PHP黑魔法，强势补了下分区的姿势，SSRF啥的。。。但也就是浏览浏览，根本沉不下来心，感觉自己太浮躁了，然后又去看一些自己错过的一些ctf的write up，想着自己去把一些想做的题去重新做一下，但根本找不到真正打比赛时的激情，感觉就像是在咀">
+<meta property="og:type" content="article">
+<meta property="og:title" content="程序员的自我修养">
+<meta property="og:url" content="http://kenshichong.github.io/2016/01/17/程序员的自我修养/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 口胡最近也算是闲下来了，把最近一直想总结的exp给总结完后，就想着找点事干。。。
+这两天就去看各个大大的blog，理解了哈希长度扩展攻击，看了一些PHP黑魔法，强势补了下分区的姿势，SSRF啥的。。。但也就是浏览浏览，根本沉不下来心，感觉自己太浮躁了，然后又去看一些自己错过的一些ctf的write up，想着自己去把一些想做的题去重新做一下，但根本找不到真正打比赛时的激情，感觉就像是在咀">
+<meta property="og:image" content="http://kenshichong.github.io/img/程序员的自我修养/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/程序员的自我修养/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/程序员的自我修养/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/程序员的自我修养/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/程序员的自我修养/4.PNG">
+<meta property="og:updated_time" content="2016-01-17T11:45:28.860Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="程序员的自我修养">
+<meta name="twitter:description" content="0x00 口胡最近也算是闲下来了，把最近一直想总结的exp给总结完后，就想着找点事干。。。
+这两天就去看各个大大的blog，理解了哈希长度扩展攻击，看了一些PHP黑魔法，强势补了下分区的姿势，SSRF啥的。。。但也就是浏览浏览，根本沉不下来心，感觉自己太浮躁了，然后又去看一些自己错过的一些ctf的write up，想着自己去把一些想做的题去重新做一下，但根本找不到真正打比赛时的激情，感觉就像是在咀">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/01/17/程序员的自我修养/" title="程序员的自我修养" itemprop="url">程序员的自我修养</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-01-17T07:48:16.000Z" itemprop="datePublished"> 发表于 2016-01-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x0-5_关于本系列的口胡"><span class="toc-number">2.</span> <span class="toc-text">0x0.5 关于本系列的口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_线程的笼统介绍"><span class="toc-number">3.</span> <span class="toc-text">0x01 线程的笼统介绍</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_口胡">0x00 口胡</h1><p>最近也算是闲下来了，把最近一直想总结的exp给总结完后，就想着找点事干。。。</p>
+<p>这两天就去看各个大大的blog，理解了哈希长度扩展攻击，看了一些PHP黑魔法，强势补了下分区的姿势，SSRF啥的。。。但也就是浏览浏览，根本沉不下来心，感觉自己太浮躁了，然后又去看一些自己错过的一些ctf的write up，想着自己去把一些想做的题去重新做一下，但根本找不到真正打比赛时的激情，感觉就像是在咀嚼剩菜，不行，提不起来劲。。。</p>
+<p>总不能浪费时间吧，安卓和硬件的话想放假回来搞，现在的心情真心不适合去马上开始一块新的领域，主要是自己真的不想搭环境，想赖着两个队友，他们把环境都搭好，自己直接用~</p>
+<p>问了下两个队友，他们也都是在各种总结，所以自己想着还是把近几个月一直在看的这本书给总结下，算是给临近放假的这段时间+寒假找点事干，也让自己静静，沉淀沉淀。。。</p>
+<p>这个blog就准备当做自己的一个总结用的东西吧，写的也都是给自己看的一些基础的东西，并不是那么注重质量，就是当做自己忘了某些东西时，有个可以查的地方吧，所以基本都是一些理论的东西，实战很少。</p>
+<p>等自己牛逼了，再重新开个blog，介绍各种奇淫技巧也不迟~</p>
+<h1 id="0x0-5_关于本系列的口胡">0x0.5 关于本系列的口胡</h1><p>还是会写成一个系列吧。。。</p>
+<p>会按照本书的脉络，总结自己认为重要的东西，会尽量注重体系化和结构化，对于一些自己认为太干的货，我还是会加入自己的口水理解，方便自己消化。</p>
+<p>跟操作系统会有点联系吧，就是一些较底层的理论姿势，发现自己也是喜欢这些东西。。。</p>
+<p>口胡就到这吧，开始漫漫总结之旅。。。</p>
+<p>没找到电子版，pdf找的也都是扫描版，所以能手打的就手打了，纯当练习自己的打字速度+加深记忆了，但是自己真的懒，所以截图大法好。。。</p>
+<h1 id="0x01_线程的笼统介绍">0x01 线程的笼统介绍</h1><p>线程，有时被称为轻量级进程。一个标准的线程由线程ID，当前指令指针（PC），寄存器集合和堆栈组成，各个线程之间共享程序的内存空间。这里说的寄存器集合并非指真正意义上的物理硬件，一个线程就给一套与它相匹配的寄存器，这。。。这里更偏向于软件，是一种数据结构的概念，还记得操系中的TSS吗，类似于那个概念吧，就是说当线程真正竞争到CPU资源时，他才对这些物理资源实现真正意义上的占有。</p>
+<p>相对于多进程应用，多线程在数据共享方面效率要高的多，因为进程间通信限制很多，这些限制是为了防止各种杂七杂八的情况出现。线程的访问很自由，他可以访问进程内存里的所有数据，甚至包括其他线程的堆栈（如果他知道其他线程的堆栈地址）。但线程也是有隐私的，局部变量，函数的参数，线程局部存储（TLS），这些数据是线程私有的。</p>
+<p>关于线程的调度问题，具体参考进程调度，差不多。如果想要提高一个线程的被调度率，可以采用提高线程优先级的方法。在windows中，使用BOOL WINAPI SetThreadPriority（HANDLE hThread，int nPriority）；来设置线程的优先级，而linux下与线程相关的操作可以通过pthread库来实现。一般的策略中，IO密集型总是比CPU密集型更容易得到优先级的提升。在优先级调度的环境下，线程的优先级改变一般有三种方式：</p>
+<ol>
+<li>用户指定优先级</li>
+<li>根据进入等待状态的频繁程度提升或降低优先级。频繁等待优先级高，意味着一旦就绪系统就会让他尽量在下个时间片运行</li>
+<li>长时间得不到执行而被提升优先级。</li>
+</ol>
+<p>关于fork，exec，clone以及写时复制、竞争与原子操作，同步与互斥啥的就不啰嗦了，操系里已经写得很清楚了</p>
+<p>线程安全是一块烫手的山芋，因为即使合理的使用了锁，也不一定能保证线程安全，这是源于落后的编译器技术已经无法满足日益增长的并发需求。很多看似无错的代码在优化和并发的面前又产生了麻烦。如下代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x=<span class="number">0</span>;</span><br><span class="line"><span class="function">thread1		thread2</span><br><span class="line"><span class="title">lock</span><span class="params">()</span></span>;		lock();</span><br><span class="line">x++;		x++;</span><br><span class="line">unlock();	unlock();</span><br></pre></td></tr></table></figure></p>
+<p>由于有lock和unlock的保护，x++的行为不会被并发所破坏，那么x的值似乎必然是2了。然而，如果编译器为了提高x的访问速度，把x放到了某个寄存器里，那么我们知道不同线程的寄存器是各自独立的。假设thread1先获得锁，则可能会出现下面的情况：</p>
+<p><img src="/img/程序员的自我修养/0.PNG" alt=""></p>
+<p>可见在这样的情况下即使正确的加锁，也不能保证线程安全。下面是另一个例子：</p>
+<p><img src="/img/程序员的自我修养/1.PNG" alt=""><br><img src="/img/程序员的自我修养/2.PNG" alt=""></p>
+<p>此时，如果按照<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">r1=y;</span><br><span class="line">切换</span><br><span class="line">y=<span class="number">1</span>;</span><br><span class="line">r2=x;</span><br><span class="line">切换</span><br><span class="line">x=<span class="number">1</span>;</span><br></pre></td></tr></table></figure></p>
+<p>这种顺序执行，那么此时r1=r2=0就完全有可能了。看到这，其实是有点崩溃的，这尼玛考虑的问题也太多了吧，老子本来写的对的程序硬生生跑错，但没办法，已经发展成这样子了。所以，我们来看下补救措施：我们可以使用volatile关键字试图阻止过渡优化。volatile可以做到：</p>
+<p><img src="/img/程序员的自我修养/3.PNG" alt=""></p>
+<p>可见volatile确实可以解决一些问题，但是即使volatile能够阻止编译器调整顺序，也无法阻止CPU动态调度换序，呵呵哒。。。</p>
+<p>另一个颇为著名的与换序有关的问题来自于singleton模式的double-check。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> T * pInst = <span class="number">0</span>;</span><br><span class="line"><span class="function">T * <span class="title">GetInstance</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">	lock();</span><br><span class="line">	<span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">		pInst = <span class="keyword">new</span> T;</span><br><span class="line">	unlock();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> pInst;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>抛开逻辑，这代码乍看没问题，使用了volatile关键字，而lock和unlock防止了多线程竞争导致的麻烦。双重的if在这里另有妙用（防止在lock前进行进程切换而使得代码流程不受我们控制），可以让lock的调用开销降低到最小。</p>
+<p>但是，呵呵，这是有问题的，没错，就是CPU的乱序执行。C++里的new其实包含了两个步骤：</p>
+<ol>
+<li>分配内存</li>
+<li>调用构造函数<br>所以pInst = new T包含了三个步骤：</li>
+<li>分配内存</li>
+<li>在内存的位置上调用构造函数</li>
+<li>将内存的地址赋值给pInst</li>
+</ol>
+<p><img src="/img/程序员的自我修养/4.PNG" alt=""></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">define</span> barrier() __asm()__ volatile (<span class="string">"lwsync"</span>)</span></span><br><span class="line"><span class="keyword">volatile</span> T * pInst = <span class="number">0</span>;</span><br><span class="line"><span class="function">T * <span class="title">GetInstance</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">	lock();</span><br><span class="line">	<span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">		T * temp = <span class="keyword">new</span> T;</span><br><span class="line">		barrier();</span><br><span class="line">		pInst = temp;</span><br><span class="line">	unlock();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> pInst;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于barrier的存在，对象的构造一定在barrier执行之前完成，因此当pInst被赋值时，对象总是完好的。</p>
+<p>首篇就先到这了。。。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/reverse-related/">reverse related</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/人丑就要多读书/">人丑就要多读书</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2016/01/17/程序员的自我修养/" data-title="程序员的自我修养 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/01/17/写着玩-强撸静态链接/" title="写着玩-强撸静态链接">
+  <strong>上一篇：</strong><br/>
+  <span>
+  写着玩-强撸静态链接</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/01/16/hello-world/"  title="想起来啥写啥">
+ <strong>下一篇：</strong><br/> 
+ <span>想起来啥写啥
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x0-5_关于本系列的口胡"><span class="toc-number">2.</span> <span class="toc-text">0x0.5 关于本系列的口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_线程的笼统介绍"><span class="toc-number">3.</span> <span class="toc-text">0x01 线程的笼统介绍</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/人丑就要多读书/" title="人丑就要多读书">人丑就要多读书<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

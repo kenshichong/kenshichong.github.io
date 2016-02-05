@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Be a machine]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://kenshichong.github.io/"/>
-  <updated>2016-01-16T04:53:00.764Z</updated>
+  <updated>2016-01-19T12:14:15.251Z</updated>
   <id>http://kenshichong.github.io/</id>
   
   <author>
@@ -13,6 +13,343 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[写着玩-狂艹装载]]></title>
+    <link href="http://kenshichong.github.io/2016/01/19/%E5%86%99%E7%9D%80%E7%8E%A9-%E7%8B%82%E8%89%B9%E8%A3%85%E8%BD%BD/"/>
+    <id>http://kenshichong.github.io/2016/01/19/写着玩-狂艹装载/</id>
+    <published>2016-01-19T11:37:30.000Z</published>
+    <updated>2016-01-19T12:14:15.251Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>最近有点痴迷一些计算机中的机制、策略等理论姿势，觉得有些机制或策略很有意思，以后会多看些这方面的书籍吧，为挖洞之路打基础。</p>
+<h1 id="0x01_开艹-一些杂七杂八的东西">0x01 开艹-一些杂七杂八的东西</h1><p>可执行文件只有装载到内存以后才能被CPU执行，装载强调的是怎样放入内存以及如何放。</p>
+<p>对于Windows操作系统来说，它的进程虚拟地址空间划分是操作系统占用2GB，剩2GB给进程。windows有个启动参数可以将操作系统占用的虚拟地址空间减少到1GB，即跟linux一样(linux是系统：进程=1:3)。方法为修改Windows系统盘根目录下的Boot.ini(默认是隐藏的)，加上”/3G”参数：<br><img src="/img/写着玩-狂艹装载/0.PNG" alt=""></p>
+<p>程序运行时是有局部性原理的，所以我们可以将程序最常用的部分驻留内存，而将一些不太常用的数据存放在磁盘里面，这就是动态载入的基本原理。覆盖载入和页映射是两种很典型的动态装载方法，都利用了程序的局部性原理。思想就是程序用到哪个模块就将哪个模块装入内存，如果不用就暂时不装入，存放在磁盘中。</p>
+<p>覆盖载入就是覆盖，就是说内存就那么点，满了的话你要再想往里面装载的话，就得覆盖，至于覆盖的策略一般要保证程序能够正常执行，禁止跨树间调用</p>
+<p>页映射的话就是，大小按页进行装载入内存，采取的策略是由操作系统定的。</p>
+<h1 id="0x02_从OS角度看可执行文件的装载">0x02 从OS角度看可执行文件的装载</h1>]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>最近有点痴迷一些计算机中的机制、策略等理论姿势，觉得有些机制或策略很有意思，以后会多看些这方面的书籍吧，为挖洞之路打基础。</p>
+<h1 id="0x01_开艹-一些杂七杂八的东西">0x01 开艹-一些杂七杂八的]]>
+    </summary>
+    
+      <category term="人丑就要多读书" scheme="http://kenshichong.github.io/tags/%E4%BA%BA%E4%B8%91%E5%B0%B1%E8%A6%81%E5%A4%9A%E8%AF%BB%E4%B9%A6/"/>
+    
+      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[写着玩-回顾以前的PE岁月]]></title>
+    <link href="http://kenshichong.github.io/2016/01/19/%E5%86%99%E7%9D%80%E7%8E%A9-%E5%9B%9E%E9%A1%BE%E4%BB%A5%E5%89%8D%E7%9A%84PE%E5%B2%81%E6%9C%88/"/>
+    <id>http://kenshichong.github.io/2016/01/19/写着玩-回顾以前的PE岁月/</id>
+    <published>2016-01-19T07:24:33.000Z</published>
+    <updated>2016-01-19T11:36:08.567Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>怎么说呢，看到PE，满满的都是感动，想起了一年前，自己刚开始接触计算机时躲在被窝里怒刷汇编视频与PE视频的岁月了。。。当时自己还是傻白甜，看不懂就看很多遍，强行建立PE姿势，很感谢当初认真的自己吧，也感谢陪伴我度过日子的鱼C论坛，虽然现在很少逛了，希望它越办越好吧。。。</p>
+<p>这篇不会讲太多，类似于过渡篇把。结构上的东西也不会讲太多，主要还是记录点有意思的东西。PE都被讲烂了，直接用一些PE工具看结构吧，挺直观的。。。</p>
+<h1 id="0x01_PE的前身-COFF">0x01 PE的前身-COFF</h1><p>PE是32位windows的，PE32+是win64的。然而新的PE32+并没有添加任何结构，最大的变化就是把那些原来32位的字段变成了64位，呵呵。。。</p>
+<p><img src="/img/写着玩-回顾以前的PE岁月/0.PNG" alt=""></p>
+<p>给出COFF目标文件格式：</p>
+<p><img src="/img/写着玩-回顾以前的PE岁月/1.PNG" alt=""></p>
+<p>COFF文件的文件头部包括了两部分，一个是描述文件总体结构和属性的映像头(Image Header/IMAGE_FILE_HEADER)，另外一个是描述该文件中包含的段属性的段表(Section Table/IMAGE_SECTION_HEADER)。</p>
+<h2 id="IMAGE_FILE_HEADER">IMAGE_FILE_HEADER</h2><p><img src="/img/写着玩-回顾以前的PE岁月/2.PNG" alt=""><br><img src="/img/写着玩-回顾以前的PE岁月/3.PNG" alt=""></p>
+<h2 id="IMAGE_SECTION_HEADER">IMAGE_SECTION_HEADER</h2><p><img src="/img/写着玩-回顾以前的PE岁月/4.PNG" alt=""><br><img src="/img/写着玩-回顾以前的PE岁月/5.PNG" alt=""><br><img src="/img/写着玩-回顾以前的PE岁月/6.PNG" alt=""></p>
+<h2 id="黑魔法1-drectve段">黑魔法1-.drectve段</h2><p>.drectve段实际上是Directive的缩写，它的内容是编译器传递给链接器的指令(Directive)，即编译器希望告诉链接器应该怎样链接这个目标文件。.drectve段的标志位是”0x100A00”，是一些标志位的组合：<br><img src="/img/写着玩-回顾以前的PE岁月/7.PNG" alt=""><br>即该段是信息段，并非程序数据；该段可以在最后链接成可执行文件的时候被抛弃；该段在文件中的对齐方式是1个字节对齐。</p>
+<p>我们可以用dumpbin对.drectve进行解析，给出内容：<br><img src="/img/写着玩-回顾以前的PE岁月/8.PNG" alt=""><br><img src="/img/写着玩-回顾以前的PE岁月/9.PNG" alt=""></p>
+<h2 id="黑魔法2-调试信息">黑魔法2-调试信息</h2><p>COFF文件中所有以”.debug”开始的段都包含着调试信息。这些段中往往有一些意想不到的信息，也可以算是一个<strong>坑点</strong>。</p>
+<p>比如，”.debug$S”表示包含的是符号(Symbol)相关的调试信息段；”.debug$P”表示包含预编译头文件(Precompiled Header Files)相关的调试信息段；”.debug$T”表示包含类型(Type)相关的调试信息段。</p>
+<p>给出.debug$S段的输出信息：</p>
+<p><img src="/img/写着玩-回顾以前的PE岁月/10.PNG" alt=""></p>
+<h2 id="COFF符号表">COFF符号表</h2><p>COFF文件的符号表包含的内容几乎跟ELF文件的符号表一样，主要就是符号名、符号的类型、所在的位置等。</p>
+<p>给出符号表的输出信息：</p>
+<p><img src="/img/写着玩-回顾以前的PE岁月/11.PNG" alt=""><br><img src="/img/写着玩-回顾以前的PE岁月/12.PNG" alt=""><br><img src="/img/写着玩-回顾以前的PE岁月/13.PNG" alt=""></p>
+<h1 id="0x02_Windows下的ELF-PE">0x02 Windows下的ELF-PE</h1><p>PE文件是基于COFF的扩展，它比COFF文件多了几个结构。最主要的变化有两个：第一个是文件最开始的部分不是COFF文件头，而是DOS_MZ可执行文件格式的文件头和桩代码(DOS MZ File Header and Stub，比较有意思的一个结构)；第二个变化是原来的COFF文件头中的”IMAGE_FILE_HEADER”部分扩展成了PE文件的文件头结构”IMAGE_NT_HEADERS”。这个结构包括了原来的”Image Header”及新增的PE扩展头部结构(PE Optional Header)。</p>
+<p>给出PE文件的结构：<br><img src="/img/写着玩-回顾以前的PE岁月/14.PNG" alt=""></p>
+<p>为了所谓的兼容性-兼容DOS，PE文件的魔数是”MZ”，因为DOS下的可执行文件格式是”MZ”。PE文件中”Image DOS Header”和”DOS Stub”这两个结构也是为了兼容DOS。</p>
+<p>“IMAGE_DOS_HEADER”结构其实跟DOS的”MZ”可执行结构的头部完全一样，所以从某个角度看，PE文件其实也是一个”MZ”文件。”IMAGE_DOS_HEADER”的结构中的前两个字节是”e_magic”结构，它是里面包含了”MZ”这两个字母的ASCII码；”e_cs”和”e_ip”两个成员指向程序的入口地址。</p>
+<p>当PE可执行映像在DOS下被加载的时候，DOS系统检测到该文件，发现最开始两个字节是”MZ”，于是认为他是一个”MZ”可执行文件。然后DOS系统就将PE文件当做正常的”MZ”文件开始执行。DOS系统会读取”e_cs”和”e_ip”这两个成员的值，以跳转到程序的入口地址。然而PE文件中，”e_cs”和”e_ip”这两个成员并不指向程序真正的入口地址，而是指向文件中的”DOS stub”。”DOS stub”是一段可以在DOS下运行的一小段代码，这段代码的唯一作用是向终端输出一行字：”This program cannot be run in DOS”，然后退出程序，表示该程序不能在DOS下运行。这是PE文件结构兼容DOS “MZ”可执行文件结构的体现。</p>
+<h2 id="IMAGE_DOS_HEADER的引导作用">IMAGE_DOS_HEADER的引导作用</h2><p><img src="/img/写着玩-回顾以前的PE岁月/15.PNG" alt=""></p>
+<h2 id="IMAGE_NT_HEADERS">IMAGE_NT_HEADERS</h2><p><img src="/img/写着玩-回顾以前的PE岁月/16.PNG" alt=""></p>
+<p>这里有必要强调一下，IMAGE_NT_HEADERS包括IMAGE_FILE_HEADER和IMAGE_OPTIONAL_HEADER两个结构，NT才是爸爸，我老是搞混。。。</p>
+<p><img src="/img/写着玩-回顾以前的PE岁月/17.PNG" alt=""></p>
+<p>给出IMAGE_OPTIONAL_HEADER(x64下叫IMAGE_OPTIONAL_HEADER64)结构定义：</p>
+<p><img src="/img/写着玩-回顾以前的PE岁月/18.PNG" alt=""><br><img src="/img/写着玩-回顾以前的PE岁月/19.PNG" alt=""></p>
+<p>里面有很多成员，我们捡一些有意思的说，其他的字段也很重要，可以去MSDN查详细信息。总之，这个结构<strong>很重要</strong></p>
+<p>Windows在装载PE可执行文件时，往往需要很快的找到一些装载所需要的数据结构，比如<strong>导入表</strong>、<strong>导出表</strong>、<strong>资源</strong>、<strong>重定位表</strong>。这些重要的数据的位置和长度都被保存在一个叫数据目录(Data Directory)的结构里面，其实他就是前面”IMAGE_OPTIONAL_HEADER”结构里面的”DataDirectory”成员，这个成员是一个”IMAGE_DATA<em>DIRECTORY”的结构数组(又是数组→</em>→)</p>
+<p>给出_IMAGE_DATA_DIRECTORY结构的定义：</p>
+<p><img src="/img/写着玩-回顾以前的PE岁月/20.PNG" alt=""><br><img src="/img/写着玩-回顾以前的PE岁月/21.PNG" alt=""></p>
+<p>数组中还包含其他的表，比如导入表、资源表、异常表、重定位表、调试信息表、线程私有存储(TLS)等的地址和长度。这些表多数跟装载和DLL动态链接有关，都很重要。通过解析DataDirectory结构就可以了解这些表的位置和长度</p>
+<h1 id="0x03_小结">0x03 小结</h1><p>介绍了Windows下的可执行文件和目标文件格式PE/COFF，与ELF文件很相似。COFF有个很有意思的段叫”.drectve段”，保存的是编译器传递给链接器的命令行参数，可以通过这个段实现指定运行库等功能。</p>
+<p>下面即将进入有意思的动态链接与装载部分。。。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>怎么说呢，看到PE，满满的都是感动，想起了一年前，自己刚开始接触计算机时躲在被窝里怒刷汇编视频与PE视频的岁月了。。。当时自己还是傻白甜，看不懂就看很多遍，强行建立PE姿势，很感谢当初认真的自己吧，也感谢陪伴我度过日]]>
+    </summary>
+    
+      <category term="人丑就要多读书" scheme="http://kenshichong.github.io/tags/%E4%BA%BA%E4%B8%91%E5%B0%B1%E8%A6%81%E5%A4%9A%E8%AF%BB%E4%B9%A6/"/>
+    
+      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[写着玩-强撸静态链接（续）]]></title>
+    <link href="http://kenshichong.github.io/2016/01/18/%E5%86%99%E7%9D%80%E7%8E%A9-%E5%BC%BA%E6%92%B8%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%EF%BC%88%E7%BB%AD%EF%BC%89/"/>
+    <id>http://kenshichong.github.io/2016/01/18/写着玩-强撸静态链接（续）/</id>
+    <published>2016-01-18T11:03:01.000Z</published>
+    <updated>2016-01-19T07:22:41.141Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>没啥好说的，接着撸。。。</p>
+<h1 id="0x01_静态链接中的空间与地址分配">0x01 静态链接中的空间与地址分配</h1><p>采用相似段合并的策略，即将相同性质的段合并到一起，给张图：<br><img src="/img/写着玩-强撸静态链接（续）/0.PNG" alt=""></p>
+<p>要明确虚拟地址空间以及文件空间的概念</p>
+<p><img src="/img/写着玩-强撸静态链接（续）/1.PNG" alt=""></p>
+<p>在linux下，ELF可执行文件默认从地址0x08048000开始分配。</p>
+<p>使用这种将相同性质的段合并策略的链接器一般都采用两步链接的方法：</p>
+<p><img src="/img/写着玩-强撸静态链接（续）/2.PNG" alt=""></p>
+<p>给定一个例子，方便下面用它来说明一些问题：</p>
+<p><img src="/img/写着玩-强撸静态链接（续）/3.PNG" alt=""></p>
+<p>采用合并相同性质段时，对于符号地址的确定就显得很简单，就是简单的段基址加偏移。即根据符号表的st_name字段得知该符号的名称，根据st_shndx字段指定段+st_value指定段内偏移可以得到该符号对应的具体信息所在的地址。对于处在b.o中的符号，其相对于基址的偏移为a的text(以text段为例)段的size+st_value。</p>
+<h1 id="0x02_符号解析与重定位">0x02 符号解析与重定位</h1><p>这里要跟上面所提到的符号地址的确定区别开，符号地址的确定只是把符号所在的具体地址给计算出来了，而符号解析与重定位侧重于讲解在未链接之前，引用外部符号的位置是什么样子的以及如何将这个在链接过程中确定的地址给回填到相应的引用中，侧重于回填的概念</p>
+<p>在未链接之前，我们将a.o目标文件进行反汇编：</p>
+<p><img src="/img/写着玩-强撸静态链接（续）/4.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/5.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/6.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/7.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/8.PNG" alt=""></p>
+<h2 id="1-_怎么修正(回填)的-重定位表">1. 怎么修正(回填)的-重定位表</h2><p>重定位表专门用来保存这些与重定位相关的信息，告诉链接器哪些指令需要被调整，这些指令的哪些部分需要被调整以及怎么调整，在ELF文件中往往是一个段或多个段。</p>
+<p>不算是废话的废话：</p>
+<p><img src="/img/写着玩-强撸静态链接（续）/9.PNG" alt=""></p>
+<p><strong><em>重定位表的结构定义</em></strong><br><img src="/img/写着玩-强撸静态链接（续）/10.PNG" alt=""></p>
+<p><strong><em>ELF32_Rel各字段含义</em></strong><br><img src="/img/写着玩-强撸静态链接（续）/11.PNG" alt=""></p>
+<h2 id="2-_符号解析">2. 符号解析</h2><p><img src="/img/写着玩-强撸静态链接（续）/12.PNG" alt=""></p>
+<p>重定位过程呢也伴随着符号的解析过程，每个目标文件都可能定义一些符号，也可能引用到定义在其他目标文件的符号。重定位时，为了确定该符号的目标地址，链接器会去查找由所有输入目标文件的符号表组成的全局符号表，找到相应的符号后进行重定位。</p>
+<hr>
+<h1 id="0xff_坑">0xff 坑</h1><p>这里看到全局符号表我是进行了一番思考的。。。符号表如何组成全局符号表是一个值得思考的问题，结合强弱符号以及符号的修饰及相同符号的合并规则等等来考虑如何实现全局符号表的组成，这些细节由于自己检索能力太烂，所以找不到相关资料，这里就留个坑在这吧，日后希望能填上。。。</p>
+<hr>
+<p>接着说。。。</p>
+<h2 id="3-_指令修正方式">3. 指令修正方式</h2><p><img src="/img/写着玩-强撸静态链接（续）/13.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/14.PNG" alt=""></p>
+<p>具体的修正细节：<br><img src="/img/写着玩-强撸静态链接（续）/15.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/16.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/17.PNG" alt=""><br>修正后，在访问时就可以根据具体的访存指令(不同的访存指令对于要访问的地址的计算方式不同，所以为了迎合访存指令，编译器在编译到相关的访存指令时，会事先安排好重定位时采用何种修正方式使得修正后的结果能正好满足这个访存指令的需要)</p>
+<p>这里还是要口胡一下，就是比如说mov指令和call指令对于跟在他后面地址操作数的计算方式是不同的，拿call来说，它就认为后面的地址操作数就是要调用的位置与紧跟着call后面的那条语句地址差，这些指令的意思是预先定义的，所以编译器在看见call指令时，如果call后面的地址需要重定位，它就会知道，“哦，原来是call后面的地址需要重定位，根据call的意义，我编译器知道它的重定位修正方式为相对寻址修正”，所以，编译器会在重定位表中填入相对地址修正的信息，就是这样。</p>
+<h1 id="0x03_COMMOM块">0x03 COMMOM块</h1><p>为什么会有COMMAOM块：<br>由于弱符号机制允许同一个符号的定义存在于多个文件中，所以可能会导致当一个弱符号定义在多个目标文件中，而他们的类型又不同，而我们知道链接器是不支持符号的类型的，即变量类型对于链接器来说是透明的，那么此时链接器该如何处理，这时就需要COMMON块。</p>
+<p>什么是COMMON块：<br>当不同的目标文件需要的COMMON块空间大小不一致时，以最大的那块为准</p>
+<p>现在的链接机制在处理弱符号时，采用的就是COMMON块的机制，编译器会将弱符号(典型的弱符号如未初始化的全局变量定义)的类型置为SHN_COMMON类型，对于相同名称不同类型的弱符号，就采用COMMON块机制-以空间最大的那个为准。</p>
+<p>在目标文件中，编译器为什么不直接把未初始化的全局变量也当做未初始化的局部静态变量一样处理，为它在BSS段分配空间，而是将其标记为一个COMMON类型的变量？<br><img src="/img/写着玩-强撸静态链接（续）/18.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/19.PNG" alt=""></p>
+<h1 id="0x04_C++程序的二进制兼容性问题">0x04 C++程序的二进制兼容性问题</h1><p>C++的一些语言特性使之必须由编译器和链接器共同支持才能完成工作。最主要的有两个方面，一个是C++的重复代码消除，还有一个就是全局构造和析构。</p>
+<h2 id="1-_重复代码消除">1. 重复代码消除</h2><p>C++编译器在很多时候会产生重复的代码，比如模板、外部内联函数和虚函数表都有可能在不同的编译单元中生成相同的代码。</p>
+<p>比较有效的一个策略就是，拿模板来说，将每个模板的实例代码都单独的存放在一个段里，每个段只包含一个模板实例。用这种段的名字来区别不同的段和相同的段。</p>
+<p>这种做法的确被目前主流的编译器采用。GNU GCC编译器和Visual C++编译器都采用了类似的方法。GCC把这种类似的需要在最终链接时合并的段叫”Link Once”，它的做法就是将这种类型的段命名为”.gnu.linkonce.name”，其中”name”是该模板函数实例的修饰后名称。Visual C++编译器做法稍有不同，它吧这种类型的段叫”COMDAT”，这种”COMDAT”段的属性字段(PE文件的段表结构里面的IMAGE_SECTION_HEADER的Characteristic成员)都有IMAGE_SCN_LINK_COMDAT(0x00001000)这个标记，在链接器看到这个标记后，它就认为该段是COMDAT类型的，在链接时会将重复的段丢弃</p>
+<p>不仅模板是这样，对于会造成代码重复的机制，这种方法或与此类似的方法都是被采用的。像上面提到的外部内联函数、虚函数表。还有默认构造函数、默认拷贝构造函数和赋值操作符等。</p>
+<p><img src="/img/写着玩-强撸静态链接（续）/20.PNG" alt=""></p>
+<p><strong>又一问题：</strong><br><img src="/img/写着玩-强撸静态链接（续）/21.PNG" alt=""><br><strong>折中的解决方案-函数级别链接</strong><br><img src="/img/写着玩-强撸静态链接（续）/22.PNG" alt=""></p>
+<h2 id="2-_全局构造与析构">2. 全局构造与析构</h2><p>C++的全局对象的构造函数在main之前被执行，C++全局对象的析构函数在main之后执行。linux系统下一般程序的入口是”_start”，这个函数是linux系统库(Glibc)的一部分。</p>
+<p><strong><em>黑姿势(以前在某CTF中被坑过)</em></strong><br>当我们的程序与Glibc库链接在一起形成最终可执行文件以后，这个函数(_start)就是程序的初始化部分的入口，程序初始化部分完成一系列初始化过程之后，会调用main函数来执行程序的主体。在main函数执行完以后，返回到初始化部分，它进行一些清理工作，然后结束进程。对于有些场合，程序的一些特定的操作必须在main函数之前被执行，还有一些操作必须在main函数之后被执行，其中很具有代表性的就是C++的全局对象的构造和析构函数。因此ELF文件还定义了两种特殊的段。</p>
+<ul>
+<li>.init 该段里面保存的是可执行指令，它构成了进程的初始化代码。因此，当一个程序开始运行时，在main函数被调用之前，Glibc的初始化部分安排执行这个段中的代码。</li>
+<li>.fini 该段保存着进程终止代码指令。因此，当一个程序的main函数正常退出时，Glibc会安排执行这个段中的代码。</li>
+</ul>
+<p>这两个段.init和.fini的存在有着特别的目的，如果一个函数放到.init段，在main函数执行前系统就会执行它。同理，假如一个函数放到.fini段，在main函数返回后该函数就会被执行。利用这两个特性，C++的全局构造和析构函数得以实现。</p>
+<h2 id="3-_C++与ABI">3. C++与ABI</h2><p><strong><em>ABI介绍</em></strong><br><img src="/img/写着玩-强撸静态链接（续）/23.PNG" alt=""><br>也就是说解决目标文件的跨编译平台问题<br><img src="/img/写着玩-强撸静态链接（续）/24.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/25.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/26.PNG" alt=""></p>
+<h2 id="4-_静态库链接">4. 静态库链接</h2><p>我们前面说过，一个静态库可以简单的看成一组目标文件的集合，即很多目标文件经过压缩打包后形成的一个文件。</p>
+<p>通常人们使用”ar”压缩程序将这些目标文件压缩到一起，并且对其编号和索引，以便于查找和索引，就形成了libc.a这个静态库文件。也可以使用”ar”工具来查看静态库包含哪些文件：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ar</span> -t libc.a</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/写着玩-强撸静态链接（续）/27.PNG" alt=""></p>
+<p>VC++页提供了与linux下的ar类似的工具，叫lib.exe。这个程序可以用来创建、提取、列举.lib文件中的内容。使用”lib /LIST libcmt.lib”就可以列举出libcmt.lib中所包含的目标文件。</p>
+<p>我们从hello.c出发，来看静态库的链接过程。根据前面的姿势，我们可以知道”printf”函数被定义在”libc.a”中的”printf.o”这个目标文件中。那么，似乎，找到了一种看似可行的链接方法，那就是”hello.c”程序编译出来的目标文件只要和libc.a里面的printf.o连接在一起就可以形成一个可执行文件了。我们来验证一下，使用下面的bash语句编译：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$gcc</span> -c -fno-builtin hello.c</span><br></pre></td></tr></table></figure></p>
+<p>这里说明一下，使用”-fno-builtin”参数是因为在默认情况下，GCC会自作聪明的将hello world程序中只使用了一个字符串参数的printf替换成puts(<strong>这也算是个坑点</strong>)。<br>然后，我们用ar工具解压libc.a<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ar</span> -x libc.a</span><br></pre></td></tr></table></figure></p>
+<p>然后链接<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ld</span> hello.o printf.o</span><br></pre></td></tr></table></figure></p>
+<p>结果意料中，那就是报错了，链接失败<br><img src="/img/写着玩-强撸静态链接（续）/28.PNG" alt=""></p>
+<p>给出编译链接的中间过程的打印结果：<br><img src="/img/写着玩-强撸静态链接（续）/29.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/30.PNG" alt=""><br><img src="/img/写着玩-强撸静态链接（续）/31.PNG" alt=""></p>
+<p>为什么静态运行库里面一个目标文件只包含一个函数？比如libc.a里面printf.o只有printf()函数，为什么要这样组织？<br><img src="/img/写着玩-强撸静态链接（续）/32.PNG" alt=""></p>
+<hr>
+<h1 id="0x05_小结">0x05 小结</h1><p>关于静态链接就到这了，重点是目标文件在被链接成最终可执行文件时，输入目标文件中的各个段是如何被合并到输出文件中的，链接器如何为它们分配在输出文件中的空间和地址。当然比较有意思的就是符号的解析与重定位了，一旦输入段的最终地址被确定，接下来就可以进行符号的解析与重定位了，链接器会把各个输入目标文件中对于外部符号的引用进行解析，把每个段中需要重定位的指令和数据进行修补，使他们都指向正确的位置。</p>
+<p>还口胡了一些问题，COMMON块啊等等，总之，静态链接很好理解，恩，就是这样。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>没啥好说的，接着撸。。。</p>
+<h1 id="0x01_静态链接中的空间与地址分配">0x01 静态链接中的空间与地址分配</h1><p>采用相似段合并的策略，即将相同性质的段合并到一起，给张图：<br><img]]>
+    </summary>
+    
+      <category term="人丑就要多读书" scheme="http://kenshichong.github.io/tags/%E4%BA%BA%E4%B8%91%E5%B0%B1%E8%A6%81%E5%A4%9A%E8%AF%BB%E4%B9%A6/"/>
+    
+      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[写着玩-硬怼目标文件]]></title>
+    <link href="http://kenshichong.github.io/2016/01/17/%E5%86%99%E7%9D%80%E7%8E%A9-%E7%A1%AC%E6%80%BC%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6/"/>
+    <id>http://kenshichong.github.io/2016/01/17/写着玩-硬怼目标文件/</id>
+    <published>2016-01-17T12:50:32.000Z</published>
+    <updated>2016-01-18T10:59:47.041Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>最近dota有点上头，就是怼，马上就能回家跟基友回家黑店了，我是屌屌的3号位，哈哈哈。。。<br>目标文件，怼起。。。</p>
+<h1 id="0x01_目标文件的格式">0x01 目标文件的格式</h1><p>还记得我们前面所说的后缀是.o的文件，就是他了，他就是目标文件的一种，其实他已经很接近可执行文件了，不，它已经可以执行了，只要你给他创造相应的条件的话。所以，我们将目标文件与可执行文件看成是一种类型的文件也未尝不可。在windows下，我们统称为PE-COFF文件格式，在linux下，统称为ELF文件。</p>
+<p>还有动态链接库-（DLL &amp; .so），静态链接库-（windows下的.lib,linux的.a）也都是可执行文件的格式，但是静态链接库稍有不同，它是把很多目标文件捆绑在一起形成一个文件，再加上一些索引，可以简单的理解为一个包含有很多目标文件的文件包。</p>
+<p>ELF文件类型：<br><img src="/img/写着玩-硬怼目标文件/0.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/1.PNG" alt=""></p>
+<h1 id="0x02_ELF文件结构">0x02 ELF文件结构</h1><p>ELF文件基本结构图：<br><img src="/img/写着玩-硬怼目标文件/2.PNG" alt=""></p>
+<p>ELF目标文件格式的最前部是ELF文件头(ELF Header)，它包含了描述整个文件的基本属性。比如ELF文件版本、目标机器型号、程序入口地址等。紧接着是ELF文件各个段。其中ELF文件中与段有关的重要结构是段表(Section Header Table)，该表描述了ELF文件包含的所有段的信息。比如每个段的段名、段的长度、在文件中的偏移、读写权限及段的其他属性。</p>
+<h2 id="1-_文件头">1. 文件头</h2><p>可以用readelf命令来详细查看ELF文件：</p>
+<p><img src="/img/写着玩-硬怼目标文件/3.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/4.PNG" alt=""></p>
+<p><strong><em>ELF文件头(ELF_Ehdr)结构的具体定义：</em></strong><br><img src="/img/写着玩-硬怼目标文件/5.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/6.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/7.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/8.PNG" alt=""></p>
+<p><strong><em>ELF文件头结构成员具体含义：</em></strong><br><img src="/img/写着玩-硬怼目标文件/9.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/10.PNG" alt=""></p>
+<p><strong><em>ELF文件头中的魔数(前16字节e_ident含义)：</em></strong><br><img src="/img/写着玩-硬怼目标文件/11.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/12.PNG" alt=""></p>
+<p><strong><em>文件类型</em></strong><br><img src="/img/写着玩-硬怼目标文件/13.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/14.PNG" alt=""></p>
+<p><strong><em>机器类型</em></strong><br><img src="/img/写着玩-硬怼目标文件/15.PNG" alt=""></p>
+<h2 id="2-_段表">2. 段表</h2><p><strong><em>段表总体描述</em></strong><br><img src="/img/写着玩-硬怼目标文件/16.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/17.PNG" alt=""></p>
+<p>所以，段表就是一个数组。</p>
+<p><strong><em>数组成员(ELF32_Shdr结构定义)</em></strong><br><img src="/img/写着玩-硬怼目标文件/18.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/19.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/27.PNG" alt=""></p>
+<p><strong><em>由段表视角出发得到的ELF文件布局</em></strong><br><img src="/img/写着玩-硬怼目标文件/20.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/21.PNG" alt=""></p>
+<p><strong><em>段描述符(ELF32-Shdr)各字段具体含义</em></strong></p>
+<p><strong>段的类型(sh_types)</strong><br><img src="/img/写着玩-硬怼目标文件/22.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/23.PNG" alt=""></p>
+<p><strong>段的标志位(sh_flag)</strong><br><img src="/img/写着玩-硬怼目标文件/24.PNG" alt=""></p>
+<p>对于系统保留段，下表列出了他们的属性</p>
+<p><img src="/img/写着玩-硬怼目标文件/25.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/26.PNG" alt=""></p>
+<p><strong>段的链接信息</strong><br><img src="/img/写着玩-硬怼目标文件/28.PNG" alt=""></p>
+<h2 id="3-_重定位表">3. 重定位表</h2><p><img src="/img/写着玩-硬怼目标文件/29.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/30.PNG" alt=""></p>
+<p>在介绍链接的过程的时候，会详细的介绍重定位表的作用</p>
+<h2 id="4-_字符串表">4. 字符串表</h2><p>这是个很重要的表，对于我们把整个ELF文件结构框架搭建起来必不可少<br><img src="/img/写着玩-硬怼目标文件/31.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/32.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/33.PNG" alt=""></p>
+<p>即：ELF文件头(e_shstrndx)-&gt;段表中的段表字符串表信息-&gt;段表字符串表-&gt;解析各个段。具体的索引想一下就知道了，这里就口胡下，首先拿到文件头中的e_shstrndx字段的值，得知下标和段表的起始位置，则由段表的起始位置+段表数组的成员大小(40 byte)*下标，可以得到段表字符串表的一些列信息，什么起始偏移，大小啊什么的，那么就可以找到段表字符串表的具体位置了，这时可以把段表字符串表拿到内存，供以后解析各个段时使用，然后再返回段表去解析各个段。</p>
+<h2 id="5-_链接的接口-符号">5. 链接的接口-符号</h2><p>每个函数或变量都有自己独特的名字，才能避免链接过程中不同变量和函数之间的混淆。在链接中，我们将函数和变量统称为符号，函数名或变量名就是符号名。</p>
+<p><strong><em>符号概述</em></strong><br><img src="/img/写着玩-硬怼目标文件/34.PNG" alt=""></p>
+<p>由于局部符号、段名、行号等对于其他目标文件来说是”不可见的”，在链接过程中无关紧要，我们只关心全局符号。我们可以使用很多命令来查看ELF文件的符号表，比如上面介绍的readelf、objdump，当然还有nm。</p>
+<p><img src="/img/写着玩-硬怼目标文件/35.PNG" alt=""></p>
+<p>ELF文件中的符号表往往是文件中的一个段，段名一般叫”.symtab”.符号表的结构很简单，它是一个ELF32_sym结构的数组，每个ELF32_sym结构对应一个符号。这个数组的第一个元素，也就是下标为0的元素为无效的”未定义”符号</p>
+<p><strong><em>ELF32_sym结构定义</em></strong><br><img src="/img/写着玩-硬怼目标文件/36.PNG" alt=""><br><strong><em>各字段含义</em></strong><br><img src="/img/写着玩-硬怼目标文件/37.PNG" alt=""></p>
+<p>对一些字段的详解：<br><strong>符号类型和绑定信息(st_info)</strong><br>该成员低4位表示符号的类型，高28位表示符号绑定信息，见下表：<br><img src="/img/写着玩-硬怼目标文件/38.PNG" alt=""></p>
+<p><strong>符号所在段(st_shndx)</strong><br>如果符号定义在本目标文件中，那么这个成员表示符号所在的段在段表中的下标；但是如果符号不是定义在本目标文件中，或者对于有些特殊符号，sh_shndx的值有些特殊，见下表：<br><img src="/img/写着玩-硬怼目标文件/39.PNG" alt=""></p>
+<p><strong>符号值(st_value)</strong><br><img src="/img/写着玩-硬怼目标文件/40.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/41.PNG" alt=""></p>
+<p>通过上图中划红线的步骤可以找到该符号所对应的具体内容，比如，函数的话可以找到该函数所对应的具体代码处，而全局初始化变量的话，则可以找到全局初始化变量所对应的具体值。</p>
+<p>还是以SimpleSection.o为例：<br><img src="/img/写着玩-硬怼目标文件/42.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/43.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/44.PNG" alt=""></p>
+<p><strong><em>符号修饰和函数签名</em></strong><br>对于符号修饰和函数签名问题，它是为了解决符号名冲突问题。很久以前，UNIX下的C语言就规定，C语言源代码文件中的所有全局的变量和函数经过编译以后，相对应的符号名前加上下划线”<em>“。而Fortran语言的源代码经过编译后，所有的符号名前面加上”</em>“，后面也加上”<em>“。现在linux下的GCC编译器，默认去掉了在C语言符号前加”</em>“的这种方式；但是windows平台下的编译器还保持着。VC++编译器，GCC在windows下的版本(cygwin,mingw)都会加”_”。GCC编译器可以通过参数选项”-fleading-underscore”或”-fno-leading-underscore”来打开和关闭是否在C语言符号前加上下划线。</p>
+<p><strong>C++符号修饰</strong><br>C++都用过，强大而又复杂。他的很多机制都为符号的管理带来了很多麻烦。比如类、继承、虚机制、重载、名称空间等特性。为了支持这些特性，发明了符号修饰或符号改编的机制。</p>
+<p><em>对于函数重载</em><br>给例子：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">float</span> <span class="title">func</span><span class="params">(<span class="keyword">float</span>)</span></span>;</span><br><span class="line"><span class="keyword">class</span> C &#123;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	<span class="keyword">class</span> C2&#123;</span><br><span class="line">		<span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> N &#123;</span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	<span class="keyword">class</span> C &#123;</span><br><span class="line">		<span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这段代码中有6个同名函数叫func，但他们的返回类型和参数及所在的名称空间不同。我们引入函数签名以及修饰后名称的概念。一个函数签名对应一个修饰后名称。C++的源代码编译后的目标文件中所使用的符号名是相应的函数和变量的修饰后名称。上面的6个函数的函数签名以及修饰后名称是：</p>
+<p><img src="/img/写着玩-硬怼目标文件/45.PNG" alt=""></p>
+<p>下面解释下不同的函数签名是怎样修饰的。GCC的基本C++名称修饰方法如下：所有的符号都以”_Z”开头，对于嵌套的名字(在名称空间或在类里面的)，后面紧跟”N”，然后是各个名称空间和类的名字，每个名字前是名字字符串长度，在以”E”结尾。比如N::C::func经过名称修饰以后就是_ZN1N1C4funcE。对于一个函数来说，他的参数列表紧跟在”E”后面。对于int类型来说，就是字母”i”。所以整个N::C::func(int)函数签名经过修饰为_ZN1N1C4funcEi。更为具体的修饰方法在这不介绍，可以去查GCC名称修饰标准。有工具可以帮我们解析被修饰过的名称，比如：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ c++filt _ZN1N1C4funcEi</span><br><span class="line">N::C::func(int)</span><br></pre></td></tr></table></figure></p>
+<p>这种修饰机制不光用到函数名上，他也被用到全局变量和静态变量上。但有一点需要注意，那就是变量的类型是没有被加入到修饰后名称中的，所以不论这个变量是整形还是浮点型甚至是一个全局对象，他们的名称都是一样的。</p>
+<p>不同的编译器厂商的名称修饰方法可能不同，在Visual C++下：</p>
+<p><img src="/img/写着玩-硬怼目标文件/46.PNG" alt=""></p>
+<p>以int N::C::func(int)这个函数签名来说明VC++修饰规则，其实我们都能猜出来→_→修饰名字由”?”开头，接着是函数名”@”符号结尾的函数名；后面跟着由”@”结尾的类名”C”和名称空间”N”，再一个”@”表示函数的名称空间结束，第一个”A”表示函数调用类型为”__cdecl”(函数调用类型会在以后说)，接着是函数的参数类型及返回值，由”@”结束，最后由”Z”结尾。</p>
+<p>其实，VC++的名称修饰规则并没有对外公开。MS提供了一个UNDecorateSymbolName()的API，可以将休市后名称转换成函数签名。</p>
+<p>由于不同的编译器采用不同的名字修饰方法，必然会导致由不用编译器编译产生的目标文件无法正常相互链接，这是导致不同编译器之间不能相互操作的主要原因之一(被坑过T_T)。。。</p>
+<p><strong><em>extern “C”</em></strong><br><img src="/img/写着玩-硬怼目标文件/47.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/48.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/49.PNG" alt=""></p>
+<p><strong><em>弱符号与强符号</em></strong><br><img src="/img/写着玩-硬怼目标文件/50.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/51.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/52.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/53.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/54.PNG" alt=""><br><img src="/img/写着玩-硬怼目标文件/55.PNG" alt=""></p>
+<h2 id="6-_调试信息">6. 调试信息</h2><p>在GCC编译时加上”-g”参数编译器就会在产生的目标文件里面加上调试信息</p>
+<h1 id="0x03_小结">0x03 小结</h1><p>主要分析了各种目标文件的格式，对于ELF文件的代码段、数据段和BSS段没有过多阐述。详细介绍了ELF文件的文件头、段表、重定位表、字符串表、符号表、调试表等相关结构。</p>
+<p>无路时可执行文件、目标文件还是库，他们实际上都是基于段的文件或是这种文件的集合，程序的源代码经过编译以后，按照代码和数据分别存放到相应的段中、编译器(汇编器)还会将一些辅助信息，比如符号、重定位信息等也按照表的方式存放到目标文件中，通常情况下，一个表就是一个段。</p>
+<p>有了这些目标文件后，接下来就是如何将他们合起来，形成一个可以使用的程序或更得模块，这就是静态链接的问题，下面会在静态链接的续集介绍</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>最近dota有点上头，就是怼，马上就能回家跟基友回家黑店了，我是屌屌的3号位，哈哈哈。。。<br>目标文件，怼起。。。</p>
+<h1 id="0x01_目标文件的格式">0x01 目标文件的格式</h1><p>还记]]>
+    </summary>
+    
+      <category term="人丑就要多读书" scheme="http://kenshichong.github.io/tags/%E4%BA%BA%E4%B8%91%E5%B0%B1%E8%A6%81%E5%A4%9A%E8%AF%BB%E4%B9%A6/"/>
+    
+      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[写着玩-强撸静态链接]]></title>
+    <link href="http://kenshichong.github.io/2016/01/17/%E5%86%99%E7%9D%80%E7%8E%A9-%E5%BC%BA%E6%92%B8%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5/"/>
+    <id>http://kenshichong.github.io/2016/01/17/写着玩-强撸静态链接/</id>
+    <published>2016-01-17T11:48:38.000Z</published>
+    <updated>2016-01-17T12:49:12.748Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>我写代码，以C的hello world为例，第一遍写时是用VC6，当时就傻逼的抄代码，然后F7，然后就F5，然后就输出了，当时就觉着自己好屌，也觉着VC6好屌。现在长大了，开始学着装逼了，用VS，用gcc，g++，但还是觉着VC6好用，没办法，自己太菜，而且也没写过太多代码，VC6够用了，而且也都习惯了。。。</p>
+<p>学了编译之后，才算大体上理解从代码文本到可执行的二进制程序是怎样的一个过程，但是也只是知道了个大概，毕竟现实中真正在用的编译器那都是有好多好多功能的，是很强大的，他的具体过程也远没我想的那么简单，既然学了编译，有了大体框架，那么，现在就来丰富细节吧。。。</p>
+<p>编程时，都是写完代码，然后一个按钮，或者一行命令，然后就生成了可执行程序，但这个按钮或命令是做了很多事的，大体分为四个步骤：预处理、编译、汇编、链接。</p>
+<p>给张图：</p>
+<p><img src="/img/写着玩-强撸静态链接/0.PNG" alt=""></p>
+<p>没啥好说的，直接撸。。。</p>
+<h1 id="0x01_这条命令干了啥">0x01 这条命令干了啥</h1><p><strong><em>gcc hello.c</em></strong></p>
+<h2 id="1-_预编译">1. 预编译</h2><p><img src="/img/写着玩-强撸静态链接/1.PNG" alt=""></p>
+<p>预编译过程主要处理那些源代码文件中的以”#”开始的预编译指令。比如”#include”、”#define”等，主要规则如下（这就不截图了，手打加深印象）：</p>
+<ol>
+<li>将所有的”#define”删除，并且展开所有的宏定义</li>
+<li>处理所有条件预编译指令，比如”#if”、”#ifdef”、”#elif”、”#else”、”#endif”。</li>
+<li>处理”#include”预编译指令，将被包含的文件插入到该预编译指令的位置。注意，这个过程是递归进行的，也就是说被包含的文件可能还包含其它文件</li>
+<li>删除所有的注释”//“和”/**/“。</li>
+<li>添加行号和文件名标识，比如#2”hello.c”2，以便于编译时编译器产生调试用的行号信息及用于编译时产生编译错误或警告时能够显示行号。</li>
+<li>保留所有的#pragma编译器指令，因为编译器要使用</li>
+</ol>
+<p>经过预编译后的.i文件不包含任何宏定义，因为所有的宏已经被展开，并且包含的文件也已经被插入到.i文件中。所以当我们无法判断宏定义是否正确或头文件包含是否正确时，可以查看预编译后的文件来确定问题(小技巧get)</p>
+<h2 id="2-_编译">2. 编译</h2><p>编译过程就是把预处理完的文件进行一系列词法分析、语法分析、语义分析以及优化后生成相应的汇编代码文件。该过程相当于如下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -S hello.i -o hello.s</span><br></pre></td></tr></table></figure></p>
+<p>现在版本的GCC把预编译和编译两个步骤合并成一个步骤，使用一个叫做cc1的程序，位于/usr/lib/gcc/i486-linux-gnu/4.1/，所以<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cc1 hello.c</span><br></pre></td></tr></table></figure></p>
+<p>可以达到相同的效果，或<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -S hello.c -o hello.s</span><br></pre></td></tr></table></figure></p>
+<p>这些都可以得到汇编文件hello.s。对于C语言，这个预编译和编译的程序是ccl，对于C++，是cclplus；Objective-C是cclobj；fortan是f771；java是jc1。所以实际上gcc这个命令只是这些后台程序的包装，它会根据不同的参数要求去调用预编译程序cc1、汇编器as、链接器ld。</p>
+<h2 id="3-_汇编">3. 汇编</h2><p>汇编器是将汇编代码转变成机器可以执行的指令，每一个汇编语句几乎都对应一条机器指令。就是根据汇编指令和机器指令的对照表意义翻译就行。对应的指令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">as hello.s -o hello.o</span><br></pre></td></tr></table></figure></p>
+<p>或<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c hello.s -o hello.o</span><br></pre></td></tr></table></figure></p>
+<p>或</p>
+<pre><code class="bash">gcc -c hello.c -o hello.o
+</code></pre>
+<h2 id="4-_链接">4. 链接</h2><p>懒，直接上图：</p>
+<p><img src="/img/写着玩-强撸静态链接/2.PNG" alt=""></p>
+<p>下面就是一堆编译器到底干了什么的东西，具体的可以参考我以前写的blog，好像是第一篇吧。。。</p>
+<p>先到这。。。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>我写代码，以C的hello world为例，第一遍写时是用VC6，当时就傻逼的抄代码，然后F7，然后就F5，然后就输出了，当时就觉着自己好屌，也觉着VC6好屌。现在长大了，开始学着装逼了，用VS，用gcc，g++，但]]>
+    </summary>
+    
+      <category term="人丑就要多读书" scheme="http://kenshichong.github.io/tags/%E4%BA%BA%E4%B8%91%E5%B0%B1%E8%A6%81%E5%A4%9A%E8%AF%BB%E4%B9%A6/"/>
+    
+      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[程序员的自我修养]]></title>
+    <link href="http://kenshichong.github.io/2016/01/17/%E7%A8%8B%E5%BA%8F%E5%91%98%E7%9A%84%E8%87%AA%E6%88%91%E4%BF%AE%E5%85%BB/"/>
+    <id>http://kenshichong.github.io/2016/01/17/程序员的自我修养/</id>
+    <published>2016-01-17T07:48:16.000Z</published>
+    <updated>2016-01-17T11:45:28.860Z</updated>
+    <content type="html"><![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>最近也算是闲下来了，把最近一直想总结的exp给总结完后，就想着找点事干。。。</p>
+<p>这两天就去看各个大大的blog，理解了哈希长度扩展攻击，看了一些PHP黑魔法，强势补了下分区的姿势，SSRF啥的。。。但也就是浏览浏览，根本沉不下来心，感觉自己太浮躁了，然后又去看一些自己错过的一些ctf的write up，想着自己去把一些想做的题去重新做一下，但根本找不到真正打比赛时的激情，感觉就像是在咀嚼剩菜，不行，提不起来劲。。。</p>
+<p>总不能浪费时间吧，安卓和硬件的话想放假回来搞，现在的心情真心不适合去马上开始一块新的领域，主要是自己真的不想搭环境，想赖着两个队友，他们把环境都搭好，自己直接用~</p>
+<p>问了下两个队友，他们也都是在各种总结，所以自己想着还是把近几个月一直在看的这本书给总结下，算是给临近放假的这段时间+寒假找点事干，也让自己静静，沉淀沉淀。。。</p>
+<p>这个blog就准备当做自己的一个总结用的东西吧，写的也都是给自己看的一些基础的东西，并不是那么注重质量，就是当做自己忘了某些东西时，有个可以查的地方吧，所以基本都是一些理论的东西，实战很少。</p>
+<p>等自己牛逼了，再重新开个blog，介绍各种奇淫技巧也不迟~</p>
+<h1 id="0x0-5_关于本系列的口胡">0x0.5 关于本系列的口胡</h1><p>还是会写成一个系列吧。。。</p>
+<p>会按照本书的脉络，总结自己认为重要的东西，会尽量注重体系化和结构化，对于一些自己认为太干的货，我还是会加入自己的口水理解，方便自己消化。</p>
+<p>跟操作系统会有点联系吧，就是一些较底层的理论姿势，发现自己也是喜欢这些东西。。。</p>
+<p>口胡就到这吧，开始漫漫总结之旅。。。</p>
+<p>没找到电子版，pdf找的也都是扫描版，所以能手打的就手打了，纯当练习自己的打字速度+加深记忆了，但是自己真的懒，所以截图大法好。。。</p>
+<h1 id="0x01_线程的笼统介绍">0x01 线程的笼统介绍</h1><p>线程，有时被称为轻量级进程。一个标准的线程由线程ID，当前指令指针（PC），寄存器集合和堆栈组成，各个线程之间共享程序的内存空间。这里说的寄存器集合并非指真正意义上的物理硬件，一个线程就给一套与它相匹配的寄存器，这。。。这里更偏向于软件，是一种数据结构的概念，还记得操系中的TSS吗，类似于那个概念吧，就是说当线程真正竞争到CPU资源时，他才对这些物理资源实现真正意义上的占有。</p>
+<p>相对于多进程应用，多线程在数据共享方面效率要高的多，因为进程间通信限制很多，这些限制是为了防止各种杂七杂八的情况出现。线程的访问很自由，他可以访问进程内存里的所有数据，甚至包括其他线程的堆栈（如果他知道其他线程的堆栈地址）。但线程也是有隐私的，局部变量，函数的参数，线程局部存储（TLS），这些数据是线程私有的。</p>
+<p>关于线程的调度问题，具体参考进程调度，差不多。如果想要提高一个线程的被调度率，可以采用提高线程优先级的方法。在windows中，使用BOOL WINAPI SetThreadPriority（HANDLE hThread，int nPriority）；来设置线程的优先级，而linux下与线程相关的操作可以通过pthread库来实现。一般的策略中，IO密集型总是比CPU密集型更容易得到优先级的提升。在优先级调度的环境下，线程的优先级改变一般有三种方式：</p>
+<ol>
+<li>用户指定优先级</li>
+<li>根据进入等待状态的频繁程度提升或降低优先级。频繁等待优先级高，意味着一旦就绪系统就会让他尽量在下个时间片运行</li>
+<li>长时间得不到执行而被提升优先级。</li>
+</ol>
+<p>关于fork，exec，clone以及写时复制、竞争与原子操作，同步与互斥啥的就不啰嗦了，操系里已经写得很清楚了</p>
+<p>线程安全是一块烫手的山芋，因为即使合理的使用了锁，也不一定能保证线程安全，这是源于落后的编译器技术已经无法满足日益增长的并发需求。很多看似无错的代码在优化和并发的面前又产生了麻烦。如下代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x=<span class="number">0</span>;</span><br><span class="line"><span class="function">thread1		thread2</span><br><span class="line"><span class="title">lock</span><span class="params">()</span></span>;		lock();</span><br><span class="line">x++;		x++;</span><br><span class="line">unlock();	unlock();</span><br></pre></td></tr></table></figure></p>
+<p>由于有lock和unlock的保护，x++的行为不会被并发所破坏，那么x的值似乎必然是2了。然而，如果编译器为了提高x的访问速度，把x放到了某个寄存器里，那么我们知道不同线程的寄存器是各自独立的。假设thread1先获得锁，则可能会出现下面的情况：</p>
+<p><img src="/img/程序员的自我修养/0.PNG" alt=""></p>
+<p>可见在这样的情况下即使正确的加锁，也不能保证线程安全。下面是另一个例子：</p>
+<p><img src="/img/程序员的自我修养/1.PNG" alt=""><br><img src="/img/程序员的自我修养/2.PNG" alt=""></p>
+<p>此时，如果按照<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">r1=y;</span><br><span class="line">切换</span><br><span class="line">y=<span class="number">1</span>;</span><br><span class="line">r2=x;</span><br><span class="line">切换</span><br><span class="line">x=<span class="number">1</span>;</span><br></pre></td></tr></table></figure></p>
+<p>这种顺序执行，那么此时r1=r2=0就完全有可能了。看到这，其实是有点崩溃的，这尼玛考虑的问题也太多了吧，老子本来写的对的程序硬生生跑错，但没办法，已经发展成这样子了。所以，我们来看下补救措施：我们可以使用volatile关键字试图阻止过渡优化。volatile可以做到：</p>
+<p><img src="/img/程序员的自我修养/3.PNG" alt=""></p>
+<p>可见volatile确实可以解决一些问题，但是即使volatile能够阻止编译器调整顺序，也无法阻止CPU动态调度换序，呵呵哒。。。</p>
+<p>另一个颇为著名的与换序有关的问题来自于singleton模式的double-check。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> T * pInst = <span class="number">0</span>;</span><br><span class="line"><span class="function">T * <span class="title">GetInstance</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">	lock();</span><br><span class="line">	<span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">		pInst = <span class="keyword">new</span> T;</span><br><span class="line">	unlock();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> pInst;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>抛开逻辑，这代码乍看没问题，使用了volatile关键字，而lock和unlock防止了多线程竞争导致的麻烦。双重的if在这里另有妙用（防止在lock前进行进程切换而使得代码流程不受我们控制），可以让lock的调用开销降低到最小。</p>
+<p>但是，呵呵，这是有问题的，没错，就是CPU的乱序执行。C++里的new其实包含了两个步骤：</p>
+<ol>
+<li>分配内存</li>
+<li>调用构造函数<br>所以pInst = new T包含了三个步骤：</li>
+<li>分配内存</li>
+<li>在内存的位置上调用构造函数</li>
+<li>将内存的地址赋值给pInst</li>
+</ol>
+<p><img src="/img/程序员的自我修养/4.PNG" alt=""></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">define</span> barrier() __asm()__ volatile (<span class="string">"lwsync"</span>)</span></span><br><span class="line"><span class="keyword">volatile</span> T * pInst = <span class="number">0</span>;</span><br><span class="line"><span class="function">T * <span class="title">GetInstance</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line"><span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">	lock();</span><br><span class="line">	<span class="keyword">if</span> (pInst == <span class="literal">NULL</span>)</span><br><span class="line">		T * temp = <span class="keyword">new</span> T;</span><br><span class="line">		barrier();</span><br><span class="line">		pInst = temp;</span><br><span class="line">	unlock();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> pInst;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于barrier的存在，对象的构造一定在barrier执行之前完成，因此当pInst被赋值时，对象总是完好的。</p>
+<p>首篇就先到这了。。。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="0x00_口胡">0x00 口胡</h1><p>最近也算是闲下来了，把最近一直想总结的exp给总结完后，就想着找点事干。。。</p>
+<p>这两天就去看各个大大的blog，理解了哈希长度扩展攻击，看了一些PHP黑魔法，强势补了下分区的姿势，SSRF啥的。。。但也就]]>
+    </summary>
+    
+      <category term="人丑就要多读书" scheme="http://kenshichong.github.io/tags/%E4%BA%BA%E4%B8%91%E5%B0%B1%E8%A6%81%E5%A4%9A%E8%AF%BB%E4%B9%A6/"/>
+    
+      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[想起来啥写啥]]></title>
@@ -1366,661 +1703,6 @@ V(mutex)
     </summary>
     
       <category term="操作系统" scheme="http://kenshichong.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
-      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[手把手教你写最简单的linux系统]]></title>
-    <link href="http://kenshichong.github.io/2015/12/14/%E6%89%8B%E6%8A%8A%E6%89%8B%E6%95%99%E4%BD%A0%E5%86%99%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84linux%E7%B3%BB%E7%BB%9F/"/>
-    <id>http://kenshichong.github.io/2015/12/14/手把手教你写最简单的linux系统/</id>
-    <published>2015-12-14T01:02:32.000Z</published>
-    <updated>2015-12-15T13:28:40.178Z</updated>
-    <content type="html"><![CDATA[<p>想用C或python写出一个最简单的操作系统，但苦于没时间，有时间补上。。。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>想用C或python写出一个最简单的操作系统，但苦于没时间，有时间补上。。。</p>
-]]>
-    </summary>
-    
-      <category term="操作系统" scheme="http://kenshichong.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
-      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[if I were a OS--linux0.11源码分析]]></title>
-    <link href="http://kenshichong.github.io/2015/12/09/if-I-were-a-OS-linux0-11%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
-    <id>http://kenshichong.github.io/2015/12/09/if-I-were-a-OS-linux0-11源码分析/</id>
-    <published>2015-12-09T09:15:22.000Z</published>
-    <updated>2015-12-16T07:49:25.344Z</updated>
-    <content type="html"><![CDATA[<blockquote>
-<p>if I were a OS</p>
-</blockquote>
-<h1 id="0x01_背景介绍">0x01 背景介绍</h1><p>要有份linux0.11的源码在身边</p>
-<h1 id="0x02_计算机的启动过程">0x02 计算机的启动过程</h1><p>在我还没有出生之前，即在电脑还没有加载操作系统把自己交给OS之前，我们来看下计算机做了哪些事情，它是如何把自己交给操作系统的。。。</p>
-<p>对于计算机的启动过程，我也是看了<a href="http://www.ruanyifeng.com/blog/2013/02/booting.html#comment-text" target="_blank" rel="external">阮一峰的一篇blog</a>，这里就不copy了，还有<a href="http:blog.csdn.net/langeldep/article/details/8788119" target="_blank" rel="external">langeldep的blog</a>，对很多启动过程中的细节做了补充，这里也不copy了。这里总结下，计算机的启动过程：</p>
-<p>首先是计算机加电，CPU马上就从地址FFFF:0000H 处开始执行指令，放在这里的只是一条跳转指令，跳到系统BIOS中真正的启动代码处，bios存放着一些启动程序，bios运行起来后会首先进行硬件自检(POST)，硬件自检完成后，bios会将控制权交给下一阶段的启动程序。bios中有一个外部存储设备排序，排在前面的设备就是优先转交控制权的设备，即我们常说的启动顺序，这个启动顺序是可以在bios中进行设置的，并且我们可以选择具体从哪(软盘、硬盘或可移动设备)启动，比如开机时有一个进bios的快捷键，有一个选择启动项的快捷键。bios按照启动顺序或用户指定的启动项，把控制权交给排在第一位的储存设备，一般都是从硬盘启动。计算机读取该设备的第一个扇区(0柱面，0磁道，1扇区)，也就是读取前面的512个字节，即我们通常所说的MBR(主引导记录)。并将该MBR加载入指定位置(0x7c00，关于这个数字的来源，也挺有趣的，可自行google)的内存中去。主引导记录的主要作用是告诉计算机到硬盘的哪一个位置去找操作系统。</p>
-<blockquote>
-<p>主引导记录由三个部分组成：</p>
-<p>（1） 第1-446字节：调用操作系统的机器码。<br>（2） 第447-510字节：分区表（Partition table）。<br>（3） 第511-512字节：主引导记录签名（0x55和0xAA）。</p>
-<p>其中，第二部分”分区表”的作用，是将硬盘分成若干个区。</p>
-</blockquote>
-<p>硬盘分区有很多好处。考虑到每个区可以安装不同的操作系统，”主引导记录”因此必须知道将控制权转交给哪个区。</p>
-<p>分区表的长度只有64个字节，里面又分成四项，每项16个字节。所以，一个硬盘最多只能分四个一级分区，又叫做”主分区”。通过分区表，我们就可以知道整块硬盘的大致划分</p>
-<blockquote>
-<p>每个主分区的16个字节，由6个部分组成：</p>
-<p>（1） 第1个字节：如果为0x80，就表示该主分区是激活分区，控制权要转交给这个分区。四个主分区里面只能有一个是激活的。<br>（2） 第2-4个字节：主分区第一个扇区的物理位置（柱面、磁头、扇区号等等）。<br>（3） 第5个字节：主分区类型。<br>（4） 第6-8个字节：主分区最后一个扇区的物理位置。<br>（5） 第9-12字节：本分区之前已用了的扇区数。<br>（6） 第13-16字节：主分区的扇区总数。</p>
-</blockquote>
-<p>最后的四个字节（”主分区的扇区总数”），决定了这个主分区的长度。也就是说，一个主分区的扇区总数最多不超过2的32次方。</p>
-<p>如果每个扇区为512个字节，就意味着单个分区最大不超过2TB。再考虑到扇区的逻辑地址也是32位，所以单个硬盘可利用的空间最大也不超过2TB。如果想使用更大的硬盘，只有2个方法：一是提高每个扇区的字节数，二是增加扇区总数。</p>
-<p>写到这，忽然对MBR以及分区表很感兴趣，找到了一篇较为详细介绍MBR以及分区的blog–<a href="http://blog.chinaunix.net/uid-20649697-id-1592536.html" target="_blank" rel="external">MBR与分区表</a>，通过这篇blog，我们可以知道硬盘是如何通过MBR这个数据结构进行主分区、扩展分区以及逻辑分区的划分的，这时，给你一块硬盘和该硬盘的前512字节(MBR)，你就可以自行脑补出该硬盘是如何组织的，有多少块之类的信息。</p>
-<p>现在MBR被加载到内存中，通过MBR的结构，我们知道MBR中也有要执行的代码，这与后面怎样将控制权交给操作系统有着密切的关系。</p>
-<blockquote>
-<p>MBR程序段的主要功能如下：<br>·检查硬盘分区表是否完好。<br>·在分区表中寻找可引导的“活动”分区。<br>·将活动分区的第一逻辑扇区内容装入内存。在DOS分区中，此扇区内容称为DOS引导记录（DBR）</p>
-</blockquote>
-<p>这里感觉MBR程序段的功能描写的太过笼统和模糊，带着刨根问底的态度就去找资料，到底载入到内存0x7c00处的代码是什么，找到了一个写的蛮详细的资料–<a href="http://www.ithov.com/article/117988.shtml" target="_blank" rel="external">DOS主引导记录扇区：MBR技术详解</a>，里面介绍了MBR程序代码的具体执行。</p>
-<p>我们来看MBR是如何完成引导的。计算机读取”主引导记录”前面446字节的机器码之后，如果事先安装了启动管理器(boot loader)，则会将控制权交给该启动管理器，然后由启动管理器进行选择启动哪一个操作系统。以grub为例说明启动管理器所做的事情：(图片均从langeldep的blog上截取)</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/1.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/2.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/3.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/4.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/5.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/6.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/7.PNG" alt=""></p>
-<p>那么grub+用户输入就可以指定具体去加载那个操作系统了，然后将控制权转交给操作系统。</p>
-<p>如果事先没有安装启动管理器，我们知道四个主分区里面，只有一个是激活的。计算机会读取激活分区的第一个扇区，叫做”卷引导记录”（Volume boot record，缩写为VBR）。</p>
-<p>“卷引导记录”的主要作用是，告诉计算机，操作系统在这个分区里的位置。然后，计算机就会加载操作系统了。</p>
-<h1 id="0x03_正片-linux0-11内核分析">0x03 正片-linux0.11内核分析</h1><p>以下内容参考了《linux0.11内核完全注释》这本书，并加入了一些本人的理解。好，下面进入期待已久的正片环节。</p>
-<p>首先来看一下linux0.11内核的整体结构布局(硬盘上的布局)：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/8.PNG" alt=""></p>
-<p>这是img的内容，是在硬盘上存储着的结构，通过上面的分析，我们知道，其实这里的bootsect就是我们前面介绍的MBR，操作系统被装载入内存后，bootsect会被装载在内存的0x7c00处，让我们来看一下此时内存的布局：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/9.PNG" alt=""></p>
-<p>我们就从现在这个布局开始讲起，看操作系统是如何一步步诞生的。。。很多细节我会忽略过去，如果你想去深入挖掘一些东西怎么在代码上体现的，请自行下一份源码去看。</p>
-<p>bootsect主要执行复制功能，即把硬盘上的数据给搬到内存上来，以便移交控制权给接下来的指令。执行bootsect后的状态：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/10.PNG" alt=""></p>
-<p>bootsect执行完后，便会将控制权转交给由它搬到内存中的setup指令段去执行，看下setup具体干了哪些事情：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/11.PNG" alt=""></p>
-<p>对于将system移动到内存其实位置，这里不过多赘述什么，给出汇编代码：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/12.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/13.PNG" alt=""></p>
-<p>下面我们来看点有意思的事情，就是所谓的段式内存管理，前面说到，setup将system代码移动到内存起始位置后，会去设置中断描述符表和全局描述符表：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/14.PNG" alt=""></p>
-<p>设置之前，gdtr(指向GDT的寄存器，存储着GDT在内存中的地址)和idtr(指向IDT的寄存器，存储着idt在内存中的地址)，二者均为32位寄存器，关于这两个的作用，下面在讲解段式内存管理时会详细说明：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/15.PNG" alt=""></p>
-<p>设置之后，两者的值是：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/16.PNG" alt=""></p>
-<p>设置完之后，通过如下指令进入保护模式：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/17.PNG" alt=""></p>
-<p>进入保护模式后，当再次用地址访问内存时，采用的机制就是段式内存访问机制了，下面来着重介绍下段式内存访问。</p>
-<h2 id="段式内存访问">段式内存访问</h2><p>在进入保护模式前，系统采用的寻址方式是实模式寻址方式，这种寻址采用的是段基址加偏移的方式进行访存，段基址存储在段寄存器中，段寄存器有CS(code segment代码段)，DS(数据段)，SS(栈段)，ES(扩展段)，还有FS和GS(对于FS和GS不熟，有兴趣自行google)，实模式的地址访问很简单，地址形式是段寄存器：偏移(比如：cs:1111),地址的计算规则是段寄存器的值左移4位后作为段基址，然后最后要访问的地址值就等于段基址+偏移，也就是说最后得到一个20位(至于为什么是20位，而非16位，有历史渊源，自行google)的地址值，也就是说实模式下访存的地址范围大小是2^20=1MB，即0-0xfffff。这是实模式下的地址访存方式，在进入保护模式之前，系统都是通过这种方式去访问内存空间。</p>
-<p>进入保护模式后，访存就采用段式内存访问了，为什么采用段式内存访问，其中有一个原因就是1MB的内存不够用了，再加上地址线的扩充故引入段式内存访问，段式内存访问可以访问2^32=4GB的内存空间，段式内存访问的地址形式仍然是段寄存器:偏移的形式(比如CS：1111),那么怎么访问到具体的内存空间呢？</p>
-<p>首先当系统读到访存指令时，系统会去找GDT，GDT即所谓的全局描述符表，然而系统并不知道GDT在哪，这时系统会去问GDTR(全局描述符表寄存器)，前面也说过，GDTR在系统设置GDT时会被初始化，初始化后，GDTR中的值会被设置成GDT的基址，即GDT所在内存的首地址，这里注意GDTR是一个32位的寄存器。GDTR是硬件，在执行访存操作时，系统被设置成会自动从GDTR中取值，从而知道了GDT所在的内存基址，拿到GDT又能怎样呢？别急，在来说一下段寄存器，这里段寄存器在段式内存访问中并不叫段寄存器，而是叫段选择子，且16位空间并非每一位都作为地址，下面来看下段选择子的具体结构</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/18.PNG" alt=""></p>
-<p>通过段选择子，我们可以得到很多信息，首先系统会查看第2位(从第0位开始算)，看他是1还是0，如果是0，则会去查GDT，如果是1，会去查LDT，这里LDT下面会说，我们先不管。好，由于现在还没有设置LDT，故此时访存的话，段选择子的第2位是0，故去GDT中找，而通过上图我们知道，第3-15位共13位为index，即GDT的索引值。为什么需要索引值呢？GDT叫做全局描述符表，既然是个表，那这个表就是由一个个的单元构成，而这些所谓的单元就是全局描述符，看下全局描述符(一个很典型的代表就是段描述符)的结构：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/19.PNG" alt=""></p>
-<p>对全局描述符表的解释：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/20.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/21.PNG" alt=""></p>
-<p>这里解释一下，全局描述符包括很多类型的描述符，不同的描述符描述的对象不同，描述段的叫段描述符，描述门的叫门描述符，当然典型的就是段描述符了，下面主要针对段描述符讲解段式内存访问。</p>
-<p>通过上图我们可以看到，每个描述符所占的空间是64位，即8字节，且每位代表着不同的意思，前面提到，段选择子的前13位代表着GDT的索引值，即段选择子所要选择的段的描述符在GDT中相对于GDT基址的偏移，这里的偏移步长是8字节，这样我们就可以通过段选择子拿到要访问的地址所在的段的一些最基本的信息，比如该段在哪，段限是多少，什么段，是否可执行等等</p>
-<p>有了这些姿势，我们来大致总结下段式内存访问的流程：当进入保护模式后，如果系统执行到访存指令时，会把指令中要访问的内存地址以段选择子:偏移的形式(实际的地址也是这么给的)给拿出来，然后通过段选择子(假设还未设置LDT)知道要去找GDT，这时系统就会从GDTR中取出GDT的基址，然后在根据段选择子的3-15位知道描述符相对GDT基址的偏移，此时别忘了段选择子还有一位RPL位，然后系统会根据此位与找到的段描述符的DPL位进行一个check，如果check通过(关于具体是怎样check的，推荐一遍blog–<a href="http://myjfm.blogbus.com/logs/57252310.html" target="_blank" rel="external">保护模式特权级别DPL,RPL,CPL 之间的联系和区别</a>)，系统就知道当前是有权访问该段的，然后就可以拿到相应的段描述符了，通过该描述符可以知道要访问的地址所在的段基址，在得到最终地址之前，系统还会将段选择子:偏移中的偏移与段限进行比较，段限根据粒度位进行相应的粒度扩展后，若偏移不超过段限，就可以通过段基址+偏移地址的形式得到最终要访问的地址了。这里说明一下，这里得到的地址是线性地址，在未启动页式内存管理之前，该线性地址就是真正的物理内存地址，</p>
-<p>段式内存访问的姿势差不多就这些，但是不知道你有没有发现，此种内存访问的效率并不是很高，因为每次访问内存单元时，都需要去先访问一下GDT，找到要访问的段，然而根据代码的局部性原理，我们可以知道，不管是数据还是指令，在一段时间内它的地址应该都是处在一个段的，所以说这里是可以优化的。现实中的优化使用的是硬件方面的优化，也就是直接对于每个段选择子，给他配套了两个影子寄存器(dh和dl)，两个都是32位寄存器，加起来正好可以存储一个段描述符，用于存储根据当前段选择子而对应的段描述符，这样的话，在访问同一个段的地址时，就不需要去再次访问GDT了，可以直接在影子寄存器中直接取得该段对应的描述符的值，然后执行接下来的访存操作，只有当访问不同的段时，操作系统会识别出要访问的地址的段选择子与当前寄存器中存储的段选择子不同，操作系统就知道要更新相应的影子寄存器了，然后就会去通过该选择子访问GDT并拿到相应的段描述符装载入影子寄存器中，实现刷新影子寄存器的操作，以便下次访存使用。</p>
-<p>下面我们再来看刚才图中比较有意思的两个汇编指令：<br>lmsw ax；和jmpf 0x0008:0000，对于lmsw指令，该指令主要是针对控制寄存器的汇编指令(控制寄存器有4个cr0-cr4，x86_32的CR0为32bit，X86_64下为64bit，相关姿势请自行google)，上面的mov ax，0x01；lmsw ax实际上是将ax的值装载入cr0寄存器中，此时cr0寄存器的最低位为1，其余为是0，最低位对应着PE(protect enable)为，置1代表着保护模式开启(对于cr0中各位的含义，自行google)。接着看jmpf指令，是一个远跳转指令，从此步指令开始就使用了段式内存访问机制，对应着保护模式的开启。</p>
-<hr>
-<p>段式内存访问就讲到这，我们接着来看操作系统的执行流程</p>
-<p>进入保护模式后，setup代码的使命就算是完成了，下面setup会将控制权转交给head(system的一部分)，来看下head干了些什么：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/22.PNG" alt=""></p>
-<p>上图描述的是不全面的，在进入head后，首先会设置段寄存器和栈指针，以保证访存操作的快速性和正确性，然后才会去设置IDT和IDTR，具体的指令就不po图了，设置后ds,ss,fs,gs四个寄存器的值，它们指向的GDT 的2 号描述符的信息是：低长字为0x000007ff，高长字为0x00c09300。其含义是：段基址为0x00000000，段限长为0x00800000（=0x007fffff+1），类型是数据段，可读写，然后设置ss和esp，设置之后ss 被赋予了值0x0010，与ds 同值，都指向GDT 的2 号段描述符，esp 被赋予了值0x0002125c，回忆一下，system 的bss 段的地址范围是[0x1fb20,0x23fd0)，可见现在ss:esp 所指向的线性地址0x00022f00 位于system 的bss 段内，是数组user_stack 结束之后的第一个字节的位置。可见现在user_stack 被用作栈（向下增长），因为现在CPU 的CPL 为0，所以CPU 目前工作在核心态，上述栈现被用作核心栈。user_stack 的位置如下：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/28.PNG" alt=""></p>
-<p>然后去设置IDT和IDTR</p>
-<p>有了段式内存访问机制的基础后，中断执行的流程就较为简单了，给出设置IDT的代码</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/23.PNG" alt=""></p>
-<h2 id="中断处理机制">中断处理机制</h2><p>下面介绍中断机制：不管是实模式还是保护模式，中断操作都是通过本质上int+中断号的指令实现的。在实模式下，中断机制较为简单，采用的是中断向量表，该中断向量表由bios加载完成，主要用于bios下一些工作的完成，实模式下的中断向量表存储在内存[0,400)共1KB的内存空间中，每个中断向量占用4个字节，中断调用指令int+中断号指令中的中断号就对应着中断向量表的索引，中断号的索引步长是4字节，这里每个中断向量并非直接存储着中断处理程序对应的物理地址，我们知道实模式下访存操作采用的是段值 * 16 + 偏移值的形式，所以这里的中断向量的四个字节，2个字节存储段值，另外两个存储偏移值，然后根据实模式下的地址计算公式就可以找到该中断号对应的中断处理程序所在的内存地址，找到地址后，就可以在简单的保存现场后，将控制权转交给中断处理程序了。在保护模式下，中断调用指令依然是int+中断号的形式，而系统采用了另外的一套流程去找寻该中断号所对应的中断处理程序，保护模式下采用的是中断描述符表，其表项——中断描述符可以是中断门、陷阱门和任务门中的一种。我们知道system整体被移到了内存的起始地址处，覆盖了原先的bios中断向量表。设置完中断描述符表以及中断描述符表寄存器(IDTR，32位，存储IDT的基址)后，内存粗略布局为：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/24.PNG" alt=""></p>
-<p>操作系统在处理具体的中断指令时，具体查找中断处理程序的流程用一张表概括为：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/25.PNG" alt=""></p>
-<p>总结下，首先系统通过中断指令拿到中断号，然后从IDTR中拿到IDT的基址(现在是0x54c0)，然后根据中断号*步长(8字节，每个描述符大小是8字节)得到偏移，通过基址+偏移拿到该中断号所对应的中断描述符(通常是中断门或陷阱门)，中断描述符的结构为：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/26.PNG" alt=""></p>
-<p>通过该结构，我们可以看到描述符存在着选择子和偏移以及一些标志位和保留字，然后通过该选择子可以去GDT或LDT中找到相应的段描述符，然后拿到段描述符后，在根据刚才中断描述符的偏移得到中断处理例程入口在该段中的偏移，从而就找到了该中断号所对应的中断处理例程。</p>
-<p>设置完IDT以及IDTR之后，保证了系统可以正常执行中断指令了。然后系统又会去设置GDTR，这里为什么又去设置GDTR呢？在设置之前，我们知道，原来GDTR的值是0x00090314，按照个人理解，一是此时GDT所在的位置距离system太远，二是以前的GDT并不能再满足需要了，可以这么说，前面设置GDTR寄存器是为了实现系统的段式内存访问机制，根据前面的注释“load gdt with whatever appropriate”可以知道。在执行完jmpf指令后，系统的控制权就交给了system的head，很明显，为了方便，需要给system在开辟一块空间当做system的GDT，他选择的是[0x5cc0,64c0)，紧靠着IDT的一段内存，然后设置GDTR指向这里，所以设置完GDTR的值后，GDTR的值就是0x5cc0了，新的GDT表为：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/27.PNG" alt=""></p>
-<p>可见只有1 号和2 号描述符是有效的，它们分别描述了一个代码段和数据段，0号描述符始终是0，做保留用，接下来在生成新的段时，就会在GDT中添加相应的描述符，3号4号之类的。既然重新设置了GDT，那么段寄存器的值就需要重新设置了，可谓一朝君子一朝臣啊(小感叹一下),毕竟执行流掌握在谁的手中谁说了算。。。重设寄存器的指令就不po图了，设置后除cs 外，cs还是0x08，其他段寄存器都获得了新值0x10，段限长变为了0x00ffffff（原来是0x007fffff）。</p>
-<p>到这里，操作系统已经实现了段式内存机制以及中断机制，接下来又是一些有意思的指令：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/29.PNG" alt=""></p>
-<p>这段代码首先测试A20 地址线是否打开，然后检测数学协处理器是否存在。<br>关于A20地址线以及数学协处理器又是挺有意思的历史，感兴趣的话就去google。</p>
-<p>马上，还有一个函数的执行(setup_paging函数)，head就快完成它的使命了，接下来的指令：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/30.PNG" alt=""></p>
-<p>先是往栈中压入三个参数，再压入返回地址0x5412，再压入返回地址0x6799（main 函数的入口地址），然后执行jmp 指令跳到setup_paging 函数（0x5412+62）中去执行。在setup_paging函数执行完返回时，会返回到0x6799（即main）函数中去执行，main 函数原理上应该不会返回，如果万一返回，就返回到0x5412 中去执行，而在0x5412 处是一个跳到自我的jmp指令，会进入无限循环。</p>
-<p>我们来看setup_paging函数的执行，即head的最后一个工作——设置页目录表和页表。</p>
-<p>我们先来看系统是怎样一步一步的设置的，然后在来介绍页目录和页表有何作用。</p>
-<p>具体设置流程，看下setup_paging函数对应的具体代码：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/31.PNG" alt=""></p>
-<p>这段代码的功能是设置页目录和页表，然后启用分页机制。查看一下head.s 的源代码可知，目前内存[0, 0x5000)对应于程序中的pgdir、pg0~pg3 这些标号，从而可知，0 号页帧（其物理地址范围是[0,0x1000)）是页目录，1 号到4 号页帧是4 个页表，设置完页目录表和页表后，内存布局为：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/32.PNG" alt=""></p>
-<p>页目录(pg_dir)可以理解为1级页表，页表(pg)可以理解为2级页表，实际上就是两次跳板</p>
-<p>设置完后，页目录中设置了4个页目录项(上面的四条mov指令)，其余的页目录项(共1024个页目录项，因为一个页4KB，而一个页目录项4字节)都是0，第一个页目录项的内容为0x00001007，其含义是：0 号页表的物理地址是0x1000（对应pg0），页存在，可读写。其他3 个页目录项类似。因为一个页表包含1024（=0x1000/4）个页表项，可以描述4MB（=1024*0x1000）的空间，所以上述4个页表项总共可以描述16MB 的空间，而我实验用的bochs虚拟机的内存只有16MB，所以只设4 个页目录项就够了。</p>
-<p>接下来是pg的内容，以pg0为例，pg0 中的第一个页表项的值为0x00000007，其含义是：这个页表项所对应页面被映射到起始地址为0x00000000 的物理页帧，即0 号页帧，页存在、用户可读写；第二个页表项的值为0x00001007，对应物理页帧的起始地址为0x00001000。可见按此页目录，每一个线性地址都被映射到了与自身相等的物理地址，即所谓“identity‐mapping”（对等映射，源代码注释中的用语）。</p>
-<p>好了，现在页目录表和页表已经设置完毕，但操作系统并不知道pg_dir的基址在哪，所以需要一个东西来记录一下，这就是cr3寄存器(页目录基址寄存器)，接下来的指令就是给页目录基址寄存器cr3 赋值，因为页目录pg_dir 的地址是0x0000，所以将0 存入cr3，但此时系统并不承认开启了分页机制，因为还要设置相应的标志位，还记得我们前面说的cr0寄存器吗，它的最后一位是PE位，用于标识是否开启保护模式，对应的cr0的最高位是PG位，用来标识是否开启分页机制，所以接下来的指令就是去将cr0的PG位置为1，告诉操作系统，分页机制开启，接下来访存就需要结合分页机制了。但是，现在的情况比较特殊，因为页目录和各页表的设置是对等映射，线性地址与物理地址相同，所以后面的访存操作实际不受影响。</p>
-<p>执行完上述指令后，接下来就是一条ret指令，还记得刚进入该函数前栈的布局吗？此时栈顶存储着main的入口地址，所以执行完ret后，控制权就交给了system中的main，然后系统就进入main执行。在进入main之前，此时的内存布局和状态是：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/33.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/34.PNG" alt=""></p>
-<p>到这，我们即将进入main的讲解。但是，不觉着少点什么吗？没错，那就是分页机制的具体作用还没有讲解，下面我们来一探究竟</p>
-<h2 id="引入分页机制后的访存">引入分页机制后的访存</h2><p>还记得我们前面所说的，给定一个逻辑地址，经过段式内存转化后，会得到一个线性地址，在为开启分页机制的情况下，该线性地址即对应着物理地址。但，此时已开启分页机制，所以说此时线性地址到物理地址仍需要进一步的转化。</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/35.PNG" alt=""></p>
-<p>根据上图我们可以看到，对于拿到的线性地址，它包含着三个信息，DIR(31-22，共10位)，用于访存页目录偏移，PAGE(21-12，共10位)，用于访存页表偏移，OFFSET(0-11，共12位)用于访存页内偏移，下面在给出具体的页目录项和页表项的结构和各字段的含义：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/36.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/37.PNG" alt=""></p>
-<p>下面来总结下如何由线性地址结合分页机制转化为物理地址的。拿到线性地址后，首先会查看cr0寄存器，看是否开启了分页机制，如果没有，则该线性地址就是最终的物理地址，如果开启，则会取该线性地址的前10位，然后在cr3中拿到页目录的基址，这前10位(DIR)就对应着页目录的索引值，根据基址+DIR*4的结果可以找到对应的页目录项，通过该页目录项可以找到对应的页表的基址，同样拿到页表的基址后，同样的根据PAGE(偏移)可以找到所在的具体的页，找到具体的页后，可以根据OFFSET，找到真正的物理地址，这样就完成了线性地址到物理地址的转化。</p>
-<p>具体的由逻辑地址转化为物理地址，可以表示为：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/38.PNG" alt=""></p>
-<p>到这就算说完了一部分内容，接下来进入main。</p>
-<h2 id="main的执行过程">main的执行过程</h2><p>程序main.c 是用C 语言编写的，还是和以前一样，先看main具体干了那些事情：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/39.PNG" alt=""></p>
-<p>首先我们来看主内存区的初始化。进入main之后，首先会计算内存缓冲区的结束地址buffer_memory_end 和主内存区的开始地址、结束地址。内存缓冲区用于外设数据缓存，主内存区用于分页管理，也就是说主内存区之外的区域是由内核直接访问的。内存缓冲区之后的第一个字节的地址是0x400000（4MB），它也是主内存区的开始地址，中间没有设虚拟内存盘。整个内存之后的第一个字节的地址是0x1000000（16MB）。主内存区的位置是：[400000, 1000000)。计算完内存缓冲区以及主内存区的相应地址范围后，就需要进行初始化了，以便进行接下来的操作和管理，4MB之前的空间被操作系统默认是使用过的，接下来我们看如何初始化主内存区的，通过函数mem_init来实现。函数mem_init 的作用是对数组mem_map 进行赋值。mem_map 位于system 的数据段中，再未初始化时的取值全为0。这个数组在内存布局中的位置是：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/40.PNG" alt=""></p>
-<p>数组mem_init 共包含3840（0xf00）个元素，每个元素描述一个页帧的分配情况，它可以对内存的后 15MB 的页帧进行描述,每个元素(1字节，8位)描述一个页帧，所以说3840个元素可以描述的空间范围是3840<em>4</em>1KB=15MB，在mem_init函数完成初始化操作后，内存区域[0x100000, 0x400000)所对应的页面在mem_map 中的标志被置为了0x64（=100），表示已被使用（实际被内存缓冲区使用），内存区域[0x400000, 0x1000000)的区域则在mem_map 中标注为了0x00（表示未使用）。它们的交界点0x209c0 是数组中下标为0x300（=0x209c0‐0x206c0）的元素，对应于0x100000 开始的第0x301 个页帧，也就是内存地址为0x400000（=0x100000+0x300*0x1000）的页帧，也就main_memory_start 的值。对主内存区初始化之后，是对陷阱门、块设备、字符设备、tty 设备和时间的初始化，这些内容我不是很熟，所以就不误人子弟了，我们暂时跳过这部分内容，以后需要时再分析。</p>
-<p>然后进入调度程序的初始化，即sched_init函数的执行，这里所谓调度程序，是指进程(一般是windows的说法，linux下一般叫任务，以下不区分这两个概念)的调度，从这里开始，操作系统就要开始建立起进程(任务)的概念。</p>
-<p>在sched_init函数中，设置GDT 中的TSS（任务状态段）描述符、LDT 描述符(前面提到过)，并初始化task数组(这里说明下，我们现在是跟着代码走，至于为什么要建立这些东西以及这些东西的作用，下面会详谈)。GDT 的4 号、5 号描述符分别被设为指向0 号进程的TSS（init_task.task.tss）和LDT（init_task.task.ldt），后续的描述符都被初始化为0，其中6 号、7 号描述符以后将被设为指<br>向1 号进程的TSS 和LDT，依此类推。而任务指针数组task[]的第一个元素已被初始化为指向0 号进程的tast_struct 结构，后续的每个元素都被初始为空。现在的GDT中只有两个描述符，1 号和2 号描述符是有效的，分别描述了一个代码段和数据段，它们是在head.s文件中初始化的。首先来看task 数组，它是一个指针数组，task 数组占据的内存空间是[0x1d1c0, 0x1d2c0)，(对于task数组的索引，不需要借助相关的硬件，因为前面已经准备好了C的环境而且main本身就是用C写的，所以操作系统若想知道task数组的位置，可以在代码中直接访问这个变量就好，这也是C的便利之处)是一个包含64 个元素的task_struct 指针数组，且只有task[0]被赋值0x1c1a0，其他都是空指针0x0。task[0]是0 号进程的进程控制块指针，查看源程序可以知道：它存储的实际上是变量init_task 的地址，0 号进程的控制块就是init_task。讲到这，可能大家已经有点晕了，反正我第一次听的时候是有点晕的，这里，我们要能清楚各个数据结构之间的关系，po几张图：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/41.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/42.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/43.PNG" alt=""></p>
-<p>从这几张图就可以看出这几个数据结构的从属关系，首先系统在建立每个任务时，会为每个任务建立一个联合数据类型，即task_union这个数据结构，由联合类型的特性我们可以知道，task_union的大小是4KB，我们来看他的两个成员，一个是task_struct，一个是stack，这两个成员共享这4KB的空间，task_struct上面有图，用于存储任务相关的信息，stack是该任务的内核栈(用户栈的话，前面有提到过)，两者共享这4KB的内存其实并不冲突，因为栈的低地址方向生长性(栈空时栈顶指针指向该页面的末尾)，所以只要栈不过分生长就不会覆盖task_struct了。由上图还可以看出，task_struct包含tss_struct，而tss中存储着任务调度和切换的重要信息(后面会谈)。</p>
-<p>理清了这些数据结构的关系后，我们接着谈。init_task 的前面956 字节用于进程0 的控制块，后面的3140 字节用于内核栈。task 数组和init_task 在内存的位置：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/44.PNG" alt=""></p>
-<p>接着跟着代码走，下面会向GDT中增加两个描述符：4 号和5 号描述符（从0 开始编号）。4 号描述符的含义为：段基址为0x0001c488，段限长为0x00068，DPL 为0 级。这正是init_task.task.tss 的位置和长度，init_task.task.tss 总共有212 字节，但除去最后一项（i387）以后，刚好占104 字节，5 号描述符与4 号描述符类似，描述了init_task.task.ldt 的位置。具体的，对于TSS段描述符各个位的含义，可看这篇blog——<a href="http://blog.csdn.net/ta_nk/article/details/5798337" target="_blank" rel="external">TSS描述符</a>，对于LDT描述符各个为的含义，可看这篇blog——<a href="http://blog.csdn.net/yuzhihui_no1/article/details/42402795" target="_blank" rel="external">x86架构下的系统段描述符格式</a></p>
-<h2 id="进程结合LDT的访存实现">进程结合LDT的访存实现</h2><p>相信看到上面，很多人已经开始骂了，这TM什么TSS，什么LDT，说清楚点啊。。。下面我们就来谈谈进程它到底是个什么鬼，也只是个人的一些见解。操作系统引入进程的概念的原因:从理论角度看，是对正在运行的程序过程的抽象；从实现角度看，是一种数据结构，目的在于清晰地刻画动态系统的内在规律，有效管理和调度进入计算机系统主存储器运行的程序(from baike)。接触过计算机的人，都会有进程的模糊认识，但并不能准确的说清进程是什么，这里我们也不讨论进程是什么，因为这就像讨论鸡是什么一样无聊，进程就是进程。对于进程，系统每建立一个进程就会向task这个数组中添加一个元素，相当于注册，这个元素指向task_union这个数据结构，这个数据结构有两个成员，一是该进程的相关信息，二是该进程的内核栈。进程分用户态和内核态两种，我们讨论到这，此时的操作系统只是单进程且处于内核态，并未进入用户态，权限还很大，我们暂且称该进程为0号进程。每个进程都有一个task_struct结构，这里我们只关心它其中的tss以及LDT，tss用于进程切换，LDT用于当前进程的访存。首先说LDT，有了GDT的基础，LDT也不难。引入LDT，个人认为，一是为了更好的体现进程的独立性，二是更好的体现GDT的全局性。每个进程可能不只两个段，而GDT只有256个描述符的空间，我们知道，task数组在声明时有64个元素，也就是最多可以有64个任务，显然GDT已经不能满足需求，而且试想每一个任务的每一个段描述符都存储在GDT中，那将会是一个多么混乱的事情，且在实现进程切换时，也会有相应的困难，所以，对于每个进程，操作系统只在GDT中注册两个描述符TSS和LDT，且针对这两个描述符，都有相关的硬件寄存器(TR和LDTR)指向这两个描述符。有了LDT，我们来看，针对进程，它是怎样实现段式访存的。首先，每个进程都有一个LDT，专门用于描述该进程所用到的段的信息，在访存时，进程给出访存地址，段选择子：偏移的形式，由段选择子的第2位知道要去LDT中找相应的描述符，段选择子中的index代表该段在LDT中的偏移，但是OS并不知道LDT在哪，此时就需要借助硬件LDTR来寻找LDT了，对于LDTR的结构，给出如下图：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/45.PNG" alt=""></p>
-<p>LDTR由显式的16位和隐式的64位(类似于前面介绍的影子寄存器的概念)构成，对于显式的16位，存储的是LDT描述符在GDT中的索引，也就是说，访存时，首先通过判断得知要访问LDT，则会从LDTR中取出LDT描述符在GDT中的索引，用过判断该描述符的S字段位和type字段位的含义，得知是LDT描述符，然后会将该描述符的内容存储到LDTR的隐式64位上，以便加速下一次的访存，通过该LDT描述符记录的信息，找到该进程对应的LDT(局部描述符表)，LDT中存储着该进程所需的所有段的信息，然后通过最早给的段选择子：偏移中的段选择子的index部分找到要访存的地址在LDT中的位置，如果是第一次访问，则会把该描述符的信息存储到相关的段描述符的影子寄存器中，以加速访存，根据描述符的信息，找到要访存的地址所在的段基址，找到后，进行相应的check，允许访问后，可以用段基址+偏移的形式得到访存的线性地址，然后看是否分页，得到最终的物理地址。这里是有两层优化的，首先针对不同的进程，用LDTR的影子寄存器实现优化，在访问相同进程时，可直接从LDTR的影子寄存器中取出该进程的LDT描述符，对于同一进程的不同代码段或不同数据段，使用了段寄存器的影子寄存器进行优化。也就是说，如果两条指令在同一个进程的同一个代码段，则可以直接去访问段寄存器的影子寄存器得到段信息，省略了先访问GDT在访问LDT的步骤。这里针对给出的访存地址是否是不同进程以及是否是不同段的检测的话，对于不同进程，是在实现进程切换时实现的LDTR的刷新，对于段，比较给出的访存地址的选择子与现在的段选择子是否不同，不同则根据信息实现影子寄存器的刷新。到这，就算把加入进程以及LDT后，访存的实现讨论完了。。。</p>
-<hr>
-<p>我们接着跟着程序的流程走，对于TSS的讨论，等到操作系统实现多进程以及有进程切换的相关操作时再具体介绍。紧接着会将EFLAGS 寄存器中的NT 标志置零，对于EFLAGS各位含义，给出blog——<a href="http://blog.csdn.net/jn1158359135/article/details/7761011" target="_blank" rel="external"> x86—EFLAGS寄存器详解</a> ，再接下来程序会将进程0的TSS 段描述符（即GDT 的4 号描述符）的选择符加载到任务寄存器TR中，通过ltr(0)指令实现，ltr(0)指令会将段选择符_TSS(0)加载到TR 寄存器中。分析一下，_TSS(0)的值0x20，指的是GDT 中的4 号描述符。由前面的程序可知，该描述符指向init_task.task.tss，即进程0 的任务状态段（TSS）。TR会被赋值为0x20，此选择子的含义：目前的TSS 由GDT 中的4 号TSS 段描述符<br>指定，本选择子的RPL 为0 级。在TR 的影子寄存器中已经加载了GDT 的4 号描述符的值，即高长字为0x00008b01，低长字为0xc4880068。这与我们在前面看到的是基本一致的，唯一的不同是原来的“89”变成了现在的“8b”，原因在于TSS 段描述符中的忙标志B 被置位，表示该任务（进程0）处于忙状态，即正在执行或正等待执行。接下来会对LDTR赋值，0x28会被赋值给LDTR 寄存器，这个选择符指向GDT 中的5 号段描述符，后者指向进程0的LDT，即init_task.task.ldt。接下来，设置8253 定时器，使它每10 毫秒发出一个时钟中断信号，即每10毫秒执行一次时钟中断处理程序。接下来是设置时钟中断处理程序对应的中断门，通过阅读源码可以知道，会将idt 中的0x20 号描述符设置为一个中断门描述符，指向中断处理函数0x08:addr，代码段值0x08 意味着cpl 将变为0 级，中断门的dpl 设为0 级，意味着在用户态（3 级）不能直接调用这个中断门。因此，当32 号（0x20）中断发生的时候，会执行的中断处理函数是代码段中的timer_interrupt 函数，且cpl 会是0 级，即进入核心态。原来0x20 号描述符指向的处理函数地址是0x08:0x80b5，查符号表可知这是函数reserved的入口地址，追根溯源，该函数在文件asm.s 中定义，对idt 的上次赋值在trap_init 函数中，目前idt 的0x20 号描述符是一个陷阱门，好，不去管它。设置完后，0x20 号描述符会被改为指向地址0x08:0x7724，也就是timer_interrupt 函数的入口地址。接下来会修改中断控制器屏蔽码，允许时钟中断，也就是说接下来每10毫秒会进行一次时钟中断，执行timer_interrupt 函数。接下来设置idt的0x80 号描述符，使其变成一个陷阱门，指向中断处理函数system_call（系统调用总入口函数），且门的dpl 被设置为3 级，即允许用户态程序调用这个中断。这里无论是调用set_intr_gate 还是调用set_system_gate来设置，描述符中的段选择符都是0x08，即使用GDT 的1 号段描述符，且cpl变为0 级，因此响应这些中断时内核都将进入核心态。设置完后，0x80 号描述符已经由原来的指向0x5428（函数ignore_int）变为了指向0x764c（system_call），且原来的8e 变成了ef，意味着由中断门变成了陷阱门，dpl 由原来的0 级变成了3 级，这些都可已通过分析门描述符的格式得出，对于门描述符的介绍，参考blog——<a href="http://blog.sina.com.cn/s/blog_9d38f2eb0101015p.html" target="_blank" rel="external">门描述符1</a>以及blog——<a href="http://blog.sina.com.cn/s/blog_49cff51801000h48.html" target="_blank" rel="external">门描述符2</a>。</p>
-<p>这里需要说明一下，我们对源码进行简单修改，通过增加系统调用的方法增加一个显示函数，以便下文研究进程切换时能够直观的显示出来，修改如下：设置idt 的0x81 号描述符，使其指向中断处理函数display_interrupt，这是一个我们新加的处理函数，用来向屏幕上输出一个字符。</p>
-<p>总结下sched_init函数对各个描述符表的修改：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/46.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/47.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/48.PNG" alt=""></p>
-<p>接下来进入buffer_init函数，是对内存缓冲区的初始化，前面mem_init函数是对主内存区的初始化，两者要区分开，内存缓冲区的范围是：[start_buffer, buffer_memory_end)，即[0x23fd0,0x400000),这部分缓冲区会分成两部分：后面是按1024 字节为单位划分的缓冲块，前面是用于管理缓冲块的缓冲头，两者一一对应。我们来看buffer_init函数执行完后，内存缓冲区的变化：<br>首先查看内存缓冲去开始部分的变化：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/49.PNG" alt=""></p>
-<p>内存范围[0x23fd0, 0x23ff4)是一个缓冲头，对应于缓冲块[0x3ffc00, 0x400000)，它的后一个缓<br>冲头的起始地址是0x23ff4，它的前一个缓冲头（也是最后一个缓冲头）的起始地址是0x42444。<br>所有的空闲缓冲块的缓冲头构成了一个双向循环链表。再查看最后一个缓冲头：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/50.PNG" alt=""></p>
-<p>可见它对应的缓冲块是[0x42800, 0x42c00)，它的前一个缓冲头的地址是0x42420，后一个缓冲头的地址是0x23fd0，即第一个缓冲头。空闲缓冲块的缓冲头链表的头指针存在变量<br>free_list 中。可见，基本验证了我们前面说的，内存缓冲区划分成两部分的说法。我们把内存缓冲区的结构总结下：1.每个缓冲头占36字节大小，即9个双字大小，从0x23fd0开始，每36字节是一个缓冲头，到0x42468结束，共(0x42468-0x23fd0)/0x24=D76=3446个缓冲头，管理着3446个缓冲块，对于缓冲头的结构，我们将9个双字节按照从低到高的顺序，用0-8代表，对于一个缓冲头，第0个双字存储着该缓冲头管理的缓冲块的起始地址，第7个及第8个双字用于组织缓冲头的双向链表(有点像堆中的空表)，第7个双字存储着前一个缓冲头的内存地址，第8个双字存储着后一个缓冲头的地址，其余双字代表的含义未知，缓冲头的管理方式是从后向前索引缓冲块，即双向链表的表头的缓冲头管理处于最高地址的缓冲块，然后依次向低地址递减，即倒着的；2.每个内存缓冲块的大小是1024个字节，缓冲块的起始地址是0x42800,结束地址是0x400000，共(0x400000-0x42800-(0x100000-0xa0000)(显存和bios))/1024=D76=3446个缓冲块，正好是一一对应的。我们前面提到过，内存缓冲区主要用于外设缓存数据，为了快速查找包含指定设备的指定逻辑块的缓冲块，包含数据的缓冲块的缓冲头被按照hash 表的形式组织起来，相应的hash 数组名为hash_table，在刚初始化完后，这个hash 数组中没有链接缓冲头，每个数组元素都是空。下面总结下，在初始化内存缓冲区后，内存的布局：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/51.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/52.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/53.PNG" alt=""></p>
-<p>接着跟着代码走，接下来是hd_init函数，此函数是对硬盘和软盘进行初始化，对这块不熟，这里略过不看，有兴趣的自行google，接着会执行move_to_user_mode()，其实move_to_user_mode()是一个宏，给出该宏的定义：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/54.PNG" alt=""></p>
-<p>这段程序首先向栈中压入段选择子0x17、当前的栈指针、eflags 寄存器的值、段选择子0x0f，以及标号1 的地址，然后执行iret 指令。在未执行iret指令之前，cs 当前取值0x0008 ，含义是：CPU 当前的特权级（CPL）是0 级，当前的代码段由GDT 表中的1 号描述符指定。ss 当前取值0x0010 说明当前的栈段由GDT 表中的2 号描述符指定。这两个段的基址都是0。当前的栈顶指针esp（0x22ed0）靠近user_stack 数组的尾部（0x22f00）。对于move_to_user_mode()的原理，我们可以这样理解，这是第一次从核心态到用户态的切换，为了实现切换，操作系统伪造了一个栈帧，把事先伪造好的各寄存器的值都压入到栈中，压入栈中后核心栈的布局为：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/55.PNG" alt=""></p>
-<p>然后执行iret指令时，该指令便会将栈中事先准备好的数据，按照上图所示的结构赋值给相应的寄存器，具体的赋值为，首先将栈中的0x0f 赋给cs 寄存器，其含义是：将CPL 变为3 级，当前的代码段改为由LDT 的1 号描述符指定；然后将栈中的0x68ab 赋给eip 寄存器，再将标志0x0002赋给eflags 寄存器。我们已经分析过，当前LDTR 指向的LDT 实际上是init_task.task.ldt，对于init_task.task.ldt，其中1 号描述符的含义是：基址为0x0000，限长为640KB(=(0x0009f+1)*0x1000)，DPL 为3级，代码段；2 号描述符的含义是：基址为0x0000，限长为640KB，DPL 为3 级，数据段。然后，CPU 会将栈中的0x17 赋给ss 寄存器、将0x22ed0 赋给esp 寄存器。ss 寄存器的新值的含义是：rpl 为3 级，段由LDT 的2 号描述符指定。使用的栈依然是user_stack，但现在是在用户态下使用该栈，用作用户栈，至此，user_stack才被真正用作用户栈。另外，代码段和栈段寄存器的值虽然变了，但它们实际的段基址并没有变，依然是0x0000。当然，最重要的是cs 寄存器的cpl 降到了3 级（用户级）。至此，进程0 已经由核心态降到了用户态，之后就在用户态运行，只有当它执行系统调用时或中断发生时，才会再切换到核心态。接下来的代码会给其他段寄存器赋值0x17，与ss 的新值相同，使其完全进入用户态。</p>
-<p>上面所说的是系统第一次从内核态切换到用户态，所以采用了这种较为巧妙的伪造方式，实现了这个切换之后，也意味着现在已经实现了用户态和内核态的切换机制。那么，我们就来看下，在此之后，是如何实现用户态到内核态的切换的，参照blog——<a href="http://www.cnblogs.com/cxrs/archive/2010/07/21/1782007.html" target="_blank" rel="external">用户态和核心态</a>(没有找到很详细的具体实现细节)，从blog中我们可以知道，当满足3中方式中的一个，系统都会执行用户态到内核态的切换操作，就以系统调用为例，比如现在我执行一条int 0x80指令，由于没有找到很详细的细节，所以这里我从OS的角度出发(if i were a OS)，自行脑补出相关细节，很可能有与实际不相符的地方，但苦于找不到资料，所以只能大胆猜测了。首先系统读到int指令，如果此时是用户态，那么系统就知道要切换到内核态了，这里明确一下，不管是用户态还是内核态，他都是属于同一进程的，一个进程可以有两个态，具体的切换过程为：1.从当前进程的描述符中提取其内核栈的ss0及esp0信息；2.借助两个通用寄存器保存当前的ss和esp；3.用ss0和esp0的值对ss以及esp寄存器赋值，此时就切换为内核栈了；4.再将此时的eflags、cs、eip和保存在通用寄存器中的用户态下的ss和esp按照iret返回指令要求的栈结构组织好；5.将根据中断号检索得到的中断处理程序的cs,eip信息装入相应的寄存器，开始执行中断处理程序，这时就转到了内核态的程序执行了。对于从内核态向用户态的切换，由于栈已经布置好，所以只需要一条iret指令即可返回用户态。</p>
-<p>至此，我们已经完整分析了Linux 0.11 的启动、初始化过程，其中比较重要的姿势有段页式内存访问机制，进程的相关姿势以及OS对整个内存的布局。</p>
-<hr>
-<p>还记得我们曾经添加的那个系统调用吗？接下来，为了描述进程以及讲解进程间的切换方便，我们要对源码进行简单修改，修改如下：在System_call.s中修改为：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/56.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/57.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/58.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/59.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/60.PNG" alt=""></p>
-<p>也就是注册了几个函数用于向屏幕输出字符，目的在于标识不同进程，然后在main.c中的修改为：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/61.PNG" alt=""></p>
-<p>下面，我们就根据修改后的OS进行讲解。</p>
-<hr>
-<p>上面已经将OS谈到了move_to_user_mode()处，根据上图修改的，我们知道，接下来就要去执行fork这个相当重要的系统调用了。首先，让我们对此时的内存布局有个整体的把握：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/62.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/63.PNG" alt=""></p>
-<p>给出IDT对应的具体的中断处理程序：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/64.PNG" alt=""><br><img src="/img/if-I-were-a-OS-linux0-11源码分析/65.PNG" alt=""></p>
-<p>IDT中可以有中断门、陷阱门、任务门三种，对于三种门描述符如何区分，以及与其他描述符如何区分，给出blog——<a href="http://blog.csdn.net/barech/article/details/4401417" target="_blank" rel="external">任务门，调用门，中断门，陷阱门 </a>，作为前面门描述符的补充。简单对当前IDT解释下，通过查看内存，我们可以知道IDT具体的16进制数据，下面就一些有特点的进行补充说明，其他的可借由门描述符的相关结构得出其对应的具体意义。中断描述符高长字中的“8f00”的含义是：段存在、dpl 为0、陷阱门。同时，有些描述符的处理函数入口地址为0x08:8213，指向的是函数reserved。前32 个中断描述符的设置是在main 函数的trap_init 函数中进行的。0x80 和0x81 号中断的处理函数入口地址分别为0x08:778c 和0x08:7970，分别对应函数system_call 和display_interrupt，这两个描述符中的“ef00”说明它们都是陷阱门、段存在、dpl 为3，因此用户程序可以直接调用这两个中断。函数display_interrupt 的功能是在屏幕上输出一个字符，通过直接访问显存来实现。</p>
-<p>好，下面开始分析fork的执行过程。网上关于fork的介绍已经太多了，大家随意google一下就可以找到一大堆，这里就不在过多赘述，但这个fork真心很重要，一定要吃透，本来想把某前辈的分析直接搬来的，可是不让公开，我也没办法。。。</p>
-<p>把下面分析要用到的几点说一下：1.fork系统调用在父进程中返回非零值，在新创建的进程中返回0值；2.新进程开始运行的地址设置为保存在tss中的eip 的值，我们知道通过fork新创建的进程在fork创建的过程中是将tss中的eip设置为int 0x80后面的一条指令的地址；所以第一次由0切换到1时执行的地址就是该地址。而以后进程在切换的时候，保存现场而存储在tss中的地址都是ljmp指令后面的那条指令的地址。因此每次进程切换回来都会从该语句执行，要从汇编的层面上去理解。注意：进程切换的本质是ljmp指令；3.不同进程切换时页目录地址不变。不同进程通过占据不同的线性地址空间来使用页目录中的不同页目录项，进而使用不同的页表，以达到进程隔离的目的。4.这里的进程拷贝只是创建了新的页目录项和对应的页表，创建的页表项指向相同的物理页面，也就是说这里能公用的就公用，比如代码段，需要不共用的就执行写时复制。5.我们把fork创建出来的进程称为1号进程，而原来的进程称为0号进程。</p>
-<p>很容易分析出来，fork执行完后，由于是在0号进程中返回，所以返回值非0，if控制结构内的语句不会执行，而是去执行if后的语句，即执行task0函数，分析代码可知，0 号进程将执行一个无穷循环，但是在执行pause系统调用之前，也就是在执行task0的过程中，会发生时钟中断，这是第一个时钟中断。对于时钟中断函数，我们只看与调度有关的最后几行代码。</p>
-<p>在时钟中断do_timer中，最后几行是对是否要执行schedule函数的判断，如果当前进程的时间片没有用完或者中断前系统处于核心态（直到2.4 版本Linux 内核都是内核不可剥夺的），则不进行调度，否则执行调度函数。执行完这个时钟中断后，0 号进程还剩14 个时钟中断周期（最近这个周期还没从counter 中减掉，因此现在显示counter 的值为15），且被中断前进程处于用户态，因此不会进行调度。进一步调试可以知道，该时钟中断发生在我们添加的函数中的一个loop循环中，因为循环执行时间较长，所以不难推断，第一次应该发生在此处，事实也是如此。</p>
-<p>接下来，从task0返回后，就会执行pause系统调用了，函数sys_pause 会将当前进程的状态变为可中断等待状态，然后执行调度函数。对于调度函数schedule函数，它分为两部分，第一部分是对信号的一个判断，具体的处理过程是：检查每个进程，如果进程的alarm 时间已经超时，则置位SIGALRM 信号；如果进程有信号且当前处于可中断等待状态，则将其变为就绪态（TASK_RUNNING）。第二部分程序是选择一个就绪进程的进程号，然后完成进程切换。选择的算法是：选择所有就绪进程（<strong>0 号进程除外</strong>）中counter 值最大的那一个；如果没有一个就绪进程，就选择0 号进程；如果所有就绪进程的counter 值都为0，则给所有进程重新添加时间片（根据进程优先级确定各进程的时间片的长短），然后重新选择。</p>
-<p>通过fork创建的1号进程在所有的创建工作都完成时，会将其置为就绪态，所以此次调度，1号进程被选中。然后，执行进程切换。</p>
-<p>对于进程切换，即switch_to函数，给出源代码：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/66.PNG" alt=""></p>
-<p>上面这段代码首先判断将要切换到的进程是否就是当前进程，如果是就跳过，否则把将要切换到的进程（进程下标为n）的进程控制块指针存入current、把该进程的TSS 选择子存入__tmp 的高长字，然后使用ljmp 指令跳转到进程n 的TSS，从而引发CPU 的现场切换，切换到进程n 执行。对于任务切换的关键，其实是ljmp指令，对于ljmp的具体细节，可以参考blog——<a href="http://blog.csdn.net/smallmuou/article/details/6837087" target="_blank" rel="external">linux0.11中switch_to理解</a></p>
-<p>进程1被切换回来后，还记得当时fork进程1的时候在进程1的tss中存储的eip的值是什么吗？没错，就是int 0x80的下一条汇编指令的地址(从汇编的角度理解比C容易的多，对于C，还真不好描述它从哪开始执行)，给出接下来的汇编指令：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/67.PNG" alt=""></p>
-<p>那么，根据进程切换多的相关姿势，进程1 被调度后的首次运行就从这条指令开始执行。对于当前指令mov %eax, 0x2c(%esp)，可知这是要往一个变量中写，指令中的0x2c(%esp)对应到源代码中的局部变量<strong>res，可见当前指令试图给局部变量</strong>res 赋值，而后者是在栈中分配空间的。还记得前面的页表吗？我们在用fork创建1时，虽然1是复制了0的页表，也就是说1与0共享相同的物理页面，但是1对页面的权限是被修改了的，即1对于与0共享的页面是不具有写权限的，那么，执行这条指令就会触发异常喽。对应的异常处理函数是页故障异常处理函数。对于linux0.11，页故障异常处理函数非常简单，只有两个分支，缺页处理（do_no_page）或页写保护处理（do_wp_page），缺页是在当前进程访问的地址在页表中找不到相应的物理页帧时执行的操作，此时明显不属于这种情况，那么就会执行页写保护处理了(这里，你有没有发现，只要他能找到相应的物理页面，即使他不具有写权限，也会给他分配空闲页帧让他写，而不是报错啥的，可怕。。。)，即执行所谓的写时复制机制。通过计算我们可以得出引发页故障的线性地址访问是0x4022edc，前面我们已知用户栈的栈顶指针esp 是0x22edc，加上段ss 的基址（可查LDT 表得知）就是0x4022edc，因此本页故障就是在试图往栈中写入一个数时引发的。对于do_wp_page函数，其中有一个个人认为还算经典的线性地址到物理地址转换的代码的具体体现：</p>
-<p><img src="/img/if-I-were-a-OS-linux0-11源码分析/68.PNG" alt=""></p>
-<p>大家可以结合前面介绍的线性地址转换为物理地址的步骤具体的针对这段代码来计算一下，对于体会位操作的强大很有帮助。函数调用un_wp_page 的参数是引发页故障的页表项的地址，经计算或调试可知引发页故障的页表项的地址为0xffe088（位于页表0xffe000 中），对于un_wp_page 函数，un_wp_page 函数会首先分配一个新页帧，然后修改页表项的值指向新页帧，并将原页帧的数据拷贝到新页帧中，新分配的物理页帧，1号进程对其是有写权限的。并会建立相应的页表项存储到页表中。然后就会从页故障处理函数中返回，这里需要提醒的一点是在处理完页故障后会再次执行0x6932 处的mov 指令，给局部变量__res 赋值。</p>
-<p>接下来，程序就会正常执行了，还要提醒一点，通过上面的图可以知道，执行完写时复制后，接下来会对fork系统调用的返回值进行一个check，对应于C语言源代码的if，由于现在进程是1号进程，由fork的具体实现可以知道，此时的返回值是0，故if判断通过，进入if中执行，对于if中的语句，首先是设置alarm信号，对于alarm信号的处理是在调度函数中，设置完信号后的代码是一个死循环。我们接着来看OS的执行流程，这里我们只关心进程1和0之间的调度和切换，也就是说我们只分析一下函数：1.do_timer;2.schedule;3.sys_pause;4.do_wp_page。这里有必要说明一下，进程1是不会向显示屏输出任何东西的，因为有写时复制的存在，所以1在每次向显存中写东西时，都会写到由于写时复制而新分配的物理页帧中，并不会写到真正的物理显存中，所以1不会显示东西。</p>
-<p>我们用调试的方法来看OS接下来的流程。切换回1后，首先发生时钟中断(第3次)，此时的时钟中断并不会满足时钟中断中调度的条件，所以不会执行调度，此时1号还剩14个时间片。然后执行pause系统调用，进程1变为可中断等待状态并执行pause中的调度函数，由于1的等待状态，所以此次调度会选中0。接下来，由于1的等待状态，在1的信号到来之前，无论是时钟中断中的还是系统调用中的调度函数，当满足条件执行调度时，都只是0进程被迫调用0进程的尴尬局面。这里有一个细节不得不注意，那就是1进程在执行pause引发0的调度时，0进程在被调度回来是执行的第一条语句的位置，还记得进程切换的相关细节吗？切换的本质就是ljmp了，切换时会把eip的值给存储在当前进程的TSS中，然后从要切换的进程的TSS中取出eip，所以说0进程在被切换回来执行的第一条语句就是ljmp后面的那条指令了。此时还没有从系统调用中返回，然后从switch中返回，然后从pause中返回，还有一个细节，就是在从系统调用中返回时，会判断是否要进行调度，判断条件是只要当前进程不处于内核态就执行调度，处于内核态时，当当前进程的时间片为0时也会执行调度，所以说这里0被切换回来执行的第一次调度是由于0从系统调用返回时满足条件，从而引发的调度(主要想提醒下，分析时不要忘了此处有一个schedule)。然后时钟中断，然后系统调用，然后。。。</p>
-<p>我们来看这种僵局如何打破，现在来分析下，进程1的信号设置的alarm 时间是1 秒，将在jiffies(时钟中断计数器)大于103 时被触发。通过调试验证当jiffies 为104 时开始处理上述alarm 设置，此时将设置进程1 的SIGALRM 信号位，接着将把具有信号的进程1 变为就绪态，接下来，在schedule中，第二部分代码就会选中进程1，然后就会切换到进程1执行了。</p>
-<p>当进程1再次执行到pause时，进程1又会变为等待态，然后又会切换回0(因为没得选)，直到进程1的alarm信号唤醒1之前，1号都会沉睡，每次满足条件执行调度时，都是0调度0的尴尬局面，就这样周而复始，生生不息。。。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<blockquote>
-<p>if I were a OS</p>
-</blockquote>
-<h1 id="0x01_背景介绍">0x01 背景介绍</h1><p>要有份linux0.11的源码在身边</p>
-<h1 id="0x02_计算机的启动过程">0x02 计算机的]]>
-    </summary>
-    
-      <category term="操作系统" scheme="http://kenshichong.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
-      <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[计算机到底是个什么东西]]></title>
-    <link href="http://kenshichong.github.io/2015/12/08/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%88%B0%E5%BA%95%E6%98%AF%E4%B8%AA%E4%BB%80%E4%B9%88%E4%B8%9C%E8%A5%BF/"/>
-    <id>http://kenshichong.github.io/2015/12/08/计算机到底是个什么东西/</id>
-    <published>2015-12-08T15:19:10.000Z</published>
-    <updated>2015-12-11T15:42:20.626Z</updated>
-    <content type="html"><![CDATA[<blockquote>
-<p>if I were a computer</p>
-</blockquote>
-<p>刚考完试想着接下来能够安心做事情的我心情无疑是十分舒畅的，所以把最近想写的东西趁这段时间都写下来，要不然以后又没时间了。。。</p>
-<p>最近一直在思考计算机到底是个什么东西，它为什么会发展到现在这个模样？它是怎么样实现我们交给他的任务的？这些功能是怎样通过硬件实现的？这个长方形的物体到底是个什么东西？为什么他这么傻逼有这么神奇？</p>
-<p>不得不说，他算是封装与抽象的一个较完美的结合。</p>
-<p>可以把计算机抽象成一个信息的几何体，它存储着信息，为什么他有存储信息的功能，什么是信息，信息是可以庙会世间万物的一种东西，什么称得上信息，我们把对一个具体事务的描绘当做信息，什么可以用来描绘，语言。为什么会有语言，它是我们人类在发展过程中为了描绘东西所建立起来的一种抽象，可以看成一种映射关系，比如石头这个词，对应着存在于我们身边的那种较硬的物质，我们从出生的那一刻起所接触的所有东西都在帮助我们建立这种映射，然后我们根据一种叫做知识或者前人经验的东西去建立和大家一样的映射，然后我们有了相同的描绘同一个东西的方法，也就是说我们有了共同的语言，我们通过这种共同的语言去交流，去描绘复杂的事务，这些种种构成了信息，信息也可以说是一种抽象，它是对具体事务的一种抽象，信息通过组合，变换，可以构成逻辑，逻辑本质上来说对应着有or没有，比如，没有就是没有，没有不是有，这就是最简单的逻辑，而逻辑可以用来描绘我们想要干的事情。什么可以用来存储信息，古人有云，天地本无极,无极生太极,太极生两仪,两仪生三才,三才生四象,四象生五行，五行生六合，六合生七星，七星生八卦，八卦生九宫，一切归十方。又云，道生一，一生二，二生三，三生无穷。所谓无中生有，有生无穷。无对应0,有对应1，那么01就可以构成全世界，没错，这就是我们的计算机，01正是他的语言，先写到这，有空了接着口胡，估计要到寒假了</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<blockquote>
-<p>if I were a computer</p>
-</blockquote>
-<p>刚考完试想着接下来能够安心做事情的我心情无疑是十分舒畅的，所以把最近想写的东西趁这段时间都写下来，要不然以后又没时间了。。。</p>
-<p>最近一直在思考计算机到底]]>
-    </summary>
-    
-      <category term="随想" scheme="http://kenshichong.github.io/tags/%E9%9A%8F%E6%83%B3/"/>
-    
-      <category term="think for fun" scheme="http://kenshichong.github.io/categories/think-for-fun/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[在思想上打造编译器]]></title>
-    <link href="http://kenshichong.github.io/2015/11/25/%E5%9C%A8%E6%80%9D%E6%83%B3%E4%B8%8A%E6%89%93%E9%80%A0%E7%BC%96%E8%AF%91%E5%99%A8/"/>
-    <id>http://kenshichong.github.io/2015/11/25/在思想上打造编译器/</id>
-    <published>2015-11-25T15:08:58.000Z</published>
-    <updated>2015-11-26T07:08:56.764Z</updated>
-    <content type="html"><![CDATA[<h1 id="在思想上打造编译器">在思想上打造编译器</h1><blockquote>
-<p>To understand a program you must become both the machine and the program.</p>
-</blockquote>
-<p>前言：最近在学习编译原理课程，觉得还是挺有体系的，就讲了一个很基本的东西——如何构造一款编译器，这也是本人的第一篇blog，写的不好的地方请自动屏蔽，有相关概念不懂的请去google，不喜欢讲概念。。。可能不是那么干，权当给自己总结复习用了。。。</p>
-<h2 id="背景知识">背景知识</h2><p>先口胡下。。。<br>作为程序员赖以生存的程序，其实就是一定字符集上的字符串，描述了我们人类想让计算机去怎样处理数据的一个过程。如果没有编译器，我们写的这一堆堆字符串对计算机来说就等同于垃圾，因为它根本看不懂。是编译器实现了我们写的代码与计算机的一个交互，把我们能够理解的高级语言转化为计算机能够看懂的二进制数据，也就是说编译器干的事情就是将我们输入的我们自以为计算机能看懂的一大串字符串翻译成计算机能够真正看懂的二进制数据，并按照我们需要的那样去执行。</p>
-<p>程序由语法和语义两部分组成，而语法由词法规则和语法规则构成。词法规则是单词符号的形成规则，词法规则用来识别哪一个或几个字符可以构成一个单词符号，词法规则是词法分析器的主体，词法分析器正是根据词法规则将字符合起来的字符串识别成具有独立意义的单词符号。举个最简单的例子，比如说你输入”fuck you!”这个字符串，计算机看不懂啊，它还以为你在骂他，这时候计算机就会派出编译器，编译器会派出词法分析器，词法分析器就会去将”fuck you!”读入，然后跟它里面预先定义好的词法规则去匹配，匹配不上就报错，如果匹配上的话，他就会报告说”fuck是一个单词，类型码(供语法分析器使用)是xxx，you也是一个单词，类型码是xxx，！也是一个单词，类型码是xxx。”，然后他将这些类型码传给语法分析器，然后语法分析器识别，根据这些类型码的组合与自己里面预先置好的语法规则相匹配，匹配不上就报错，匹配上的话，他会报告说”这是一个合法的语法单位，是一个句子”，然后再去匹配相应的语义规则，然后编译器才知道这句话是在跟计算机问好(一般语法和语义的匹配采用一遍扫描翻译的模式)，然后报告计算机”这个人在跟你问好”，计算机知道过后根据此信息做出相应的反馈，比如跟你也问个好”fuck you,too”之类的，其实我们人就是一个高级计算机，也有编译器的功能。有输入，有输出，当别人向我们输入这句话的时候，我们的大脑会向我们输出”哦，别人在跟我问好-_-“</p>
-<p>扯到这里，不得不强行扯到文法，所谓文法，指描述语言的语法结构的形式规则，通俗点来说，就是一堆东西按照一定顺序排列后我们又能把他叫做另一种什么东西，以便于我们更好的去进行下一步的工作，是语法规则的一个概括和抽象。举个例子，&lt;句子&gt; → &lt;主语&gt;&lt;谓语&gt;&lt;间接宾语&gt;&lt;直接宾语&gt;，这是一个语法规则，它规定了什么东西可以组成句子，同样的，对于主语，他又会规定什么东西可以组成主语，就这样将这个东西直至细分成词法分析器分析后的单词符号的类型码，这一条条的规则组合起来构成的一个有意义的东西就是文法，像上面的例子就是一个”句子”的文法。扯到文法，又不得不扯到上下文无关文法，我本身对于这种概念性的东西是非常反感的，但没办法，学术圈就是这个样子，把一些浅显易懂的东西非得强行扯上一大堆你看不懂的概念啊，符号啊给包装起来。。。不传播这些言论，接着说上下文无关文法，</p>
-<blockquote>
-<p>一个上下文无关文法G是一个四元式</p>
-<p> G=(VT，VN，S，P)，其中</p>
-<p>VT：终结符集合(非空)</p>
-<p>VN：非终结符集合(非空)，且VT∩VN=∅</p>
-<p>S：文法的开始符号，S∈VN</p>
-<p>P：产生式集合(有限)，每个产生式形式为</p>
-<p>P→a， P∈VN，a∈(VT∪VN)*</p>
-<p>开始符S至少必须在某个产生式的左部出现一次</p>
-</blockquote>
-<p>下面解释一下，终结符就是语法分析器的原始输入，即类型符号；非终结符就是可以进一步扩展的，比如上面的主语；开始符号指上面的句子，即一个文法定义的起点；对于每一条语法规则，叫做产生式，是终结符和非终结符按照一定的顺序组合起来可以被规约成另一个非终结符的规则。</p>
-<p>文法毕竟是一个抽象的概念，是对语言的一个抽象，由文法可以产生语言，下面给出语言的定义</p>
-<blockquote>
-<p>假定G是一个文法，S 是它的开始符号。如果S可以经过0步或若干步推出(这里的推出是指按照产生式进行非终结符到终结符的一步步的代换)α，则α称是一个句型。仅含终结符号的句型是一个句子。文法G所产生的句子的全体是一个语言，将它记为 L(G)。</p>
-</blockquote>
-<p>之所以介绍文法和语言的概念，是因为文法是语法分析器的一个重要的组成部分，一个输入的句子正是根据文法才能够被判断为该句子是否合法。到这里，我们要具备能够根据文法写出相应语言以及根据语言写出文法的能力(这里我们能够写出的文法都是一些有规律的很简单的文法，一些文法是很难写出的)，还有根据推导过程画出相应语法树的能力。所谓语法树，就是把你从文法推导具体句子时的过程一步步体现出来的一种树状结构。</p>
-<p>如果一个文法存在某个句子对应两颗不同的语法树，则说这个文法是二义的，就是说一个句子根据这个文法有两种不同的推导过程可以推出。二义性问题是不可判定问题，即不存在一个算法，它能在有限步骤内，确切地判定一个文法是否是二义的，我们只能找到一组无二义文法的充分条件。这里为什么又冒出来一个二义性文法的概念呢，不是说好不多扯概念的吗？？？没办法，下面要用到，这里的背景知识尽量把下面要用到的概念提前说清，以便下文在搭建打造编译器的框架时能够不被相关概念给卡住。这里扯二义性文法，是因为我们下面在打造编译器时所用到的文法是无二义性的，就算是有二义性，我们也会通过一些人为的手段去调整成看上去无二义的，因为如果一个具体的句子，有两种不同的过程可以被编译器识别，那编译器该选用那个过程去识别，编译器很为难的。。。</p>
-<hr>
-<p>口胡了这么久，终于来到了期待已久的正片环节。。。</p>
-<hr>
-<h2 id="正片">正片</h2><p><img src="/img/在思想上打造编译器/1.PNG" alt=""></p>
-<p>这就是我们的编译器的总体框架了，下面我们就要一步步的去在思想上打造我们的编译器了，呵呵呵呵。。。</p>
-<h2 id="词法分析器">词法分析器</h2><p>首先就是词法分析器了。词法分析的任务就是从左至右逐个字符地对源程序进行扫描，产生一个个单词符号，词法分析器又称扫描器。这里有必要讨论下词法分析器的输入输出，输入就是你能看懂的代码，输出是单词符号。单词符号包括</p>
-<ul>
-<li>基本字：如 begin，repeat</li>
-<li>标识符——表示各种名字：如变量名、数组名和过程名</li>
-<li>常数：各种类型的常数</li>
-<li>运算符：+，-，*，/，</li>
-<li>界符：逗号、分号、括号和空白</li>
-</ul>
-<p>等等。。。</p>
-<p>方便起见，单词符号的表示形式是：(单词种别，单词自身的值)，这里的单词种别通常用整数编码表示，这里用整数编码也是为了方便，他就是建立了一种映射关系，比如1对应begin基本字，2对应运算符’+’，那么我词法分析器输出1的时候，我就知道我输入了一个begin基本字，以此类推。单词自身的值是为了区别在整数编码相同的情况下如何区分不同的东西，比如我规定常数的单词种别是4，那么当我输入1和输入2的时候，词法分析器识别的结果是单词种别都是4，那么我怎么区分，这时单词自身的值就起到区分的效果(当然，这个值后面也用很多用处)。对于常数，单词自身的值就记为他的二进制表示，那么1-&gt;(4,1)，2-&gt;(4,10)，这时就显而易见了。</p>
-<p>当然，这种映射关系是你自己可以定义的，你可以一词一种，也可以多词一种，随你喜欢去定制，只要你的语法分析器的接口能够按照这种映射关系去识别。</p>
-<p>我们打算用c语言去写词法分析器，至于c语言的词法分析器是什么，我们不讨论这种鸡生蛋的问题，我们如果用代码去实现词法分析器的话，那么很容易想到的是该代码的大致框架就是读取输入，识别出是什么东西，然后输出对应的种别编码，就是很简单的if语句，这种格式化的代码我们如果手写就太费劲了，那么如何去自动生成呢，自动生成需要借助状态转换图，至于状态转换图的相关理论请自行google，下面直接po一张很简单的词法分析器的状态转换图(这一眼就看懂)，又叫有限自动机。</p>
-<p><img src="/img/在思想上打造编译器/2.PNG" alt=""></p>
-<p>有了状态转换图，就能实现自动生成代码了，具体实现方法是：</p>
-<ol>
-<li>对不含回路的分叉结点 ，可用一个CASE语句或一组IF-THEN-ELSE语句实现</li>
-<li>对含回路的状态结点，可对应一段由WHILE结构和IF语句构成的程序.</li>
-<li>终态结点表示识别出某种单词符号，因此，对应语句为<br>RETURN (C，VAL)，其中，C为单词种别，VAL为单词自身值</li>
-</ol>
-<p>具体代码请自行脑补。当然这么做是有前提条件的，前提是：</p>
-<blockquote>
-<p>所有基本字都是保留字;用户不能用它们作自己的标识符；</p>
-<p>基本字作为特殊的标识符来处理，使用保留字表；</p>
-<p>如果基本字、标识符和常数(或标号)之间没有确定的运算符或界符作间隔，则必须使用一个空白符作间隔</p>
-</blockquote>
-<p>假设我们能够根据语言的相关定义，画出其对应的状态转换图的话，然后转换为相应的数据结构存储在计算机中，那么计算机就可以根据此状态转换图对应的数据结构去自动生成格式化程序代码，这些格式化代码就组成了一个很基本很简单的词法分析器，那么现在的问题就是如何画出这种状态转换图，或者说如何实现这种状态转换图对应的数据结构，这时又需要正规式的概念</p>
-<p>正规式类似于正则表达式，有了正规式，我们就可以实现正规式到有限自动机的转化，其中的原理后面再谈。先说正规式，有正则表达式基础的，正规式应该很好懂，就是一个对字符串的匹配规则，我们所实现的编译器的语言是一个正规集，正规集可以用正规式表示，比如语言中，关键字的正规式是他本身，因为它需要确切匹配，标识符的正规式可以用letter(letter|digit)<em> 这种形式来表示，而数字的正规式可以用digit(digit)</em>这种形式来表示。有了这些理论，下面我们来捋一捋现在我们词法分析器的实现框架(这里是怎么去产生一个词法分析器，输入是该词法分析器的要求，即你规定哪些是关键字，哪些是标识符等等，输出是一个词法分析器)，即一个生成一个词法分析器的程序的实现思路:</p>
-<ol>
-<li>根据我们想实现的语言(正规集)写出相应的能够识别正规集的正规式，并给每个正规式确定相应的种别编码，即输入我们的要求；</li>
-<li>该程序将正规式转换为有限自动机的对应数据结构存储起来；</li>
-<li>该程序读取有限自动机对应的数据结构生成词法分析器的格式化代码；</li>
-</ol>
-<p>上面的每一步都是理论上可以实现的，至于相关的具体代码，自行脑补，别忘了我们的题目——在思想上打造编译器。。。</p>
-<p>对于第一步，根据要求写正规式(正则表达式),不难；对于第二步，下面马上要谈；对于第三步，对于具体代码实现，我们可以这样，先讨论有限自动机对应的数据结构的代码实现，可以这样建数据结构，该数据结构有以下的字段：当前状态字段；读取的下一个字符以及当前状态在读入该字符的前提下所到达的下一状态的字段。有了该数据结构的话，代码可以这样写，建一个当前状态变量，将当前状态变量赋值为初始状态，新建一个文本，用于存储词法分析器的源代码，然后写一个循环，该循环的功能是读取当前状态，查找数据结构中当前状态的位置，然后根据此数据结构中存储的信息以及上面所说的自动生成代码的方法去向文本中输出相应的语句代码，这个循环的代码说到这已经很好写了，自行脑补吧。。。这样，实现了这三步的话，我们就写出了一个可以产生词法分析器的程序，只要我们给出相应的输入(正规式)即可。</p>
-<hr>
-<p>好，下面要去实现第二步了，将正规式转换为有限自动机。。。</p>
-<hr>
-<p>正规式我们已经了解，现在来看下有限自动机。有限自动机分为确定有限自动机(DFA)和非确定有限自动机(NFA)，两者的区别是：</p>
-<blockquote>
-<p>NFA可以有多个初态</p>
-<p>NFA弧上的标记可以是Σ*中的一个字(甚至可以是一个正规式)，而不一定是单个字符；</p>
-<p>NFA同一个字可能出现在同状态射出的多条弧上</p>
-</blockquote>
-<p>可以看出，DFA是NFA的特例，但是上文第三步中我们用于自动生成格式化代码的有限自动机是DFA，但是NFA的话更容易在正规式的基础上被构造出来(因为NFA的可操作空间更大)，但是西班SONA(不用担心)，NFA和DFA是可以等价的相互转化的。</p>
-<p>对于DFA向NFA的转化跟我们的问题关系不大，且转化出来的NFA不唯一，所以在这不讨论，只讨论NFA向DFA的等价转化，这一步又叫做NFA的确定化，对于任意的NFA，确定化的具体步骤为：</p>
-<ol>
-<li><p>改造：</p>
-<p> 1) 引进新的初态结点X和终态结点Y，X,Y∉S，</p>
-<pre><code>从X到S0中任意状态结点连一条<span class="function"><span class="title">yipuxilong</span><span class="params">(这个符号不会打，应该是这样读的，自行脑补吧，呵呵)</span></span>箭弧， 从F中任意状态结点连一条yipuxilong箭弧到Y。
-</code></pre><p> 2）<img src="/img/在思想上打造编译器/3.PNG" alt=""></p>
-</li>
-</ol>
-<pre><code><span class="number">3</span>)逐步把这个图转变为每条弧只标记为Σ上的一个字符或yipuxilong，最后得到一个NFA;
-</code></pre><p>2.对改造后的NFA采用子集法进行进一步确定化，这里的子集法涉及到I的yipuxilong闭包的概念，自行google，这里直接给步骤：</p>
-<p><img src="/img/在思想上打造编译器/4.PNG" alt=""></p>
-<p>不难看出，在图中的I列，处于同一个yipuxilong闭包的状态可以用一个大的状态去统一，统一过后会得到一个DFA，很明显这个DFA与该NFA是等价的(这里不做证明)。到这里，我们还差一步就可以在思想上打造出我们的词法分析器了，这一步就是正规式和NFA的相互等价转化。</p>
-<p>我们首先要明确一点，NFA和正规式是等价的，其证明过程也是其相互转化的算法。还记得上面的三条规则吗？上面的三条规则可以用来应用于正规式→NFA的等价转化，而上面的三条规则反过来就可以应用于NFA→正规式的等价转化，较简单，自行脑补。。。</p>
-<p>到这，我们已然基本实现了一个简单的词法分析器，该词法分析器的框架为：</p>
-<p><img src="/img/在思想上打造编译器/5.PNG" alt=""></p>
-<p>总结下：</p>
-<p>对于一门程序语言，我们如果想要设打造对应该语言的词法分析器的话，那么该语言每一个具有独立意义的符号(类似于现实语言的单词)的整体就可以看做上图中的正规集，我们可以对正规集进行抽象概括，用正规式去表示正规集，写出这样的正规式应该对于程序员来说不是问题，好像只有正规式是我们自己写的，其他的步骤都是程序自动实现的，恩，就是这样。有了正规式后，产生词法分析器的程序就可以根据正规式生成NFA，算法上面有介绍，具体代码自行脑补；生成完NFA后，程序又会将NFA确定化为DFA，算法上有，代码自行脑补；有了DFA后，程序就可以去格式化的输出词法分析器的源代码了，拿到生成的源代码编译后就可以得到一个词法分析器的程序了。。。</p>
-<p>人是追求完美的动物，对于NFA确定化生成的DFA，并不是最简的，也就是说可能存在状态冗余，即存在等价状态。所谓等价状态，指如果从状态s出发能读出某个字α而停止于终态，那么同样，从t出发也能读出α而停止于终态；反之亦然，则称s与t等价。对于等价的状态，我们是有必要去除的，这一步又叫做DFA的最小化，算法我直接截图了。。。懒。。。</p>
-<p><img src="/img/在思想上打造编译器/6.PNG" alt=""><br><img src="/img/在思想上打造编译器/7.PNG" alt=""><br><img src="/img/在思想上打造编译器/8.PNG" alt=""><br><img src="/img/在思想上打造编译器/9.PNG" alt=""></p>
-<p>好了，到这，我们已经完成了在思想上打造词法分析器的目标，给自己鼓下掌吧。。。</p>
-<p>其实，上面介绍的东西只是在实现词法分析器上面提供了理论的可行性，上面的很多算法和思想都很是经典和值得借鉴的。但如果真按照上面的理论去自己手工打造一款词法分析器的话，我真心佩服，但是写出来的程序有多粗糙暂且不论，好不好用还真不敢保证。不用担心，前人种树，后人乘凉，懒有懒的办法，FLEX帮助你自动产生一款可以自己定制的词法分析器，对于FLEX实现生成词法分析器的理论我也不是很了解，不知道跟我上面讲的是不是有类似，欢迎交流。。。它的基本用法是你可以自己定制正规式，还可以自己定制当输入匹配到该正规式时需要执行的代码，了解正则的人已然明白，FLEX是一款强大的字符串处理工具，并且可以给其他程序输出很好的接口。</p>
-<p>词法分析器就介绍到这，下面开始挑战语法分析器。。。</p>
-<hr>
-<h2 id="语法分析器">语法分析器</h2><p>对于我们输入的代码，编译器首先借由词法分析器对输入进行处理后产生单词符号，单词符号作为语法分析器的输入，由语法分析器来进行判断这些单词符号按照这样的顺序呢能否构成一个合法的句子。</p>
-<p>还记得我们前面介绍的上下文无关文法吗？我们要打造的语法分析器正是根据上下文无关文法规定的语法规则来判断一串顺序单词符号是否构成一个合法句子，语法分析器的功能就是按照文法的产生式(语言的语法规则)，识别输入符号串是否为一个句子(合式程序)。</p>
-<p>下面介绍两种语法分析的方法：一是自上而下分析法，二是自下而上分析法<br>。自上而下就是从文法的开始符号开始，一步步根据文法向下推导来检查一个符号串是否匹配；自下而上就是从文法的终结符开始，一步步根据文法向上规约来检查符号串是否匹配。</p>
-<hr>
-<p><strong>自上而下的分析</strong></p>
-<p>并不是说随意给一个文法就能够用来做语法分析器的文法的，有两个问题是语法分析时必须解决的问题，一是文法的左递归性，二是文法的回溯性。文法的左递归性将使自上而下的分析陷入无限循环；文法的回溯性指若一个产生式有多个候选，分析过程中，当一个非终结符用某一个候选匹配成功时，这种匹配可能是暂时的，出错时，不得不“回溯，回溯将会导致语法分析效率的严重下降。针对这两个问题，给出如下解决方法：</p>
-<p><img src="/img/在思想上打造编译器/10.PNG" alt=""></p>
-<p>补充：</p>
-<p>1.不同的排序可能会得到不同的文法，但等价性是显然的；</p>
-<p>2.上面所说的直接左递归性的消除指：</p>
-<p><img src="/img/在思想上打造编译器/11.PNG" alt=""></p>
-<p>现在根据上述算法，我们已经能够消除文法的左递归性了，对于消除了左递归的文法，我们可以借用最简单的递归思想去构造一个语法分析器，即所谓的递归下降分析器，该分析器的特点是：</p>
-<p>分析程序由一组过程组成， 对每一语法变量(非终结符)构造一个相应的子程序，识别对应的语法单位；</p>
-<p>通过子程序间的相互调用实现对输入串的识别。</p>
-<p>但是，可以看出该分析器的效率也是不高，因为递归本身就是一个巨大的消耗，而且他还需要去执行大量的判断语句，所以我们为了实现效率的提升，还是要去消除语法分析过程中的回溯性问题，从而打造出一个更高效率的语法分析器。</p>
-<p>现在我们要去消除回溯。为了消除回溯，前方又是一波理论来袭。。。</p>
-<hr>
-<p>消除回溯必须保证对文法的任何非终结符，当要它去匹配输入串时，能够根据它所面临的输入符号准确地指派它的一个候选去执行任务，并且此候选的工作结果应是确信无疑的，怎么去实现呢？</p>
-<p>理论：</p>
-<p><img src="/img/在思想上打造编译器/12.PNG" alt=""></p>
-<p>可以看出，有了这个集合，我们就可以满足上面的要求，如何构造这个集合呢？首先，我们要解决上图中所说的首符集两两不想交的问题，方法是提取公共左因子：</p>
-<p><img src="/img/在思想上打造编译器/13.PNG" alt=""></p>
-<p>但是我们仅仅是有FIRST集合是不够的，因为有一种情况是没有办法解决的，就是假如我输入符号为a，但a并不在A的所有候选首符集中，但A有yipuxilong且a又在A的后面恰好可以匹配，这时我们可以用yipuxilong去匹配A，然后让a去匹配A后面的，我们不能忽略这种情况，要解决这种情况，我们需要借助另外一个集合，即FOLLOW集合</p>
-<p><img src="/img/在思想上打造编译器/14.PNG" alt=""></p>
-<p>如果有了这两个集合那么我们就可以去消除回溯了，结合前面的消除左递归，我们来总结一下构造不带回溯的自上而下分析的文法条件：</p>
-<p><img src="/img/在思想上打造编译器/15.PNG" alt=""></p>
-<p>对于LL(1)文法的分析算法：</p>
-<p><img src="/img/在思想上打造编译器/16.PNG" alt=""></p>
-<p>下面的问题就转移到了如何去构造满足条件文法的FIRST和FOLLOW集合，不罗嗦，直接上图：</p>
-<p><img src="/img/在思想上打造编译器/17.PNG" alt=""><br><img src="/img/在思想上打造编译器/18.PNG" alt=""></p>
-<p>补充：循环应用上述规则，直至所有的FIRST都不再改变<br><img src="/img/在思想上打造编译器/19.PNG" alt=""></p>
-<p>有了FIRST和FOLLOW集合，为了使分析程序的构造更加方便，我们引入分析表：</p>
-<p><img src="/img/在思想上打造编译器/20.PNG" alt=""></p>
-<p>可以看出，他其实是对分析算法的一个整合，分析过程中，下一步要干什么直接查表即可。有了预测分析表，我们的分析程序进一步简化：</p>
-<p><img src="/img/在思想上打造编译器/21.PNG" alt=""><br><img src="/img/在思想上打造编译器/22.PNG" alt=""></p>
-<p>到这里，自上而下的语法分析方法就算写完了，总结下：<br>对于一个给定的文法，首先消除左递归；然后提取公共左因子；然后构造FIRST和FOLLOW集合；然后构造分析表；有了分析表这种数据结构，就可以根据语法分析算法去自上而下的进行语法分析了。上述每一步的具体代码组合起来就是具备自上而下语法分析功能的预测分析程序，即语法分析器。</p>
-<hr>
-<p><strong>自下而上的分析</strong><br>自下而上的分析的基本思想就是从输入串开始，逐步进行规约，直至规约到文法的开始符号，也就是从语法数的末端开始来构造语法树。这里所谓的规约指根据文法的产生式规则，把产生式的右部替换成左部符号。体现在程序上就是用一个寄存符号的先进后出栈，把输入符号一个一个地移进到栈里，当栈顶形成某个产生式的候选式时，即把栈顶的这一部分替换成(归约为)该产生式的左部符号。可见，自下而上的思想并不难，难的是如何识别可规约串以及在何时进行规约。和自上而下一样，介绍两种自下而上的分析方法，一种是算符优先分析算法，另一种是LR分析法</p>
-<p><em>算符优先分析算法</em></p>
-<p>所谓算符优先分析法就是定义算符(终结符)之间的某种优先关系，借助于这种关系寻找“可归约串”和进行归约。</p>
-<p>对于上一句话，首先要明白什么是算符文法。</p>
-<p>算符文法指一个文法，如果它的任一产生式的右部都不含两个相继(并列)的非终结符，即不含如下形式的产生式右部：<br>…QR… ，即不存在两个并列的非终结符，则我们称该文法为算符文法。</p>
-<p>其次要知道什么是优先关系</p>
-<p>定义任何两个可能相继出现的终结符a与b的三种优先关系</p>
-<p>a 《 b：a的优先级低于b</p>
-<p>a  = b：a的优先级等于b</p>
-<p>a  》b：a的优先级高于b</p>
-<p>这里的优先关系是有顺序的，即a》b并不意味着b《a</p>
-<p><img src="/img/在思想上打造编译器/23.PNG" alt=""></p>
-<p>上面一幅图给出了优先关系的计算方法以及算符优先文法的定义，还是要补充一下，之所以引入优先关系的概念，是因为我们在判断如何进行规约时，优先关系能够给我们提供一个标准，那就是先规约优先级高的终结符，这也是算符优先分析的精髓所在</p>
-<p>既然要用到终结符之间的优先关系，方便起见，把算符的优先关系绘制成一<br>张表，称为优先关系表</p>
-<p><img src="/img/在思想上打造编译器/24.PNG" alt=""><br><img src="/img/在思想上打造编译器/25.PNG" alt=""></p>
-<p>现在的问题就转移到了如何去构造每个非终结符的FIRSTVT和LASTVT集合了，不罗嗦，直接上图：</p>
-<p><img src="/img/在思想上打造编译器/26.PNG" alt=""></p>
-<p>伪代码实现为：</p>
-<p><img src="/img/在思想上打造编译器/27.PNG" alt=""></p>
-<p>那么，LASTVT为：</p>
-<p><img src="/img/在思想上打造编译器/28.PNG" alt=""></p>
-<p>伪代码的实现类似于FIRSTVT</p>
-<p>那么，算符优先关系表的构造流程就是：首先计算非终结符的FIRSTVT和LASTVT，然后根据下面的算法去构造优先关系表：</p>
-<p><img src="/img/在思想上打造编译器/29.PNG" alt=""><br><img src="/img/在思想上打造编译器/30.PNG" alt=""></p>
-<p>有了优先关系表后，我们来看如何进行规约。我们知道，优先关系表代表着终结符在某种情况下的规约顺序，即两个终结符存在时先规约谁的问题，这里为了描述这个规约顺序方便，我们引入最左素短语的概念。</p>
-<p>一个文法G的句型的素短语是指这样一个短语，它至少含有一个终结符，并且，除它自身之外不再含任何更小的素短语。最左素短语是指处于句型最左边的那个素短语。</p>
-<p>最左素短语的特征为：</p>
-<p><img src="/img/在思想上打造编译器/31.PNG" alt=""></p>
-<p>这里我们只需要把握住最左素短语的特征即可，根据最左素短语的特征，我们知道，对于输入串，第一个规约的一定是最左素短语，然后接着查找规约后的最左素短语，再规约，一直这样循环下去，直至规约到文法的开始符号。那么，现在的问题就变为如何去找到一个串的最左素短语，这个问题只要根据最左素短语的特征结合我们前面建立的优先关系表就很好解决了。解决算法的描述为：</p>
-<p>对于一个输入串，从左往右遍历，借用一个栈，先找到满足条件ai》ai+1的两个终结符(这里先找aj-1《aj不方便，因为另外两个条件不一定与这个条件相匹配，因为你想如果找到一个满足aj-1《aj的串的话，再接着找如果再找着满足aj-1《aj的串的话，我们就得把原来的放弃掉，直至找到满足大于关系的，与其这样，不如直接找最左素短语的末尾，然后往前找，这样就方便了)，把不满足条件的所有符号都压入栈中，找到满足大于条件的相邻终结符后，同样也把他压入栈中，然后在栈中从后往前遍历，碰到相等的掠过去，直至找到满足小于关系的两个相邻终结符，然后就找到了所谓的最左素短语，然后就可以规约了，然后重复，直至规约到文法的开始符号，上伪代码：</p>
-<p><img src="/img/在思想上打造编译器/32.PNG" alt=""></p>
-<p>对于这个算法需要注意的一点是：</p>
-<p>在上述算法的第11行中，我们并没有指出应把所找到的最左素短语规约到哪一个非终结符号”N”,N是指那样一个产生式的左部符号，此产生式的右部和s[j+1]…s[k]构成如下意义对应关系：自左至右，终结符对终结符，非终结符对非终结符，而且对应的终结符相同，对非终结符只要求顺序关系，不要求一一对应。</p>
-<p>在实际实现算符优先分析算法时，一般不采用优先关系表，而是采用优先函数，这样做以来可以便于比较运算，二来可以节省空间，但是缺点是原先不存在优先关系的两个终结符，由于与自然数对应，变成可比较的了。</p>
-<p><img src="/img/在思想上打造编译器/33.PNG" alt=""><br><img src="/img/在思想上打造编译器/34.PNG" alt=""></p>
-<p>优先函数与优先表的作用是一样的</p>
-<p>这样，我们可以根据以上的东西打造出针对算符文法的语法分析器，这个语法分析器有一定的局限性。</p>
-<hr>
-<p>介绍完了算符优先分析，下面介绍另外一种自下而上的分析方法——LR分析法</p>
-<p><em>LR分析法</em></p>
-<p>LR分析法的关键在于LR分析表，该分析表的作用是指示下一步应该做什么，上图：</p>
-<p><img src="/img/在思想上打造编译器/35.PNG" alt=""></p>
-<p>有了这张表之后，就可以让计算机自动的去匹配了，那么现在的问题就转化成了如何去构造这张表。</p>
-<p>这里引入前缀和活前缀的概念：</p>
-<p><img src="/img/在思想上打造编译器/36.PNG" alt=""></p>
-<p>这里的规范句型指规范推导推出来的句型，而规范推导指按照产生式的从文法符号开始的推导，句柄是指我们要规约的单位，活前缀是句型的前面的组成部分，LR分析的关键就在于借助一个符号栈，在往符号栈中读入的时候，保证符号栈内部始终是活前缀，当栈中组成句柄时就进行规约。为了达到这个目的，我们引入项目的概念，直接上图：</p>
-<p><img src="/img/在思想上打造编译器/37.PNG" alt=""></p>
-<p>引入这个概念后，再结合前面所说的活前缀，我们可以构造识别文法的所有活前缀的NFA方法，</p>
-<p><img src="/img/在思想上打造编译器/38.PNG" alt=""></p>
-<p>确定化之后的DFA大致为：</p>
-<p><img src="/img/在思想上打造编译器/39.PNG" alt=""></p>
-<p>这是LR分析表的原型，用这个DFA其实已经可以完成LR分析，方便起见，我们把它化成表的形式，算法是：</p>
-<p><img src="/img/在思想上打造编译器/40.PNG" alt=""></p>
-<p>其实，看了上面的表的形式，再结合这个DFA，即使不用算法也能够把表构造出来吧。。。</p>
-<p>有了LR分析表，上面已经介绍了如何根据这个表去对一个串进行LR分析，那么我们可以根据以上的思想去打造出一个语法分析器，而且这个语法分析器的应用范围较广泛</p>
-<p>介绍一款语法分析器生成工具——YACC(Bison)，是一个用来生成编译器的编译器，常与FLEX结合使用。</p>
-<hr>
-<p>呼。。。语法分析就到这了，写了也有将近一星期了。。。下面要进入语义分析的部分了，距离我们最后的编译器还有很长一段路要走。。。</p>
-<hr>
-<h2 id="语义分析与中间代码生成器">语义分析与中间代码生成器</h2><p>仅仅拥有此法分析器和语法分析器，我们的编译器还尚未完全，因为他仅仅能够识别一个串是否是一个合法的句子，但并不能知道这个句子到底有什么含义，从而无法正确的指导cpu应该怎样做，做什么。为了解决这个问题，就需要编译器的另一个模块——语义分析与中间代码生成器。</p>
-<p>为了下文的平铺直叙，强行引入以下概念：</p>
-<p>属性文法：在上下文无关文法的基础上，为每个文法符号（终结符或非终结符）配备若干相关的“值”（称为属性），属性代表与文法符号相关信息，如类型、值、代码序列、符号表内容等，属性是可以进行计算和传递的。</p>
-<p>语义规则：对于文法的每个产生式都配备了一组属性的计算规则。所谓的语义分析就是根据产生式的属性计算规则以及产生式中每个符号的属性去一步步的计算其余相关符号的属性，最终得到整个句子的具体意义。</p>
-<p>属性分为综合属性和继承属性。综合属性：“自下而上”传递信息；继承属性：“自上而下”传递信息。终结符只有综合属性，由词法分析器提供；非终结符既可有综合属性也可有继承属性，文法开始符号的所有继承属性作为属性计算前的初始值。由这些可以看出，想要计算综合属性，需要知道他所有依赖儿子的属性；而继承属性，需要知道它依赖的父亲或兄弟的属性。在语法树中，一个结点的综合属性的值由其子结点和它本身的属性值确定，使用自底向上的方法在每一个结点处使用语义规则计算综合属性的值；在语法树中，一个结点的继承属性由其父结点、其兄弟结点和其本身的某些属性确定</p>
-<p>语法制导翻译法：由源程序的语法结构所驱动的处理办法就是语法制导翻译法</p>
-<p>翻译：对输入符号串的翻译也就是根据语义规则进行计算的结果</p>
-<p>强行引入这些概念后，下面开始口胡：由语法分析，不管是自上而下的还是自下而上的，我们都可以构造对应输入串的语法树出来，那么我们的属性文法的计算就可以基于这棵语法树进行。在语法树的基础上进行属性计算的方法有：依赖图法和树遍历法。</p>
-<p><em>依赖图法</em></p>
-<p><img src="/img/在思想上打造编译器/41.PNG" alt=""></p>
-<p>建立依赖图的算法：</p>
-<p><img src="/img/在思想上打造编译器/42.PNG" alt=""></p>
-<p>有了依赖图，我们就可以得到计算语义规则的顺序，为什么这么说？你想，所谓的依赖图，就是指若要知道某个符号的属性需要先知道哪些属性，这样一层层的问下去就会知道若要计算所有符号的属性，需要最先知道的符号的属性，从而确定了语义规则的计算顺序，然后就可以进行语义计算了，流程图为：输入串→语法树→依赖图→语义计算顺序，这就是依赖图法计算属性</p>
-<p><em>树遍历法</em></p>
-<p>树遍历是指遍历语法树计算属性，所以还是根据语法分析建立起来的语法树去按照某种次序去计算属性，算法为：</p>
-<p><img src="/img/在思想上打造编译器/43.PNG" alt=""></p>
-<hr>
-<p>可以看出，不管是依赖图法还是树遍历法，都需要预先建立好语法树，然后在根据这个语法树做文章，这其实是对输入串进行了两次或两次以上的扫描的，是不是感觉有点浪费呢。为了更高的追求，特推出一遍扫描的处理方法，即在进行语法分析进行建立语法树的同时就将各符号的属性计算出来，达到一遍扫描不仅建立语法树，而且建立语义树的目的。</p>
-<p>我们注意到，对于综合属性和继承属性，两者的计算是有很大区别的，所以，我们区别对待。</p>
-<p>我们首先来看一种比较简单的情况——只含有综合属性。只含有综合属性的属性文法称为S-属性文法。对于这种属性文法，它的一遍扫描较易实现，综合属性可以在分析输入符号串的同时由自下而上的分析器来计算，分析器可以保存与栈中文法符号有关的综合属性值，每当进行归约时，新的属性值就由栈中正在归约的产生式右边符号的属性值来计算。即在进行规约操作时，计算规约到的符号的综合属性，因为此时由自下而上的分析可以知道，它所依赖的所有属性此时都是已知的了，所以可以进行计算。</p>
-<p>我们对这种情况进行一个扩充，即介绍L-属性文法：</p>
-<p><img src="/img/在思想上打造编译器/44.PNG" alt=""></p>
-<p>那么，我们如何去翻译这种文法呢？在对某种属性文法进行翻译的时候，我们仅仅知道语义规则是不够的，就像前面的依赖图法和树遍历法一样，二者都是通过某种途径去确立了语义规则的计算顺序，从而使得翻译能够顺利进行，一遍扫描也是如此，在应用语义规则的时候，我们得知道何时应用语义规则，由此就构成了翻译模式的概念。语义规则：给出了属性计算的定义，没有属性计算的次序等实现细节；翻译模式：给出了使用语义规则进行计算的次序，这样就可把某些实现细节表示出来。为了体现在何时何地进行语义规则的计算，我们规定在翻译模式中，和文法符号相关的属性和语义规则（这里我们也称语义动作），用花括号{ }括起来，插入到产生式右部的合适位置上。</p>
-<p>这样，在一遍扫描中，我们就得设计出文法的翻译模式出来，以达到一边扫描的目的。设计翻译模式时，必须保证当某个动作引用一个属性时它必须是有定义的。而L-属性文法本身就能确保每个动作不会引用尚未计算出来的属性，而且可以看出，L-属性文法适合自上而下的分析，并且插入在产生式右边的动作是在处于相同位置上的符号被展开（匹配成功）时执行的。但是经过前面的语法分析的介绍，我们知道左递归对自顶向下造成的问题，所以为了构造不带回溯的自顶向下语法分析，必须消除文法中的左递归，但是在与此同时，当消除一个翻译模式的基本文法的左递归时同时考虑属性。下面给出解决这个问题的一般方法：</p>
-<p><img src="/img/在思想上打造编译器/45.PNG" alt=""></p>
-<p>现在我们已经能够消除文法的左递归且不改变语义。一边扫描是指在语法分析的同时去实现语义的分析，还记得前面的递归下降分析程序吗？它是我们进行语法分析的一种较为简单的程序实现，那么我们如何在这个程序中嵌入语义分析，使之成为一个翻译器呢？给出以下算法：</p>
-<p><img src="/img/在思想上打造编译器/46.PNG" alt=""><br><img src="/img/在思想上打造编译器/47.PNG" alt=""></p>
-<p>由此，可以构造出一个完整的递归下降翻译器。</p>
-<p>那么，翻译器知道了该句子的语义后，他怎么去指导CPU去完成相应的运转呢？我们知道CPU只认识机器指令，那么，很自然的想到，翻译器可以根据相关的语义去产生相对应的机器指令去指导CPU工作。但这太不方便了，这样做会有很多限制，优化啊，移植啊什么乱七八糟的都会受限。这时，就引入了中间代码的概念，独立于机器，复杂性界于源语言和目标语言之间的语言。引入中间语言便于进行与机器无关的代码优化工作 ；易于移植；使编译程序的结构在逻辑上更为简单明确等。列举几种中间语言：后缀式又称逆波兰表示；图表示： 比如DAG、抽象语法树；三地址代码：三元式，四元式，间接三元式。对于后缀式和图表示由于后面所用不多，就不做介绍了。着重介绍三地址代码，先来个直观的展示：</p>
-<p><img src="/img/在思想上打造编译器/48.PNG" alt=""></p>
-<p>四元式：一个带有四个域的记录结构，这四个域分别称为op, arg1, arg2及result；</p>
-<p>三元式：三个域：op、arg1和arg2；引用临时变量(中间结果)：通过计算该值的语句的位置</p>
-<p>间接三元式：三元式表+间接码表组成。间接码表是一张指示器表，按运算的先后次序列出有关三元式在三元式表中的位置，这相较于三元式方便优化并且节省空间。</p>
-<p>有了上面所铺设的理论，我们来看一些具体的高级语言的结构怎么被翻译成中间代码的。。。</p>
-<hr>
-<p><em>赋值语句的翻译</em></p>
-<p><img src="/img/在思想上打造编译器/49.PNG" alt=""></p>
-<p>先看属性文法(只给出语义规则)：</p>
-<p><img src="/img/在思想上打造编译器/50.PNG" alt=""></p>
-<p>再看翻译模式：</p>
-<p><img src="/img/在思想上打造编译器/51.PNG" alt=""><br><img src="/img/在思想上打造编译器/52.PNG" alt=""></p>
-<p>可以看出，根据现有知识，写出此文法的语义规则很简单，根据文法及语义规则写出此翻译模式也不难，可以说，对于赋值语句的翻译是较为简单的。</p>
-<hr>
-<p><em>数组元素的引用的翻译</em><br>对于数组元素的引用，其核心问题就是数组元素地址计算的问题。</p>
-<p><img src="/img/在思想上打造编译器/53.PNG" alt=""></p>
-<p>这里有必要说明一下为什么采用这种相对地址计算公式。按正常人的想法，数组元素的地址计算公式应该是base+((i1-low1)xn2+i2-low2)x w这种很正常的地址计算公式，可以很明显的证明这两种公式是等价的，只是表现形式不同，那为什么要进行这种转换呢，有什么便利性吗？</p>
-<p>你想，如果采用这种正常的地址计算公式的话，一遍扫描是没有办法计算出数组元素的相对地址的，因为在一边扫描的过程中，对于(i1-low1)        x nk x nk-1 x …n1，这个k值在不扫描到最后是没办法确定的，所以如果采用这种计算公式的话，需要回溯或回写，导致一遍扫描的目的无法达到，但是采用上图那种转换后的公式的话就可以达到一遍扫描后就可以得到地址的目的。可以这样理解：对于不变部分，它是在声明该数组时就可以确定的，而对于可变部分，当我们扫描到i1时，我们计算i1n2，当我们扫描到i2时，我们计算(i1n2+i2)n3，扫描到哪，计算到哪，然后依此类推，就可以当我们扫描到最后的ik时，我们就得到了该数组元素的相对地址了。</p>
-<p>下面就介绍结合组数元素的赋值语句的翻译：</p>
-<p><img src="/img/在思想上打造编译器/54.PNG" alt=""><br><img src="/img/在思想上打造编译器/55.PNG" alt=""><br><img src="/img/在思想上打造编译器/56.PNG" alt=""><br><img src="/img/在思想上打造编译器/57.PNG" alt=""><br><img src="/img/在思想上打造编译器/58.PNG" alt=""><br><img src="/img/在思想上打造编译器/59.PNG" alt=""><br><img src="/img/在思想上打造编译器/60.PNG" alt=""></p>
-<p>其中，对于产生式E→E1 ＋E2，我们还需考虑类型转换的问题，直接来看考虑类型转换问题的语义动作的改进(前面好像提到过类型转换的事)：</p>
-<p><img src="/img/在思想上打造编译器/61.PNG" alt=""><br><img src="/img/在思想上打造编译器/62.PNG" alt=""></p>
-<p>有了赋值语句翻译的基础，我们再来个难点的——布尔表达式的翻译</p>
-<hr>
-<p><em>布尔表达式的翻译</em></p>
-<p>布尔表达式的两个基本作用：用于逻辑演算，计算逻辑值；用于控制语句的条件式。产生布尔表达式的文法并不难写，这里直接给出：</p>
-<p>产生布尔表达式的文法：E → E or E | E and E | not E | (E) | i rop i | i</p>
-<p>对于布尔表达式的翻译，我们首先要考虑优化问题，在翻译时是否要采用优化，将决定两种不同的翻译模式。这里所说的优化是指当布尔表达式已经足够去判断true或false时，不再进行接下去的计算，所以优化后：</p>
-<p>把A or B解释成      if A then true else B</p>
-<p>把A and B解释成  if A then B else false</p>
-<p>把not A解释成    if A then false else true</p>
-<p>这也是现今绝大多数语言所采用的方法，所以下面的针对布尔表达式的翻译模式是针对优化的翻译模式，且翻译出来的中间代码普遍采用四元式的形式，特此说明。</p>
-<p>当布尔表达式用于逻辑运算时，即针对布尔表达式的数值表示进行翻译时，较为简单：</p>
-<p><img src="/img/在思想上打造编译器/63.PNG" alt=""><br><img src="/img/在思想上打造编译器/64.PNG" alt=""></p>
-<p>当布尔表达式作为条件控制语句时，需要考虑的东西相对就较多一些，这时需要把整个布尔表达式当做一个整体来判断，该整体影响外界的只有两种情况，即当这个布尔表达式true时怎么样，当这个布尔表达式false时怎么样，为了说明方便起见，结合四元式的形式，我们赋予这种作为条件控制语句的布尔表达式两种出口：真出口和假出口。举个例子：</p>
-<p><img src="/img/在思想上打造编译器/65.PNG" alt=""></p>
-<p>由此我们来看具体的语义规则：</p>
-<p><img src="/img/在思想上打造编译器/66.PNG" alt=""><br><img src="/img/在思想上打造编译器/67.PNG" alt=""><br><img src="/img/在思想上打造编译器/68.PNG" alt=""><br><img src="/img/在思想上打造编译器/69.PNG" alt=""><br><img src="/img/在思想上打造编译器/70.PNG" alt=""></p>
-<p>这些语义规则把我们所想要表达的该语句的具体意义已经很好的体现了出来，下面我们来看具体的翻译模式。最简单的一种翻译就是：为给定的输入串构造一棵语法树，遍历语法树，进行语义规则中规定的翻译，但这需要两遍或多遍扫描，效率低，我们不喜欢，我们追求一遍扫描的翻译模式。</p>
-<hr>
-<p>我们做如下约定<br><img src="/img/在思想上打造编译器/71.PNG" alt=""></p>
-<p>我们考虑一下，一遍扫描的翻译的最大困难是什么？就是产生跳转四元式时，它的转移地址无法立即知道，需要以后扫描到特定位置时才能回过头来确定。为了解决这个问题，我们把这个未完成的四元式地址作为E的语义值保存,待机“回填”。为此，引入以下概念：</p>
-<p><img src="/img/在思想上打造编译器/72.PNG" alt=""><br><img src="/img/在思想上打造编译器/73.PNG" alt=""></p>
-<p>由此，我们可以构造出翻译模式：</p>
-<p><img src="/img/在思想上打造编译器/74.PNG" alt=""><br><img src="/img/在思想上打造编译器/75.PNG" alt=""><br><img src="/img/在思想上打造编译器/76.PNG" alt=""><br><img src="/img/在思想上打造编译器/77.PNG" alt=""><br><img src="/img/在思想上打造编译器/78.PNG" alt=""></p>
-<p>补充：作为整个布尔表达式的“真”“假”出口(转移目标)仍待回填(这是翻译包括他的整体时做的事情)</p>
-<hr>
-<p>有了布尔表达式翻译的基础，我们再来看控制语句的翻译，这里我们直接设计一遍扫描的翻译模式：</p>
-<p><img src="/img/在思想上打造编译器/79.PNG" alt=""></p>
-<p>老规矩，先看语义规则：</p>
-<p><img src="/img/在思想上打造编译器/80.PNG" alt=""><br><img src="/img/在思想上打造编译器/81.PNG" alt=""><br><img src="/img/在思想上打造编译器/82.PNG" alt=""></p>
-<p>有了前面的基础，可以说知道文法后，这个语义规则很容易写出，那么，我们来构造翻译模式吧，树遍历的那种翻译模式就不说了，直接来一遍扫描的。</p>
-<p>为了便于“回填”，我们引入yipuxilong，作为属性计算的中转，便于传递属性，因此需要等价改写产生式，改写后首先来看if语句的翻译模式，没啥好说的，直接看：</p>
-<p><img src="/img/在思想上打造编译器/83.PNG" alt=""></p>
-<p>从此翻译模式可以看出M，N非终结符的引入是为了记录当前所在位置，从而便于“回填”我们前面所介绍的真出口或假出口，至于回填哪个出口，还需要根据当前产生式的逻辑决定。如法炮制，对于while控制语句：</p>
-<p><img src="/img/在思想上打造编译器/84.PNG" alt=""></p>
-<p>这种借用中间符号便于以后回填的思想很有用，可以灵活应用于其他语句的翻译</p>
-<hr>
-<p><em>标号与goto语句的翻译</em></p>
-<p>对于goto语句，我们知道分两种情况：</p>
-<p><img src="/img/在思想上打造编译器/85.PNG" alt=""></p>
-<p>对于向后转移的情况，没什么好说的，当编译程序遇到这个goto语句时，L必是已定义了的，通过对L查找符号表获得他的定义地址p，从而编译程序可立即产生出相应于这个goto L的四元式(j,-,-,p)。</p>
-<p>但是对于向前转移的情况，也就是说，当遇到goto语句，标号L尚未定义，那么，若L是第一次出现，则把他填进符号表中并标记上“未定义”。由于L尚未定义，所以对goto L我们只能产生一个不完全的四元式(j,-,-,-)，它的转移目标需待L定义时在回填回去，在这种情况下，就必须把所有那些以L为转移目标的四元式的地址都记录下来，以便遇到L时回填。可以采用链式结构，建链的方法是：若第一次遇到goto L中的标号尚未在符号表中出现，则把L填入表中，置L为“未定义”，产生不完全四元式，并把该四元式的地址记录在符号表中；当再次遇到goto L时，若L还未定义，在产生一个不完全四元式，只不过该四元式的跳转地址是上一个goto L四元式的地址，然后符号表中L处记录的地址改为新产生的四元式的地址，也就是把符号表中记录的不完全四元式的地址当做链表头，在回填的时候，依据该链表头，边向后索引边回填，直至末尾(末尾的不完全四元式的跳转地址为0作为末尾标志)。如图：</p>
-<p><img src="/img/在思想上打造编译器/86.PNG" alt=""></p>
-<p>具体的伪代码就自行脑补吧。。。</p>
-<hr>
-<p><em>case语句的翻译</em></p>
-<p>对于case语句，较简单，没啥说的，直接上图吧：</p>
-<p><img src="/img/在思想上打造编译器/87.PNG" alt=""><br><img src="/img/在思想上打造编译器/88.PNG" alt=""></p>
-<hr>
-<p><em>过程调用的翻译</em></p>
-<p>对于过程调用，需要注意的就是在传参的时候，不管是传值还是传引用，都要保证过程调用有参数可用，这点自己把握，实现方法很多，例如可以借助一个中间结构等等，上图：</p>
-<p><img src="/img/在思想上打造编译器/89.PNG" alt=""></p>
-<hr>
-<p>到这，喘口气吧，我们已经把打造一个编译器所需要的主要功能都介绍完毕了。理下思路吧(口胡ing)。。。</p>
-<p>所谓编译器，是指针对一门人们设计的程序语言所架设的一个人与计算机沟通的桥梁。我们人类把我们的思想以及我们想要让计算机干的事情，通过程序语言的形式精简概括的表达出来，我们认为计算机是可以懂我们的意思，其实如果没有编译器，计算机根本不知道我们是啥意思，他只知道输入了一大堆东西，然后就没有然后了。而有了编译器，编译器就可以将程序语言转换成计算机能够唯一读懂的机器码(中间代码距离机器码仅一步之遥，只需要建立一个映射关系即可)，然后计算机就可以按照我们人类所预想的那样去工作(当然，这需要我们把编译器打造成能够按照我们的意思去翻译的一个程序)。</p>
-<p>注意，编译器是针对语言而来的，不同的语言对应不同的编译器。如果我们想在思想上打造一款全新的编译器，那么我们首先要从设计一门新的语言开始。假设我自己设计的语言只有赋值、控制、布尔表达式、过程调用的功能，那么，对于这个我们自己设计的程序设计语言，我们可以很轻易的将其抽象成文法的形式，并赋予我们想要赋予的语义(可以自己定制，你可以实现与当今流行的语言同样的语法形式，当完全不同的语义，只要你开心就好)，有了文法和相应的语义，那么我们现在可以针对我们自己设计的语言去设计一款匹配的编译器了，对于文法中的每个符号，不管是终结符还是非终结符，我们都可以设计出相对应的正规式，根据正规式，然后根据我们前面介绍的词法分析器的构造方法，我们可以打造出识别此输入的词法分析器，词法分析器会将输入识别为文法中相对应的单词符号，这些单词符号又会被语法分析器接收，当做语法分析器的输入，去进行相应的语法分析，结合我们前面介绍的一遍扫描的翻译模式，我们知道语法分析器、语义分析器以及中间代码产生器是可以结合在一起来工作的，也就是说在语法分析的同时就会进行语义的计算(如果能够正确匹配的话)并根据翻译模式产生相应的中间代码，有了中间代码就相当于有了机器码，这些机器码组成了所谓的程序，此时编译器就完成了它的工作，然后计算机就可以拿着这些机器码去运行了。也就是说，我们已经可以在理论上自己设计属于我们自己的程序语言并打造出相对应的编译器了，虽然很low就是了。</p>
-<hr>
-<p>现在我们的编译器已经初具规模，接下来要做的就是一些打磨和善后工作了，可能不是那么的系统(这扯一点，那扯一点)，这些工作同样重要，它意味着我们又可以向完美迈进一步- _ -…</p>
-<hr>
-<p><strong>善后工作1——符号表</strong></p>
-<p>还记得之前所说的符号表吗，我们总是提及它却不曾较为系统的阐释它，现在我们要善后了，较为详细的来介绍下符号表，其实这里介绍的符号表只是一种较为正常的实现，你也可以根据自己的需要去打造自己的符号表，还是那句话：你开心就好- _ -</p>
-<p>符号表的基本结构就是包含两栏：名字栏，也称主栏，关键字栏；信息栏，记录相应的不同属性，分为若干子栏。符号表的作用就是我们将信息存储在里面，当我们需要的时候，我们就查找它将信息提取出来，对于符号表的具体组织，具体存什么东西，看你需要，你开心就好。。。对于符号表的存储和查找，涉及数据结构和算法，怎么存省空间，怎么查速度快等问题这里不做探讨。</p>
-<p>这里，符号表就讨论到这。可能有人要骂娘了，这TM不是什么也没说吗，别急，对于符号表，他就是你所想的那样，你想要怎么实现就怎么实现，抽象的说，符号表就是一个信息的载体，它可以存储信息，然后在你要用的时候提供相应的信息。</p>
-<p><strong>善后工作2——参数传递</strong></p>
-<p>下面我们来讨论下参数传递的问题。我们知道，参数分为形参和实参，参数传递的方式有以下4种，分别会达到不同的效果。</p>
-<p><img src="/img/在思想上打造编译器/90.PNG" alt=""><br><img src="/img/在思想上打造编译器/91.PNG" alt=""><br><img src="/img/在思想上打造编译器/92.PNG" alt=""><br><img src="/img/在思想上打造编译器/93.PNG" alt=""></p>
-<p>说的很详细，就不在多啰嗦什么了。。。</p>
-<p><strong>善后工作3——嵌套过程语言的栈式实现</strong></p>
-<p>我们知道，有些程序是允许嵌套定义的，即允许过程定义的嵌套，如PASCAL，PL语言。嵌套定义时遵循最近嵌套原则。</p>
-<p><img src="/img/在思想上打造编译器/94.PNG" alt=""></p>
-<p>对于嵌套定义，需要解决的问题就是非局部名字的访问的实现，结合前面所说的最近嵌套原则，当访问一个变量时，我们需要知道，距离该变量最近的定义是什么，如果在最内层找不到的话，则向外层查找，直至找到，并引用距离该变量层数最近的定义，若找到最外层都没找到的话，则报错。那么，如何在程序中实现这个查找的过程呢？我们提供一种方法：</p>
-<p>引入如下概念：</p>
-<p><img src="/img/在思想上打造编译器/95.PNG" alt=""><br><img src="/img/在思想上打造编译器/96.PNG" alt=""></p>
-<p>有了活动记录和静态连以及动态链的概念，我们就可以实现访问非局部名字的访问的实现，上个例子：有如下程序：</p>
-<p><img src="/img/在思想上打造编译器/97.PNG" alt=""><br><img src="/img/在思想上打造编译器/98.PNG" alt=""></p>
-<p>由这个程序，我们可以知道，程序的嵌套定义以及调用过程，程序的调用过程为：主程序P→过程S→过程Q→过程R→过程R，紧扣静态链和动态链的概念的意义，我们来看几种情况下非局部名字的访问的实现，也就是要找到最先定义名字的活动记录，因为找到了相应的活动记录，就可以找到相应的名字：</p>
-<p><img src="/img/在思想上打造编译器/99.PNG" alt=""><br><img src="/img/在思想上打造编译器/100.PNG" alt=""><br><img src="/img/在思想上打造编译器/101.PNG" alt=""></p>
-<p>解决了上面的三种情况，我们就可以找到任何情况下非局部名字最先定义所在的活动记录，从而引用。最后送一张完整的图：</p>
-<p><img src="/img/在思想上打造编译器/102.PNG" alt=""></p>
-<p><strong>善后工作4——优化</strong></p>
-<p>我们这里的优化是对中间代码的优化，指对程序进行各种等价变换，使得从变换后的程序出发，能生成更有效的目标代码。优化分为：局部优化、循环优化和全局优化。优化包括删除多余运算(或称删除公用子表达式)、合并已知量、复写传播、删除无用赋值、代码外提、强度消弱、变换循环控制条件等等</p>
-<p>我们首先介绍局部优化。。。</p>
-<p><em>局部优化</em></p>
-<p>对于局部优化，我们引入以下概念：</p>
-<p><img src="/img/在思想上打造编译器/103.PNG" alt=""></p>
-<p>这里所说的局部优化指局限于基本块范围内的优化。那么现在我们如果想做局部优化，我们就要能够将一连串的中间代码划分成一个个的基本块，对于一个基本块，要确定的就是他的入口和出口。下面我们给出如何划分程序的基本块，中间代码以四元式为例：</p>
-<p><img src="/img/在思想上打造编译器/104.PNG" alt=""><br><img src="/img/在思想上打造编译器/105.PNG" alt=""></p>
-<p>将程序划分为基本块后，为了将基本块之间的关系展示出来，给出流图的概念：</p>
-<p><img src="/img/在思想上打造编译器/106.PNG" alt=""></p>
-<p>由此，一长串的四元式就变成了有一定顺序和结构的流图。回归正题，我们接着来看基本块的优化，对于基本块的优化，我们要借助一种数据结构——DAG(无循环有向图)</p>
-<p><img src="/img/在思想上打造编译器/107.PNG" alt=""></p>
-<p>首先，我们根据基本块建立该基本块对应的DAG，DAG是和基本块等价的，然后就可以根据DAG进行优化了。在建立基本块对应的等价DAG时，我们就可以进行优化，删除一些多余的重复的东西。给出建立DAG的算法</p>
-<p><img src="/img/在思想上打造编译器/108.PNG" alt=""><br><img src="/img/在思想上打造编译器/109.PNG" alt=""><br><img src="/img/在思想上打造编译器/110.PNG" alt=""><br><img src="/img/在思想上打造编译器/111.PNG" alt=""><br><img src="/img/在思想上打造编译器/112.PNG" alt=""><br><img src="/img/在思想上打造编译器/113.PNG" alt=""></p>
-<p>建立DAG时，我们要遵循的原则就是能重用的节点就重用，能不建立新的节点就不建。这步优化已经可以删除很多多余的重复的东西，但是是针对一遍代码执行的优化。对于基本块的优化，我们还必须去考虑一个问题——循环的优化，对于循环的优化是优化的关键，对循环中的代码，我们可以实行：</p>
-<blockquote>
-<p>代码外提<br>强度消弱<br>删除归纳变量(变换循环控制条件)<br>循环展开<br>循环合并</p>
-</blockquote>
-<p>我们一步步的看，对于代码外提，外提的代码需要满足一定的条件，我们引入以下概念：</p>
-<p><img src="/img/在思想上打造编译器/114.PNG" alt=""></p>
-<p>由此可以看出，我们如果想要进行代码外提的优化，我们需要查找循环的不变运算，给出查找循环不变运算的算法：</p>
-<p><img src="/img/在思想上打造编译器/115.PNG" alt=""></p>
-<p>有了循环不变运算，我们就已具备了代码外提的前提，下面给出代码外提算法：</p>
-<p><img src="/img/在思想上打造编译器/116.PNG" alt=""><br><img src="/img/在思想上打造编译器/117.PNG" alt=""></p>
-<p>将一些能够外提的代码外提后，我们再来考虑循环内部的代码，内部代码的优化，我们可以进行强度消弱。所谓强度消弱指把程序中执行时间较长的运算转换为执行时间较短的运算，强度消弱后可以很自然的进行归纳变量的删除，所以我们把这两步合并到一块给出算法。首先给出归纳变量的定义：</p>
-<p><img src="/img/在思想上打造编译器/118.PNG" alt=""></p>
-<p>给出算法：</p>
-<p><img src="/img/在思想上打造编译器/119.PNG" alt=""><br><img src="/img/在思想上打造编译器/120.PNG" alt=""></p>
-<p>对于强度消弱，啰嗦几句：强度消弱通常是对与循环控制变量有线性关系的变量赋值进行；经过强度消弱后，循环中可能出现一些新的无用赋值；对于消弱下标变量地址计算的强度非常有效</p>
-<p>谈到优化工作，简单介绍下编译器GCC的优化开关：</p>
-<p><img src="/img/在思想上打造编译器/121.PNG" alt=""></p>
-<p>优化就到这。。。</p>
-<h2 id="最后的工作——代码生成器">最后的工作——代码生成器</h2><p>有了前面生成的优化后的中间代码，我们的编译器打造还差最后一步，就是根据中间代码生成目标代码，目标代码是真正计算机可以读懂的代码，目标代码里直接写出对硬件的操作，从而指导硬件工作。</p>
-<p>目标代码的三种形式：</p>
-<p>绝对指令代码：能够立即执行的机器语言代码，所有地址已经定位</p>
-<p>可重新定位指令代码：待装配的机器语言模块，执行时，由连接装配程序把它们和某些运行程序连接起来，转换成能执行的机器语言代码</p>
-<p>汇编指令代码：尚须经过汇编程序汇编，转换成可执行的机器语言代码</p>
-<p>通常，汇编语言和中间代码的界定并不是那么明显，这里不撕逼，还有前面所说的中间代码到机器指令的映射关系并不准确，这里更正一下。。。中间代码生成目标代码的过程中，还有很多我们值得考虑的问题，比如：</p>
-<p>如何使生成的目标代码较短； 如何充分利用计算机的寄存器，减少目标代码中访问存贮单元的次数； 如何充分利用计算机的指令系统的特点等等。。。</p>
-<p>下面我们就来看在考虑上述问题的情况下，代码生成器怎么构造，这里说明一下，对于目标代码，我们采用汇编语言。首先，我们要知道，代码生成器的输入包括源程序的中间表示，以及符号表中的信息，然后输出就是指导硬件如何工作的目标代码。学习过汇编的都知道，汇编涉及对硬件的直接操作，但我们知道硬件资源总是有限的，那么我们如何在目标代码的层次上去更好的利用这些硬件资源呢？这就是我们接下来要讨论的问题。</p>
-<p>首先，我们考虑寄存器的分配问题，我们抽象出一台计算机出来，该计算机具有以下特征：</p>
-<blockquote>
-<p>具有多个通用寄存器，他们既可以作为累加器，也可以作为变址器</p>
-<p>运算必须在某个寄存器中进行</p>
-<p>含有四种类型的指令形式</p>
-</blockquote>
-<p>我们抽象的目的是为了让计算机兼容我们的目标语言(汇编),以方便我们下面的讨论，这也符合一定的实际。</p>
-<p>假设不考虑目标代码的执行效率，目标代码的生成是很简单的。给个例子(以类汇编语言为例)：</p>
-<p><img src="/img/在思想上打造编译器/122.PNG" alt=""></p>
-<p>可以看出，生成的目标代码存取操作很多，我们都知道计算机的访存操作是很耗时间的，所以我们应当在一个基本块的范围内考虑如何充分利用寄存器，减少访存操作。充分利用要遵循以下原则：</p>
-<blockquote>
-<p>尽可能留：在生成计算某变量值的目标代码时，尽可能让该变量保留在寄存器中</p>
-<p>尽可能用：后续的目标代码尽可能引用变量在寄存器中的值，而不访问内存</p>
-<p>及时腾空：在离开基本块时，把存在寄存器中的现行的值放到主存中</p>
-</blockquote>
-<p>为了能够这样做代码生成器必须了解一些信息。我们引入待用信息、寄存器描述数组和变量地址描述数组用以记录代码生成时所需收集的信息：</p>
-<p><img src="/img/在思想上打造编译器/123.PNG" alt=""><br><img src="/img/在思想上打造编译器/124.PNG" alt=""></p>
-<p>那么如何生成符号的待用信息表呢？这里我们需维护两个数据结构，一是我们想要得到的待用信息表，需要注意的是我们最后想要得到的是针对四元式中各个变量的待用信息；二是我们建立信息表所需要用到的信息链，下面给出算法：</p>
-<p><img src="/img/在思想上打造编译器/125.PNG" alt=""><br><img src="/img/在思想上打造编译器/126.PNG" alt=""></p>
-<p>这里需要注意的一点就是上述步骤2中的顺序是不可颠倒的。基本块中各个四元式的符号的待用和活跃信息将为我们在处理某个具体的四元式时如何分配寄存器带来方便，再给出如何分配寄存器时，我们还需引入以下概念：</p>
-<p><img src="/img/在思想上打造编译器/127.PNG" alt=""><br><img src="/img/在思想上打造编译器/128.PNG" alt=""></p>
-<p>有了这些概念，我们来看针对某个具体的四元式(该四元式携带着该四元式每个符号的待用和活跃信息)如何实施寄存器的分配，给出具体的算法：</p>
-<p><img src="/img/在思想上打造编译器/129.PNG" alt=""><br><img src="/img/在思想上打造编译器/130.PNG" alt=""><br><img src="/img/在思想上打造编译器/131.PNG" alt=""><br><img src="/img/在思想上打造编译器/132.PNG" alt=""></p>
-<p>到这，我们已经可以针对某个具体的四元式给出它的寄存器分配方案，那么我们来看最终的代码生成算法吧：</p>
-<p><img src="/img/在思想上打造编译器/133.PNG" alt=""><br><img src="/img/在思想上打造编译器/134.PNG" alt=""><br><img src="/img/在思想上打造编译器/135.PNG" alt=""></p>
-<p>到这，属于编译器的最后一个部分——代码生成器也就在理论上打造完成了。。。</p>
-<hr>
-<h2 id="总结——口胡">总结——口胡</h2><p>一路走来，让我们来整体回顾一下打造编译器的整体流程：</p>
-<p>所谓编译器，是指针对一门人们设计的程序语言所架设的一个人与计算机沟通的桥梁。我们人类把我们的思想以及我们想要让计算机干的事情，通过程序语言的形式精简概括的表达出来，我们认为计算机是可以懂我们的意思，其实如果没有编译器，计算机根本不知道我们是啥意思，他只知道输入了一大堆东西，然后就没有然后了。而有了编译器，编译器就可以将程序语言转换成计算机能够唯一读懂的机器码(中间代码距离机器码仅一步之遥，只需要建立一个映射关系即可)，然后计算机就可以按照我们人类所预想的那样去工作(当然，这需要我们把编译器打造成能够按照我们的意思去翻译的一个程序)。</p>
-<p>注意，编译器是针对语言而来的，不同的语言对应不同的编译器。如果我们想在思想上打造一款全新的编译器，那么我们首先要从设计一门新的语言开始。假设我自己设计的语言只有赋值、控制、布尔表达式、过程调用的功能，那么，对于这个我们自己设计的程序设计语言，我们可以很轻易的将其抽象成文法的形式，并赋予我们想要赋予的语义(可以自己定制，你可以实现与当今流行的语言同样的语法形式，当完全不同的语义，只要你开心就好)，有了文法和相应的语义，那么我们现在可以针对我们自己设计的语言去设计一款匹配的编译器了，对于文法中的每个符号，不管是终结符还是非终结符，我们都可以设计出相对应的正规式，根据正规式，然后根据我们前面介绍的词法分析器的构造方法，我们可以打造出识别此输入的词法分析器，词法分析器会将输入识别为文法中相对应的单词符号，这些单词符号又会被语法分析器接收，当做语法分析器的输入，去进行相应的语法分析，结合我们前面介绍的一遍扫描的翻译模式，我们知道语法分析器、语义分析器以及中间代码产生器是可以结合在一起来工作的，也就是说在语法分析的同时就会进行语义的计算(如果能够正确匹配的话)并根据翻译模式产生相应的中间代码，有了中间代码后，可以根据DAG等理论对中间代码进行一系列的优化，拿到优化后的中间代码，我们就要着手准备最终的目标代码了，这时，编译器的最后一个组成部分——代码生成器就会发挥作用了，代码生成器会根据具体的四元式结构生成具有一定运行效率的目标代码，目标代码等价于机器代码，这些机器码组成了所谓的程序，此时编译器就完成了它的工作，然后计算机就可以拿着这些机器码去运行了。也就是说，我们已经可以在理论上自己设计属于我们自己的程序语言并打造出相对应的编译器了，虽然很low就是了。。。</p>
-<p>最后，附一张总体框架图用以完美收官：</p>
-<p><img src="/img/在思想上打造编译器/136.PNG" alt=""></p>
-<p>不敢自称程序员的小菜比第一次写blog，写了大概两个星期吧，算是自己比较用心的写的一篇总结了，肯定会有很多不足，欢迎多多交流指正，如果有人看的话，呵呵。。。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<h1 id="在思想上打造编译器">在思想上打造编译器</h1><blockquote>
-<p>To understand a program you must become both the machine and the program.</p>
-</blockquote>]]>
-    </summary>
-    
-      <category term="编译原理" scheme="http://kenshichong.github.io/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/"/>
     
       <category term="reverse related" scheme="http://kenshichong.github.io/categories/reverse-related/"/>
     
