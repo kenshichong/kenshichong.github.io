@@ -1,0 +1,550 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>对UPX的一次深入 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 口胡这次不知道怎么说，心血来潮的成分更多一点吧。自己也有过很多次这种心血来潮，希望这次能够实践下去。。。
+记得刚入二进制坑的时候，就接触了脱壳，自己的脱壳技巧也是停留在那时的水平，也只是会一些压缩壳，而且也只是傻逼式的用工具，根本不懂原理，以及为什么这么做。。。
+这次准备以UPX为引导，准备实现以下目标： 1. 了解熟悉UPX加壳流程  2. 逆向分析UPX脱壳桩代码  3. 分析从OE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对UPX的一次深入">
+<meta property="og:url" content="http://kenshichong.github.io/2016/02/25/对UPX的一次深入/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 口胡这次不知道怎么说，心血来潮的成分更多一点吧。自己也有过很多次这种心血来潮，希望这次能够实践下去。。。
+记得刚入二进制坑的时候，就接触了脱壳，自己的脱壳技巧也是停留在那时的水平，也只是会一些压缩壳，而且也只是傻逼式的用工具，根本不懂原理，以及为什么这么做。。。
+这次准备以UPX为引导，准备实现以下目标： 1. 了解熟悉UPX加壳流程  2. 逆向分析UPX脱壳桩代码  3. 分析从OE">
+<meta property="og:updated_time" content="2016-03-28T14:27:20.202Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="对UPX的一次深入">
+<meta name="twitter:description" content="0x00 口胡这次不知道怎么说，心血来潮的成分更多一点吧。自己也有过很多次这种心血来潮，希望这次能够实践下去。。。
+记得刚入二进制坑的时候，就接触了脱壳，自己的脱壳技巧也是停留在那时的水平，也只是会一些压缩壳，而且也只是傻逼式的用工具，根本不懂原理，以及为什么这么做。。。
+这次准备以UPX为引导，准备实现以下目标： 1. 了解熟悉UPX加壳流程  2. 逆向分析UPX脱壳桩代码  3. 分析从OE">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/25/对UPX的一次深入/" title="对UPX的一次深入" itemprop="url">对UPX的一次深入</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-25T02:57:48.000Z" itemprop="datePublished"> 发表于 2016-02-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#GO！"><span class="toc-number">2.</span> <span class="toc-text">GO！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_了解熟悉UPX加壳流程"><span class="toc-number">3.</span> <span class="toc-text">0x01 了解熟悉UPX加壳流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#参数check"><span class="toc-number">3.1.</span> <span class="toc-text">参数check</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#do_files(i,argc,argv)"><span class="toc-number">3.2.</span> <span class="toc-text">do_files(i,argc,argv)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#do_one_file(iname,oname)"><span class="toc-number">3.3.</span> <span class="toc-text">do_one_file(iname,oname)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#doPack(fo)"><span class="toc-number">3.4.</span> <span class="toc-text">doPack(fo)</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_口胡">0x00 口胡</h1><p>这次不知道怎么说，心血来潮的成分更多一点吧。自己也有过很多次这种心血来潮，希望这次能够实践下去。。。</p>
+<p>记得刚入二进制坑的时候，就接触了脱壳，自己的脱壳技巧也是停留在那时的水平，也只是会一些压缩壳，而且也只是傻逼式的用工具，根本不懂原理，以及为什么这么做。。。</p>
+<p>这次准备以UPX为引导，准备实现以下目标：<br><strong> 1. 了解熟悉UPX加壳流程 </strong><br><strong> 2. 逆向分析UPX脱壳桩代码 </strong><br><strong> 3. 分析从OEP处dump的话具体是dump了个什么东西 </strong><br><strong> 4. 分析dump后重建IAT的原理 </strong><br><strong> 5. 根据加壳和脱壳流程，写出自己的脱壳脚本(python或IDApython)</strong><br><strong> 6. 有时间的话，去看看各种压缩算法，估计没时间</strong></p>
+<h1 id="GO！">GO！</h1><h1 id="0x01_了解熟悉UPX加壳流程">0x01 了解熟悉UPX加壳流程</h1><p>近阶段时间有限，要干和想干的事情太多，加上近机场ctf我都没开题，所以在前段日子看了近三周源码后决定先搁置一段时间，好好修炼一下pwn，真心被打的有点小郁闷。。。</p>
+<p>网上资料真心少啊，本来以为前人有做这方面工作的，结果，并没找到，没办法，自己撸源码。。。</p>
+<p>UPX作为一个经典的压缩壳，自己对待它的源码还是很细致的剖析了一下的，所以耗费了大把时间，也想学习下一个小的工程程序它的大体架构是怎样的，毕竟不能只做脚本小子:p。但只看了加壳流程的大半部分，不过，应该可以扯很长时间了。。。</p>
+<p>没捷径，一步步来吧，从main开始，由于没看完，所以别妄想我能够从总体上把握所谓的加壳的整体架构和流程之类的，毕竟不是战略家，科科。。。</p>
+<p>开扯</p>
+<h2 id="参数check">参数check</h2><ol>
+<li>_set_abort_behavior：首先设定程序崩溃时所采取的动作，详见<a href="https://msdn.microsoft.com/library/e631wekh%28v=vs.90%29.aspx" target="_blank" rel="external">msdn</a>，用户友好，并没有什么影响</li>
+<li>acc_wildargv：并不知道干嘛的</li>
+<li>upx_sanity_check()：里面是一系列的断言，进行初步检测</li>
+<li>opt-&gt;reset()：opt是声明的一个全局变量，是从options.h中导出的(extern struct options_t *opt;),这是个蛮复杂的结构，从他的具体结构中(注释和变量命名)，我们可以看到UPX所支持的一系列操作，该语句是对该结构的一些变量进行初始化赋值，设定一些默认值。</li>
+<li>紧接着是对后缀进行处理。我们知道windows一般都是带.exe这种后缀的，下面的#if,#else预处理就是把这个后缀去掉</li>
+<li>set_term(stderr);设置输出终端为标准错误流</li>
+<li>下面的预处理是判断两种压缩算法是否可用，不可用输出错误信息，然后直接退出</li>
+<li>设置随机种子，下面好像没有用到</li>
+<li>参数解析，只对几个很简单的参数(help这种)进行操作，如果存在，输出相关信息</li>
+<li>一个并不知道干嘛的预处理</li>
+<li>重置终端为标准输入(默认)</li>
+<li>参数判断，并作相应处理</li>
+<li>只有一个参数，显示提示信息后退出</li>
+<li>重置输出为错误输出</li>
+<li>还是参数检查-_-</li>
+<li>紧接着的语句说明upx支持批量加壳</li>
+</ol>
+<hr>
+<p>参数到这就算检查完了，参数通过检查，则把参数信息记录下来后开始工作，不出意料应该是记录到opt全局变量中去。然后就是重置输出为标准输出，然后进入新世界，do_files</p>
+<hr>
+<h2 id="do_files(i,argc,argv)">do_files(i,argc,argv)</h2><ol>
+<li>对版本的检查，版本大于1显示信息。</li>
+<li>初始化静态变量infoheader</li>
+<li>从批量的待加壳文件中取出一个，进行单个加壳操作-&gt;do_one_file，后面跟一大堆捕获异常的块，就不看了。</li>
+</ol>
+<h2 id="do_one_file(iname,oname)">do_one_file(iname,oname)</h2><ol>
+<li>检查输入文件的合法性和权限，当输入只读且要在源文件基础上输出会报错</li>
+<li>InputFile fi;fi.st = st;fi.sopen(iname, O_RDONLY | O_BINARY, SH_DENYWR);/<em>二进制和只读方式打开文件</em>/</li>
+<li>// open output file/<em>创建一个临时输出文件，根据抛出的异常提示信息，可以看出打开输出文件时面临哪些问题</em>/OutputFile fo;</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PackMaster <span class="title">pm</span><span class="params">(&amp;fi, opt)</span></span>;<span class="comment">/*根据opt和fi创建加壳管理对象，这个对象很重要*/</span></span><br><span class="line"><span class="keyword">if</span> (opt-&gt;cmd == CMD_COMPRESS)</span><br><span class="line">	pm.pack(&amp;fo);<span class="comment">/*加壳，参数为fo，结果输出到fo中，着重分析这个函数，加壳算法都在这里面，*/</span></span><br></pre></td></tr></table></figure>
+<hr>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> PackMaster::pack(OutputFile *fo)</span><br><span class="line">&#123;</span><br><span class="line">    p = getPacker(fi);?*获取加壳文件的格式，支持很多种格式*/</span><br><span class="line">    fi = <span class="literal">NULL</span>;<span class="comment">/*前面都是一些check*/</span></span><br><span class="line">    p-&gt;doPack(fo);<span class="comment">/*得到具体的加壳对象后，下面开始加壳*/</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Packer *PackMaster::getPacker(InputFile *f)<span class="comment">/*根据文件的类型得到与之相对应的文件加壳对象*/</span></span><br><span class="line">&#123;</span><br><span class="line">    Packer *pp = visitAllPackers(try_pack, f, opt, f);<span class="comment">/*try_pack是一个函数指针，visitAllPackers实际上是对try_pack的一个封装*/</span></span><br><span class="line">    <span class="keyword">if</span> (!pp)<span class="comment">/*用try_pack去不停的尝试，直至匹配到相应的文件类型，然后返回相应的加壳对象*/</span></span><br><span class="line">        throwUnknownExecutableFormat();</span><br><span class="line">    pp-&gt;assertPacker();<span class="comment">//这是返回具体的Packer后，检查具体的Packer的有效性，与前面的检查相同</span></span><br><span class="line">    <span class="keyword">return</span> pp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Packer* PackMaster::visitAllPackers(<span class="keyword">visit_func_t</span> func, InputFile *f, <span class="keyword">const</span> <span class="keyword">options_t</span> *o, <span class="keyword">void</span> *user)</span><br><span class="line">&#123;</span><br><span class="line">	仅截取部分相关代码</span><br><span class="line">        <span class="keyword">if</span> ((p = func(<span class="keyword">new</span> PackW32Pe(f), user)) != <span class="literal">NULL</span>)<span class="comment">/*我们以最能说明情况的32exe为例*/</span></span><br><span class="line">            <span class="keyword">return</span> p;									<span class="comment">/*与PackExe对象相差dos_exe.force_stub这个东西，这个应该是区分DOS和x32的标志*/</span></span><br><span class="line">        <span class="keyword">delete</span> p; p = <span class="literal">NULL</span>;				<span class="comment">/*对于pe32文件，返回的就是这个对象，该对象在构造的过程中会进行相应的检查*/</span></span><br><span class="line">    &#125;	<span class="comment">/*看下这个对象的继承关系，PackW32PE继承自PeFile,PeFile继承自Packer*/</span></span><br><span class="line">    <span class="keyword">if</span> ((p = func(<span class="keyword">new</span> PackArmPe(f), user)) != <span class="literal">NULL</span>)<span class="comment">/*考虑继承时构造函数的执行顺序问题(一般先执行父类的构造函数)*/</span></span><br><span class="line">        <span class="keyword">return</span> p;<span class="comment">/*所以在构造中进行的检查为 */</span></span><br><span class="line">    <span class="keyword">delete</span> p; p = <span class="literal">NULL</span>;<span class="comment">/*计算文件的大小和创建压缩信息显示对象(UI的)UiPacker(Packer)；PeFile检查PE的相关数据结构大小和字节对齐(主要是为了兼容平台；而构造PackW32Pe时只记录了简单的一些变量信息)*/</span>*/</span><br><span class="line">    <span class="keyword">if</span> ((p = func(<span class="keyword">new</span> PackExe(f), user)) != <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span> p;</span><br></pre></td></tr></table></figure>
+<hr>
+<p>fi的使命已完成，置空并进入doPack(fo)进行加壳<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fi = <span class="literal">NULL</span>;<span class="comment">/*前面都是一些check*/</span></span><br><span class="line">p-&gt;doPack(fo);<span class="comment">/*得到具体的加壳对象后，下面开始加壳*/</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="doPack(fo)">doPack(fo)</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Packer::doPack(OutputFile *fo)</span><br><span class="line">&#123;</span><br><span class="line">    uip-&gt;uiPackStart(fo);<span class="comment">/*又是UI,更新压缩文件数，可以看出，支持多文件加壳*/</span></span><br><span class="line">    pack(fo);<span class="comment">/*虚函数，需要到相应的具体实现中去看，不同的文件格式有不同的实现这里以pe32为例*/</span></span><br><span class="line">    uip-&gt;uiPackEnd(fo);<span class="comment">/*加壳完成后，输出相应的信息*/</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>doPack()的具体实现就不贴了，到这开始就开始与文件结构有紧密联系了，总的思路就是不同的文件格式有不同的压缩和加壳策略，对应着doPack()的不同实现。</p>
+<p>对于文件格式的信息，给出以前学PE的图片，结合图片来看。</p>
+<p>ih指IMAGE_FILE_HEADER</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/reverse-related/">reverse related</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/源码说明一切/">源码说明一切</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2016/02/25/对UPX的一次深入/" data-title="对UPX的一次深入 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/04/14/写着玩-简短过渡之共享库的组织/" title="写着玩-简短过渡之共享库的组织">
+  <strong>上一篇：</strong><br/>
+  <span>
+  写着玩-简短过渡之共享库的组织</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/02/12/写着玩-怒干动态链接/"  title="写着玩-怒干动态链接">
+ <strong>下一篇：</strong><br/> 
+ <span>写着玩-怒干动态链接
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#GO！"><span class="toc-number">2.</span> <span class="toc-text">GO！</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_了解熟悉UPX加壳流程"><span class="toc-number">3.</span> <span class="toc-text">0x01 了解熟悉UPX加壳流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#参数check"><span class="toc-number">3.1.</span> <span class="toc-text">参数check</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#do_files(i,argc,argv)"><span class="toc-number">3.2.</span> <span class="toc-text">do_files(i,argc,argv)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#do_one_file(iname,oname)"><span class="toc-number">3.3.</span> <span class="toc-text">do_one_file(iname,oname)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#doPack(fo)"><span class="toc-number">3.4.</span> <span class="toc-text">doPack(fo)</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>17</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/人丑就要多读书/" title="人丑就要多读书">人丑就要多读书<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/源码说明一切/" title="源码说明一切">源码说明一切<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

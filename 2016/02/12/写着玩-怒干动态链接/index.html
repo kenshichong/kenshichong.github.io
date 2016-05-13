@@ -1,0 +1,634 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>写着玩-怒干动态链接 | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 依旧口胡终于到了动态链接，终于到了有意思的地方。。。
+0x01 为什么要动态链接静态链接的一些问题导致了动态链接的实现。
+
+内存和磁盘空间的浪费，即相同功能代码模块的重用问题。静态链接使得内存中保存有大量相同的代码，造成浪费。
+程序的开发和发布问题。静态链接带来的问题是整个程序中如果有任何模块更新，整个程序就要重新链接、发布给用户。因为一般厂商都是提供程序，而不会提供原代码- _ -。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="写着玩-怒干动态链接">
+<meta property="og:url" content="http://kenshichong.github.io/2016/02/12/写着玩-怒干动态链接/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 依旧口胡终于到了动态链接，终于到了有意思的地方。。。
+0x01 为什么要动态链接静态链接的一些问题导致了动态链接的实现。
+
+内存和磁盘空间的浪费，即相同功能代码模块的重用问题。静态链接使得内存中保存有大量相同的代码，造成浪费。
+程序的开发和发布问题。静态链接带来的问题是整个程序中如果有任何模块更新，整个程序就要重新链接、发布给用户。因为一般厂商都是提供程序，而不会提供原代码- _ -。">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/6.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/7.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/8.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/9.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/11.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/12.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/13.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/14.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/15.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/16.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/17.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/18.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/19.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/20.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/21.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/22.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/23.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/24.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/25.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/26.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/27.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/28.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/29.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/30.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/31.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/32.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/33.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/34.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/35.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/36.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/37.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/38.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/39.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/40.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/41.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-怒干动态链接/42.PNG">
+<meta property="og:updated_time" content="2016-04-14T13:25:34.043Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="写着玩-怒干动态链接">
+<meta name="twitter:description" content="0x00 依旧口胡终于到了动态链接，终于到了有意思的地方。。。
+0x01 为什么要动态链接静态链接的一些问题导致了动态链接的实现。
+
+内存和磁盘空间的浪费，即相同功能代码模块的重用问题。静态链接使得内存中保存有大量相同的代码，造成浪费。
+程序的开发和发布问题。静态链接带来的问题是整个程序中如果有任何模块更新，整个程序就要重新链接、发布给用户。因为一般厂商都是提供程序，而不会提供原代码- _ -。">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/12/写着玩-怒干动态链接/" title="写着玩-怒干动态链接" itemprop="url">写着玩-怒干动态链接</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-12T04:13:37.000Z" itemprop="datePublished"> 发表于 2016-02-12</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_依旧口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 依旧口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_为什么要动态链接"><span class="toc-number">2.</span> <span class="toc-text">0x01 为什么要动态链接</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_地址无关代码的实现"><span class="toc-number">3.</span> <span class="toc-text">0x02 地址无关代码的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#模块中地址引用方式"><span class="toc-number">3.1.</span> <span class="toc-text">模块中地址引用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#共享模块的全局变量问题"><span class="toc-number">3.2.</span> <span class="toc-text">共享模块的全局变量问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04_延迟绑定(PLT)"><span class="toc-number">4.</span> <span class="toc-text">0x04 延迟绑定(PLT)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x05_动态链接相关结构"><span class="toc-number">5.</span> <span class="toc-text">0x05 动态链接相关结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#“-interp”段"><span class="toc-number">5.1.</span> <span class="toc-text">“.interp”段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#“-dynamic”段"><span class="toc-number">5.2.</span> <span class="toc-text">“.dynamic”段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态符号表(-dynsym)"><span class="toc-number">5.3.</span> <span class="toc-text">动态符号表(.dynsym)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态链接重定位表"><span class="toc-number">5.4.</span> <span class="toc-text">动态链接重定位表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态链接时进程堆栈初始化信息"><span class="toc-number">5.5.</span> <span class="toc-text">动态链接时进程堆栈初始化信息</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x06_动态链接的步骤和实现"><span class="toc-number">6.</span> <span class="toc-text">0x06 动态链接的步骤和实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#动态链接器自举"><span class="toc-number">6.1.</span> <span class="toc-text">动态链接器自举</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#装载共享对象"><span class="toc-number">6.2.</span> <span class="toc-text">装载共享对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重定位和初始化"><span class="toc-number">6.3.</span> <span class="toc-text">重定位和初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux动态链接器的实现"><span class="toc-number">6.4.</span> <span class="toc-text">Linux动态链接器的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#显式运行时链接"><span class="toc-number">6.5.</span> <span class="toc-text">显式运行时链接</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x07_小结下"><span class="toc-number">7.</span> <span class="toc-text">0x07 小结下</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_依旧口胡">0x00 依旧口胡</h1><p>终于到了动态链接，终于到了有意思的地方。。。</p>
+<h1 id="0x01_为什么要动态链接">0x01 为什么要动态链接</h1><p>静态链接的一些问题导致了动态链接的实现。</p>
+<ol>
+<li>内存和磁盘空间的浪费，即相同功能代码模块的重用问题。静态链接使得内存中保存有大量相同的代码，造成浪费。</li>
+<li>程序的开发和发布问题。静态链接带来的问题是整个程序中如果有任何模块更新，整个程序就要重新链接、发布给用户。因为一般厂商都是提供程序，而不会提供原代码- _ -。</li>
+</ol>
+<p>所以，我们有了动态链接的思想。简单来说就是把程序的模块相互分割开来，形成独立的文件，而不再将他们静态的链接在一起，在程序需要运行时才进行链接。这样可以很好的解决上面两个问题，并且对于程序的可扩展性和兼容性有很大的改善</p>
+<h1 id="0x02_地址无关代码的实现">0x02 地址无关代码的实现</h1><p>为了实现动态链接，我们需要解决共享地址的冲突问题，为此采用装载时重定位的方法。又叫基址重置。我们在前面静态链接时提到过重定位，大家好好回想一下，那时的重定位叫做链接时重定位，是指在形成二进制文件时，由于目标文件的相互引用，导致一些目标文件中的地址需要重定位，从而链接器在链接所有的目标文件把需要确定的一些地址通过重定位的方式确定下来，然后链接各目标文件从而形成一个可以直接使用的二进制文件，该二进制文件中的虚拟地址都是确定的。而这里的装载时重定位是指要运行的二进制文件中的虚拟地址是不确定的，需要在运行时，装载该二进制文件需要的动态链接文件时才会对该二进制文件中的不定地址通过重定位的方式进行确定。</p>
+<p>装载时重定位时解决动态模块制表中有绝对地址引用的办法之一，但他有一个很大的缺点，那就是指令部分无法在多个进程之间共享，这样就失去了动态链接节省内存的一大优势。</p>
+<p>为此我们需要实现程序模块中共享的指令部分在装载时不需要因为装载地址的改变而改变。所以实现的基本想法就是把指令中那些需要被修改的部分分离出来，跟数据部分放在一起，这样指令部分可以保持不变，而数据部分可以在每个进程中拥有一个副本。这种方案就是目前被称为地址无关代码(PIC)的技术。</p>
+<h2 id="模块中地址引用方式">模块中地址引用方式</h2><p>我们先来看看地址是如何引用的。</p>
+<p><img src="/img/写着玩-怒干动态链接/0.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/1.PNG" alt=""></p>
+<p>下面来看下这4种方式是怎样产生地址无关代码的。</p>
+<p><strong><em> 类型一 模块内部调用或跳转 </em></strong><br>最简单的一种情况，解决策略就是我们前面在静态链接重定位中介绍过的相对位移调用指令的指令格式。举个例子：</p>
+<p><img src="/img/写着玩-怒干动态链接/2.PNG" alt=""></p>
+<p>这样就实现了模块内部调用或跳转的指令的地址无关性。</p>
+<p><strong><em> 类型二 模块内部数据访问 </em></strong><br>首先考虑要解决问题的特点：<br>指令中不能直接包含数据的绝对地址，那么实现地址无关性就只能用相对寻址了。我们知道，一个模块前面一般是若干个页的代码，后面紧跟着若干个页的数据，这些页之间的相对位置是固定的，也就是说，任何一条指令与它需要访问的模块内部数据之间的相对位置是固定的，那么只需要相对于当前指令加上固定的偏移量就可以访问模块内部数据了。</p>
+<p>考虑解决方法：<br>根据前面分析的问题特点知道可以用当前指令地址(PC)加上一个偏移量的方法来达到访问相应变量的目的。</p>
+<p>实际中采用的方法：<br>现代的体系结构中，数据的相对寻址往往没有相对于PC的寻址方式，所以ELF用了一个很巧妙的方法来得到当前的PC值，然后再加上一个偏移量就可以达到访问相应变量的目的了。得到PC值的方法很多，看下最常用的一种，也是现在ELF的共享对象里面用的一种方法：</p>
+<p><img src="/img/写着玩-怒干动态链接/3.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/4.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/5.PNG" alt=""></p>
+<p><strong><em> 类型三 模块间数据访问 </em></strong><br>当程序访问本模块外的数据时，我们知道这个数据的地址在装载时才能确定。ELF解决这种问题的做法是在数据段里面建立一个纸箱这些变量的指针数组，也称为全局偏移表(GOT)。注意这里的所属问题，就是说当一个模块中有本模块外的数据引用时，就会在本模块内生成一个got表，然后还应该会在本模块中的重定位表中(该重定位表是在装载时重定位用的，因为在装载时才能知道模块外的地址，而目标文件的重定位表是在静态链接时重定位用的)添加相应的重定位项，这样在动态链接装载时，当所需的模块加载入内存后，相应的地址也就知道了，这样只需要根据重定位项对GOT表进行修改即可，而不用对指令代码进行修改，指令代码的话，始终都是固定的对GOT表的引用，这样在多进程的情况下，指令代码就可以得到重用，而只需要在不同的进程中根据不同的模块装载地址生成不同的GOT表，也就是说只是多了GOT表(所占空间较小)。</p>
+<p><img src="/img/写着玩-怒干动态链接/6.PNG" alt=""></p>
+<p>书上的描述是链接器在装载模块的时候会查找每个变量所在的地址，然后填充GOT中的各个项，以确保每个指针所指向的地址正确。由于GOT本身是放在数据段的，所以它可以在本模块装载时被修改，并且每个进程都可以有独立的副本，相互不受影响。</p>
+<p>对于具体的细节，实际上是根据两个偏移来确定最终的访问地址的，在编译时确定GOT相对于当前指令的偏移，则通过得到PC值然后加上一个偏移量，就可以得到GOT表的位置，然后我们根据变量地址在GOT中的偏移就可以得到变量的地址，变量地址在GOT中的偏移是在变量的具体地址确定时经过简单计算装入GOT表中的。当然GOT中每个地址对应于哪个变量是由编译器决定的.</p>
+<p>给个例子：<br><img src="/img/写着玩-怒干动态链接/7.PNG" alt=""></p>
+<p><strong><em> 类型四 模块间调用、跳转 </em></strong><br>对于模块间调用、跳转，这里只是提出一个策略、可能性，对于具体的做法，稍后说。</p>
+<p>可以采用类型三的方法解决，当然也可以直接在GOT中相应的项保存目标函数的地址，利用GOT进行间接跳转，给个例子：</p>
+<p><img src="/img/写着玩-怒干动态链接/8.PNG" alt=""></p>
+<p>先得到PC，然后加上一个偏移得到函数地址，然后在通过一个间接调用达到目的。</p>
+<h2 id="共享模块的全局变量问题">共享模块的全局变量问题</h2><p><img src="/img/写着玩-怒干动态链接/9.PNG" alt=""></p>
+<p>而且，我们知道，由于程序主模块的代码并不是地址无关代码(主模块是二进制可执行文件，它的重定位过程是发生在链接过程中的)，那么它怎么解决这种问题呢？</p>
+<p>编译器不管那么多，它在编译的时候会跟普通数据访问方式一样，产生类似这样的代码：movl $0x1,xxxxxx</p>
+<p>xxxxxx就是global的地址，不进行代码重定位的情况下，变量的地址必须在链接过程中确定下来。也就是说，这个锅由链接器来接。链接器也是有办法的，它会在创建可执行文件时(此时链接器已经知道该变量是否在同一模块的目标文件中，在的话就正常的进行重定位呗，不在就采用下面的方法)，在它的.bss段创建一个global变量的副本，那么问题就很明显了，现在global变量定义在原先的共享对象中，而在可执行文件的.bss段还有一个副本。如果同一个变量同时存在与多个位置中，这在程序实际运行过程中是不可行的。</p>
+<p>解决方法是所有的使用这个变量的指令都指向位于可执行文件中的那个副本。ELF共享库在编译时，默认都把定义在模块内部的全局变量(只针对全局变量)当做定义在其他模块的全局变量，也就是说当做前面所讲的类型4，通过GOT来实现变量的访问。当共享模块被装载时，如果某个全局变量在可执行文件中拥有副本，这样该变量在运行时实际上最终只有一个实例。如果变量在共享模块中被初始化，那么动态链接器还需要将该初始化值复制到程序主模块中的变量副本；如果该全局变量在程序主模块中没有副本，那么GOT中的相应地址就指向模块内部的该变量副本。</p>
+<h1 id="0x04_延迟绑定(PLT)">0x04 延迟绑定(PLT)</h1><p>延迟绑定是为了解决动态链接时的速度问题的。我们知道动态链接比静态链接慢的主要原因是动态链接下对于全局和静态的数据访问都要进行复杂的GOT定位，然后间接寻址，还有就是动态链接器会寻找并装载所需要的共享对象，然后进行符号查找地址重定位等工作，这些都会导致启动速度减慢。</p>
+<p>所以提出延迟绑定的解决办法。在一个程序执行过程中，可能很多函数在程序执行完时都不会被用到。延迟绑定的基本思想就是当函数第一次被用到时才进行上面说的绑定工作。</p>
+<p>当我们调用某个外部模块的函数时，通常的做法是通过GOT，为了延迟绑定，在这个中间再次增加一层跳转，这一层间接跳转就是PLT。每个外部函数在PLT中都有一个相应的项，比如bar()函数在PLT中的项的地址我们称之为bar@plt。其实现为：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bar@plt:</span><br><span class="line">jmp *(bar@GOT)</span><br><span class="line">push n</span><br><span class="line">push moduleID</span><br><span class="line">jump _dl_runtime_resolve</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/写着玩-怒干动态链接/10.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/11.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/12.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/13.PNG" alt=""></p>
+<p>所以外部调用的流程就是，call 外部函数(其实是跳到.plt处的与该函数相对应的代码项)-&gt;bar@plt-&gt;GOT(第一次调用还要-&gt;PLT0)</p>
+<h1 id="0x05_动态链接相关结构">0x05 动态链接相关结构</h1><p>动态链接情况下，可执行文件的装载与静态链接情况基本一样。首先操作系统会读取可执行文件的头部，检查文件的合法性，然后从头部中的”Program Header”中读取每个”Segment”的虚拟地址、文件地址和属性，并将它们映射到进程虚拟空间的相应位置。但是，这时候，可执行文件里很多对于外部符号的引用还处于无效地址的状态，所以在映射完可执行文件后，操作系统会先启动一个动态链接器。也就是说，在装载器和真正执行期间，还隔着一个动态链接器、</p>
+<h2 id="“-interp”段">“.interp”段</h2><p>“.interp”的内容很简单，里面保存的就是一个字符串，这个字符串就是可执行文件需要的动态链接器的路径。</p>
+<p><img src="/img/写着玩-怒干动态链接/14.PNG" alt=""></p>
+<p>上图显示的/lib/ld-linux.so.2通常是一个软链接，它指向真正的链接器。</p>
+<p><img src="/img/写着玩-怒干动态链接/15.PNG" alt=""></p>
+<h2 id="“-dynamic”段">“.dynamic”段</h2><p><img src="/img/写着玩-怒干动态链接/16.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/17.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/18.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/19.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/20.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/21.PNG" alt=""></p>
+<h2 id="动态符号表(-dynsym)">动态符号表(.dynsym)</h2><p>在前面的截图中，我们能够看到动态符号表的影子，它可以从.dynamic段中去索引。</p>
+<p><img src="/img/写着玩-怒干动态链接/22.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/23.PNG" alt=""></p>
+<p>可以看出，动态链接的符号表的结构与静态链接的符号表几乎一样，我们可以简单的将导入函数看做是对其他目标文件的中函数的引用，把导出函数看做是在本目标文件中    定义的函数就可以了。</p>
+<h2 id="动态链接重定位表">动态链接重定位表</h2><p>在地址无关代码中，动态链接的可执行文件使用的是PIC方法，但这并不能改变它需要重定位的本质，即PIC模式的共享对象(代码段地址无关)也需要重定位。<br><img src="/img/写着玩-怒干动态链接/24.PNG" alt=""></p>
+<p>GOT也是一种需要重定位后才能生成的东西。</p>
+<p>动态链接的重定位与静态链接重定位的唯一区别，也是我们一直在强调的一个点，就是目标文件的重定位时在静态链接时完成的，而共享对象的重定位是在装载时完成的。</p>
+<p><img src="/img/写着玩-怒干动态链接/25.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/26.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/27.PNG" alt=""></p>
+<p>共享对象的数据段是没有办法做到地址无关的，他可能会包含绝对地址的引用，对于这种绝对地址的引用，我们必须在装载时将其重定位。来看个例子：</p>
+<p><img src="/img/写着玩-怒干动态链接/28.PNG" alt=""></p>
+<p>这里插一嘴，对于非PIC模式编译的模块，外部函数调用的重定位就会出现在.rel.dyn中，而非.rel.plt中。很明显，PIC时，地址都是可以通过PIC中的相对当前指令的位置加上一个固定偏移计算出来(内部的引用就直接用偏移，外部的引用通过相对于GOT的偏移来达到目的)，而非PIC中，代码段不在使用这种相对于当前指令的PIC方法，而是采用绝对地址寻址，所以它需要对代码段直接进行重定位</p>
+<h2 id="动态链接时进程堆栈初始化信息">动态链接时进程堆栈初始化信息</h2><p><img src="/img/写着玩-怒干动态链接/29.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/30.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/31.PNG" alt=""></p>
+<h1 id="0x06_动态链接的步骤和实现">0x06 动态链接的步骤和实现</h1><p>基本分为3步：启动动态链接器本身；装载所有需要的共享对象；重定位和初始化</p>
+<h2 id="动态链接器自举">动态链接器自举</h2><p>前面提到过，动态链接器本身就是一个共享对象。所谓自举就是自己启动自己的过程。</p>
+<p><img src="/img/写着玩-怒干动态链接/32.PNG" alt=""></p>
+<p>自举代码不能使用全局变量和静态变量(前面在谈到共享模块的全局变量问题时提过，可执行文件会在本数据段内部创建一个副本，共享库在编译时，默认都把定义在模块内部的全局变量当做定义在其他模块的全局变量，就是通过GOT来实现访问)，也不能调用函数，内部函数也不行(这个原因会在后面说)。自举代码结束后，就可以自由的调用函数并且随意访问全局变量了。</p>
+<h2 id="装载共享对象">装载共享对象</h2><p><img src="/img/写着玩-怒干动态链接/33.PNG" alt=""></p>
+<p>上面的共享对象的装载过程中，我们无法回避一个问题，那就是当两个共享对象中的全局符号同名时，符号的优先级问题。出现这种问题时，解决的方法就是覆盖。我们把这种一个共享对象里面的全局符号被另一个共享对象的同名全局符号覆盖的现象称为共享对象全局符号介入。</p>
+<p>当一个符号需要被加入全局符号表时，如果相同的符号名已经存在，则后加入的符号被忽略。由于存在这种重名符号被直接忽略的问题，当程序使用大量共享对象时应该非常小心符号的重名问题，如果两个符号重名又执行不同的功能，那么 程序运行时可能会将所有该符号的引用解析到第一个被加入全局符号表的使用该符号名的符号，从而导致莫名其妙的错误。</p>
+<p>下面要解决上面留下的问题，那就是自举时为啥内部函数也不行的问题。前面介绍PIC时，对于第一类模块内部调用或跳转的处理时，我么简单的将其当做是相对地址调用或跳转。但是，有了全局符号介入后，我们就应该重新考虑一下了。那前面的例子来说，foo函数对于bar函数的调用不能够采用第一类模块内部调用的方法，因为一旦bar函数由于全局符号介入被其他模块中的同名函数覆盖(根据忽略策略，以后载入的所有模块中的同名函数引用都必须指向它)，那么foo如果采用相对地址调用的话，那个相对地址部分就需要重定位，这又与共享对象的地址无关性矛盾。所以对于bar函数的调用，编译器只能采用第三种，即当做模块外部符号处理，bar()函数被覆盖，动态链接器只需要重定位.got.plt，不影响共享对象的代码段。</p>
+<p>这里我们总结下，数据访问的重定位问题，要把全局和内部的概念区分清楚：</p>
+<ol>
+<li>模块内部调用或跳转：PIC模式下，由于全局符号介入问题，采用策略三，即重定位”.got.plt”，从而实现不影响共享对象代码段的目的；非PIC模式下，对于可执行文件，在静态链接生成文件时就已经完成重定位，对于共享对象，在装载时，基址确定后直接对代码段中具体的引用指令进行重定位。</li>
+<li>模块内部数据访问：PIC模式下：不论是共享对象还是可执行文件，对于模块内部的数据访问，采用相对于当前指令地址的寻址方式，由于在静态链接形成文件时，内部数据所在的具体地址相对于当前引用该数据的指令是可以确定的，所以说重定位为静态链接时由静态链接器进行完成。</li>
+</ol>
+<h2 id="重定位和初始化">重定位和初始化</h2><p>上面两步搞完后，链接器会开始重新遍历可执行文件和每个共享对象的重定位表，将所有的GOT/PLT需要修正的进行修正。由于此时动态链接器已经拥有了该进程(所有模块)的全局符号表，所以修正就很自然。</p>
+<p>重定位完成后，如果某个恭喜那个对象有”.init”段，那么动态链接器会执行”.init”段中的代码，用以实现共享对象特有的初始化过程，比如最常见的，共享对象中的C++的全局/静态对象的构造就需要通过”.init”段来初始化，相应的，共享对象中还可能有”.finit”段，当进程退出时会执行”.finit”段中的代码，可以用来实现C++全局对象析构之类的操作。</p>
+<p>这里需要注意的是，如果进程的可执行文件也有”.init”段，那么动态链接器不会执行它，而是由程序初始化部分代码负责执行。</p>
+<p>当完成了重定位和初始化之后，准备工作就OK了，这时就没动态链接器什么卵事了，他就可以把剩下的摊子交给程序的入口，此时程序的入口接过进程的控制权开始执行。</p>
+<h2 id="Linux动态链接器的实现">Linux动态链接器的实现</h2><p><img src="/img/写着玩-怒干动态链接/34.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/35.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/36.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/37.PNG" alt=""></p>
+<p>这里不对dl_main()进行展开。</p>
+<p><img src="/img/写着玩-怒干动态链接/38.PNG" alt=""></p>
+<h2 id="显式运行时链接">显式运行时链接</h2><p>就是让程序自己在运行时控制加载指定的模块，并且可以在不需要该模块时卸载，这种共享对象一般被叫做动态装载库，跟一般的共享对象没什么卵区别。这种方便装卸的功能可以用于一些有特殊需求的程序上，比如插件，驱动什么的。</p>
+<p>本质上就是提供一组函数来进行在程序运行时调用，linux下是dlopen()、dlsym()、dlerror()、dlclose()，windows下的话就是LoadLibrary()和GetProcAddress()了。</p>
+<p>这里介绍一个有意思的点。</p>
+<p><img src="/img/写着玩-怒干动态链接/39.PNG" alt=""><br><img src="/img/写着玩-怒干动态链接/40.PNG" alt=""></p>
+<p>另外，如果被加载的模块之间有依赖关系，比如模块A依赖于模块B，那么程序员需手工加载被依赖的模块，比如先加载B，再加载A。</p>
+<p><img src="/img/写着玩-怒干动态链接/41.PNG" alt=""></p>
+<h1 id="0x07_小结下">0x07 小结下</h1><p><img src="/img/写着玩-怒干动态链接/42.PNG" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/reverse-related/">reverse related</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/人丑就要多读书/">人丑就要多读书</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2016/02/12/写着玩-怒干动态链接/" data-title="写着玩-怒干动态链接 | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/02/25/对UPX的一次深入/" title="对UPX的一次深入">
+  <strong>上一篇：</strong><br/>
+  <span>
+  对UPX的一次深入</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/01/19/写着玩-狂艹装载/"  title="写着玩-狂艹装载">
+ <strong>下一篇：</strong><br/> 
+ <span>写着玩-狂艹装载
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_依旧口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 依旧口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_为什么要动态链接"><span class="toc-number">2.</span> <span class="toc-text">0x01 为什么要动态链接</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_地址无关代码的实现"><span class="toc-number">3.</span> <span class="toc-text">0x02 地址无关代码的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#模块中地址引用方式"><span class="toc-number">3.1.</span> <span class="toc-text">模块中地址引用方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#共享模块的全局变量问题"><span class="toc-number">3.2.</span> <span class="toc-text">共享模块的全局变量问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04_延迟绑定(PLT)"><span class="toc-number">4.</span> <span class="toc-text">0x04 延迟绑定(PLT)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x05_动态链接相关结构"><span class="toc-number">5.</span> <span class="toc-text">0x05 动态链接相关结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#“-interp”段"><span class="toc-number">5.1.</span> <span class="toc-text">“.interp”段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#“-dynamic”段"><span class="toc-number">5.2.</span> <span class="toc-text">“.dynamic”段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态符号表(-dynsym)"><span class="toc-number">5.3.</span> <span class="toc-text">动态符号表(.dynsym)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态链接重定位表"><span class="toc-number">5.4.</span> <span class="toc-text">动态链接重定位表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态链接时进程堆栈初始化信息"><span class="toc-number">5.5.</span> <span class="toc-text">动态链接时进程堆栈初始化信息</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x06_动态链接的步骤和实现"><span class="toc-number">6.</span> <span class="toc-text">0x06 动态链接的步骤和实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#动态链接器自举"><span class="toc-number">6.1.</span> <span class="toc-text">动态链接器自举</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#装载共享对象"><span class="toc-number">6.2.</span> <span class="toc-text">装载共享对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重定位和初始化"><span class="toc-number">6.3.</span> <span class="toc-text">重定位和初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux动态链接器的实现"><span class="toc-number">6.4.</span> <span class="toc-text">Linux动态链接器的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#显式运行时链接"><span class="toc-number">6.5.</span> <span class="toc-text">显式运行时链接</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x07_小结下"><span class="toc-number">7.</span> <span class="toc-text">0x07 小结下</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>17</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/人丑就要多读书/" title="人丑就要多读书">人丑就要多读书<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/源码说明一切/" title="源码说明一切">源码说明一切<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

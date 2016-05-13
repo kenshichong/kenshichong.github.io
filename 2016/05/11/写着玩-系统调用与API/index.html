@@ -1,0 +1,532 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>写着玩-系统调用与API | Dung Beetle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="kenshichong">
+    
+
+    
+    <meta name="description" content="0x00 口胡这本书快完了，加快效率。。。
+0x01 系统调用由于系统有限的资源有可能被多个不同的应用程序同时访问，因此，如果不加以保护，那么各个应用程序难免产生冲突。现代OS采取的策略是将这些可能产生冲突的系统资源给保护起来，然后给我们提供相应的接口去让我们按照OS所能接受的范围去操纵这些资源，这些接口就是所谓的系统调用。系统调用是较底层的接口，我们所写的用户层的程序以及运行库这种，它的一些函数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="写着玩-系统调用与API">
+<meta property="og:url" content="http://kenshichong.github.io/2016/05/11/写着玩-系统调用与API/index.html">
+<meta property="og:site_name" content="Dung Beetle">
+<meta property="og:description" content="0x00 口胡这本书快完了，加快效率。。。
+0x01 系统调用由于系统有限的资源有可能被多个不同的应用程序同时访问，因此，如果不加以保护，那么各个应用程序难免产生冲突。现代OS采取的策略是将这些可能产生冲突的系统资源给保护起来，然后给我们提供相应的接口去让我们按照OS所能接受的范围去操纵这些资源，这些接口就是所谓的系统调用。系统调用是较底层的接口，我们所写的用户层的程序以及运行库这种，它的一些函数">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/0.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/6.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/7.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/8.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/9.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-系统调用与API/11.PNG">
+<meta property="og:updated_time" content="2016-05-12T02:16:45.066Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="写着玩-系统调用与API">
+<meta name="twitter:description" content="0x00 口胡这本书快完了，加快效率。。。
+0x01 系统调用由于系统有限的资源有可能被多个不同的应用程序同时访问，因此，如果不加以保护，那么各个应用程序难免产生冲突。现代OS采取的策略是将这些可能产生冲突的系统资源给保护起来，然后给我们提供相应的接口去让我们按照OS所能接受的范围去操纵这些资源，这些接口就是所谓的系统调用。系统调用是较底层的接口，我们所写的用户层的程序以及运行库这种，它的一些函数">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dung Beetle" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dung Beetle">Dung Beetle</a></h1>
+				<h2 class="blog-motto">Be a machine</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:kenshichong.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/05/11/写着玩-系统调用与API/" title="写着玩-系统调用与API" itemprop="url">写着玩-系统调用与API</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="kenshichong" target="_blank" itemprop="author">kenshichong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-05-11T12:09:25.000Z" itemprop="datePublished"> 发表于 2016-05-11</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_系统调用"><span class="toc-number">2.</span> <span class="toc-text">0x01 系统调用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#系统调用的弊端"><span class="toc-number">2.1.</span> <span class="toc-text">系统调用的弊端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux的新型系统调用机制"><span class="toc-number">2.2.</span> <span class="toc-text">linux的新型系统调用机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于dd命令"><span class="toc-number">2.3.</span> <span class="toc-text">关于dd命令</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_Windows_API"><span class="toc-number">3.</span> <span class="toc-text">0x02 Windows API</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0xFF_最终结"><span class="toc-number">4.</span> <span class="toc-text">0xFF 最终结</span></a></li></ol>
+		
+		</div>
+		
+		<h1 id="0x00_口胡">0x00 口胡</h1><p>这本书快完了，加快效率。。。</p>
+<h1 id="0x01_系统调用">0x01 系统调用</h1><p>由于系统有限的资源有可能被多个不同的应用程序同时访问，因此，如果不加以保护，那么各个应用程序难免产生冲突。现代OS采取的策略是将这些可能产生冲突的系统资源给保护起来，然后给我们提供相应的接口去让我们按照OS所能接受的范围去操纵这些资源，这些接口就是所谓的系统调用。系统调用是较底层的接口，我们所写的用户层的程序以及运行库这种，它的一些函数都是对系统调用的封装。当然，我们可以直接使用系统调用</p>
+<p>系统调用往往通过中断来实现，比如linux使用0x80号中断作为系统调用的入口，windows采用0x2e号中断作为系统调用入口。</p>
+<p>对于windows来讲，系统调用实际上不是它与应用程序的最终接口，而是API，我们暂可以把API与系统调用等同起来，API的数量从最初的450个增加到了现在的数千个。</p>
+<p>对于linux来说，系统调用由0x80中断完成，各个通用寄存器用于传递参数(如我们熟悉的用EAX传递功能号)我们完全可以绕过glibc的fopen、fread、fclose(这些函数也是封装的系统调用)打开读取和关闭文件，而直接使用open()、read()和close()来实现文件的读取，就不举例了。</p>
+<p>我们可以使用linux的man命令查看每个系统调用的详细说明，比如查看read(参数2表示系统调用手册)：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ man <span class="number">2</span> <span class="built_in">read</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="系统调用的弊端">系统调用的弊端</h2><p>不到万不得已，不要直接用系统调用写程序，使用不便和不跨平台(不兼容)</p>
+<p><img src="/img/写着玩-系统调用与API/0.PNG" alt=""></p>
+<p>运行库已经帮助我们把系统调用给封装好了，C语言的标准库是跨平台的，就是说他会把平台的差异(即使系统调用符号、实现不同)给屏蔽掉，提供给我们统一的接口，这个接口是统一的功能：</p>
+<p><img src="/img/写着玩-系统调用与API/1.PNG" alt=""></p>
+<p>感谢写C标准库的人，使他们使我们的编程变得简单。但是为了保证跨平台性，它只能取所有的平台，所有的OS都支持的功能</p>
+<p><img src="/img/写着玩-系统调用与API/2.PNG" alt=""></p>
+<p>关于中断的详细分析，可以去看我写的两篇OS相关的，这里就不啰嗦了。</p>
+<h2 id="linux的新型系统调用机制">linux的新型系统调用机制</h2><p><img src="/img/写着玩-系统调用与API/3.PNG" alt=""><br><img src="/img/写着玩-系统调用与API/4.PNG" alt=""><br><img src="/img/写着玩-系统调用与API/5.PNG" alt=""><br><img src="/img/写着玩-系统调用与API/6.PNG" alt=""></p>
+<h2 id="关于dd命令">关于dd命令</h2><p><img src="/img/写着玩-系统调用与API/7.PNG" alt=""></p>
+<p>也就是说想要dump内存的话，可以通过dd命令，借助/proc/pid/mem的内存快照来达到dump pid对应进程的任意地址处的内存内容</p>
+<h1 id="0x02_Windows_API">0x02 Windows API</h1><p><strong>没有什么是加层解决不了的，如果有，就再来一层</strong><br>Windows API 是指Windows操作系统提供给应用程序开发者的最底层的、最直接与Windows打交道的接口。Windows操作系统下，CRT是建立在Windows API之上的，另外还有很多对Windows API的各种包装库，MFC就是很著名的一种以C++形式封装的库。</p>
+<p><img src="/img/写着玩-系统调用与API/8.PNG" alt=""><br><img src="/img/写着玩-系统调用与API/9.PNG" alt=""></p>
+<p>其中有一个头文件”Windows.h”包含了Windows API的核心部分，只要我们在程序里面包含了它，就可以使用Windows API的核心部分了。</p>
+<p><img src="/img/写着玩-系统调用与API/10.PNG" alt=""><br><img src="/img/写着玩-系统调用与API/11.PNG" alt=""></p>
+<p>模块相当于在API的基础上又封装了一层，从而提供更加集成化的功能。</p>
+<p>API的核心就是：<br><strong> 不管内核如何改变接口，只要维持API层面的接口不变，理论上所有的应用程序都不用重新编译就可以正常运行，这也是Windows API存在的主要原因，解决兼容性的问题就交给具体的API实现了，我们只需要最后的API接口，我们只需要知道这个接口可以达到什么样的目的就ok了。 </strong></p>
+<h1 id="0xFF_最终结">0xFF 最终结</h1><p>此书的最后一章主要讲解了如何去实现一个自己的迷你运行库(miniCRT)，以及在最初的架构上如何对其进行扩展，对此没什么兴趣，所以就不谈这一章了。</p>
+<p>后面还有一些手册类的东西，比如ELF文件结构中的常见段的一个简要功能介绍，GCC(编译器)命令行参数参考、ld(GNU链接器)命令行参数参考、objdump(GNU目标文件可执行文件查看器)命令行参数参考、cl(MSVC编译器)命令行参数参考、link(MSVC链接器)命令行参数参考、dumpbin(MSVC的COFF/PE文件查看器)</p>
+<p>到这，程序员的修养大法这本书就算做完笔记了，也算是给了自己一个交代。</p>
+<p>挺不错的一本书，讲了很多理论干货，也算是自己读的比较认真的一本书了。</p>
+<p>接下来会去读其他的书，毕竟书是有体系的，跟着书学也能够让自己沉下心来，光看帖子，浏览网站学习容易浮躁，果然还是要打牢理论基础。</p>
+<p>接下来的计划就是读C++反汇编与逆向分析这本书，挑战是在最短的时间内干完此书，继续人丑就该多读书系列。</p>
+<p>就酱。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/reverse-related/">reverse related</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/人丑就要多读书/">人丑就要多读书</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://kenshichong.github.io/2016/05/11/写着玩-系统调用与API/" data-title="写着玩-系统调用与API | Dung Beetle" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/05/09/写着玩-运行库/"  title="写着玩-运行库">
+ <strong>下一篇：</strong><br/> 
+ <span>写着玩-运行库
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_系统调用"><span class="toc-number">2.</span> <span class="toc-text">0x01 系统调用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#系统调用的弊端"><span class="toc-number">2.1.</span> <span class="toc-text">系统调用的弊端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#linux的新型系统调用机制"><span class="toc-number">2.2.</span> <span class="toc-text">linux的新型系统调用机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于dd命令"><span class="toc-number">2.3.</span> <span class="toc-text">关于dd命令</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_Windows_API"><span class="toc-number">3.</span> <span class="toc-text">0x02 Windows API</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0xFF_最终结"><span class="toc-number">4.</span> <span class="toc-text">0xFF 最终结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/cryptography/" title="cryptography">cryptography<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>17</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/think-for-fun/" title="think for fun">think for fun<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/人丑就要多读书/" title="人丑就要多读书">人丑就要多读书<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/操作系统/" title="操作系统">操作系统<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/源码说明一切/" title="源码说明一切">源码说明一切<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/编译原理/" title="编译原理">编译原理<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.lynahex.com" target="_blank" title="lynahex&#39;s Blog">lynahex&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://hear7v.githup.io" target="_blank" title="Hear7v&#39;s Blog">Hear7v&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> People I care, technology <br/>
+			Dota, Anime and Nothing....</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="kenshichong">kenshichong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

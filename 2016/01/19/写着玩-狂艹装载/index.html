@@ -22,7 +22,39 @@
 0x01 开艹-一些杂七杂八的东西可执行文件只有装载到内存以后才能被CPU执行，装载强调的是怎样放入内存以及如何放。
 对于Windows操作系统来说，它的进程虚拟地址空间划分是操作系统占用2GB，剩2GB给进程。windows有个启动参数可以将操作系统占用的虚拟">
 <meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/0.PNG">
-<meta property="og:updated_time" content="2016-01-19T12:14:15.251Z">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/1.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/2.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/3.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/4.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/5.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/6.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/7.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/8.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/9.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/10.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/11.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/12.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/13.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/14.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/15.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/16.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/17.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/18.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/19.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/20.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/21.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/22.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/23.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/24.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/25.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/26.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/27.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/28.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/29.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/30.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/31.PNG">
+<meta property="og:image" content="http://kenshichong.github.io/img/写着玩-狂艹装载/32.PNG">
+<meta property="og:updated_time" content="2016-02-11T15:59:09.399Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="写着玩-狂艹装载">
 <meta name="twitter:description" content="0x00 口胡最近有点痴迷一些计算机中的机制、策略等理论姿势，觉得有些机制或策略很有意思，以后会多看些这方面的书籍吧，为挖洞之路打基础。
@@ -99,7 +131,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_开艹-一些杂七杂八的东西"><span class="toc-number">2.</span> <span class="toc-text">0x01 开艹-一些杂七杂八的东西</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_从OS角度看可执行文件的装载"><span class="toc-number">3.</span> <span class="toc-text">0x02 从OS角度看可执行文件的装载</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_开艹-一些杂七杂八的东西"><span class="toc-number">2.</span> <span class="toc-text">0x01 开艹-一些杂七杂八的东西</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_从OS角度看可执行文件的装载"><span class="toc-number">3.</span> <span class="toc-text">0x02 从OS角度看可执行文件的装载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_进程虚存空间分布"><span class="toc-number">4.</span> <span class="toc-text">0x03 进程虚存空间分布</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_ELF文件链接视图和执行视图"><span class="toc-number">4.1.</span> <span class="toc-text">1. ELF文件链接视图和执行视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_堆和栈"><span class="toc-number">4.2.</span> <span class="toc-text">2. 堆和栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_段地址对齐"><span class="toc-number">4.3.</span> <span class="toc-text">3. 段地址对齐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-_进程栈初始化"><span class="toc-number">4.4.</span> <span class="toc-text">4. 进程栈初始化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04_linux内核装载ELF过程简介"><span class="toc-number">5.</span> <span class="toc-text">0x04 linux内核装载ELF过程简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x05_Windows_PE的装载"><span class="toc-number">6.</span> <span class="toc-text">0x05 Windows PE的装载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x06_拿来的总结"><span class="toc-number">7.</span> <span class="toc-text">0x06 拿来的总结</span></a></li></ol>
 		
 		</div>
 		
@@ -109,7 +141,46 @@
 <p>程序运行时是有局部性原理的，所以我们可以将程序最常用的部分驻留内存，而将一些不太常用的数据存放在磁盘里面，这就是动态载入的基本原理。覆盖载入和页映射是两种很典型的动态装载方法，都利用了程序的局部性原理。思想就是程序用到哪个模块就将哪个模块装入内存，如果不用就暂时不装入，存放在磁盘中。</p>
 <p>覆盖载入就是覆盖，就是说内存就那么点，满了的话你要再想往里面装载的话，就得覆盖，至于覆盖的策略一般要保证程序能够正常执行，禁止跨树间调用</p>
 <p>页映射的话就是，大小按页进行装载入内存，采取的策略是由操作系统定的。</p>
-<h1 id="0x02_从OS角度看可执行文件的装载">0x02 从OS角度看可执行文件的装载</h1>  
+<h1 id="0x02_从OS角度看可执行文件的装载">0x02 从OS角度看可执行文件的装载</h1><p>好长时间没写了，从这开始写，有点不适应，放假放的搞得脑子都不在了，没有思考，真的是彻底的休闲与放松了，但也觉着有点无聊。大年初一，干点事情把。。。</p>
+<p>谈到装载，我觉着要理清三个地址的概念，一是文件所在的磁盘地址，二是虚拟内存地址，三是真正的物理内存地址。</p>
+<p>我们可以把虚拟内存地址当做是连接磁盘地址与物理内存地址的桥梁，这样来看装载就显得很easy了。</p>
+<p>装载是指可执行文件的装载，可执行文件是由目标文件链接而成，以elf为例，我们用一些软件，如readelf等看到的信息，也就是可执行文件中真正存储着的地址信息都是虚拟内存地址信息。装载的过程就是以可执行文件中存储着的虚拟地址信息为参照，将文件在磁盘中要装载到内存中内容给装载到内存中，并建立好相应的映射关系即可。</p>
+<p>我们用命令(一般为./elf文件)或者双击执行可执行文件时，基本上都伴随着一个新的进程的创建。创建一个进程(还记得我们在讲OS的时候，讲到过用fork系统调用创建进程)，然后装载相应的可执行文件并且执行，一般分三步：</p>
+<ol>
+<li>创建独立的虚拟地址空间：创建一个虚拟空间实际上并不是创建空间而是创建映射函数所需要的相应的数据结构，这里是创建虚拟地址空间与真正的物理内存之间的映射，我们在讲OS的时候也详细讲过，所谓的段页式映射，应该还有点印象把。在i386的linux下，首先创建虚拟空间时实际上并不会分配物理空间，只是分配一个页目录就可以了，甚至不设置页映射关系，这些映射关系等到后面程序发生页错误的时候在进行设置，前面讲OS的时候也详细介绍过，就是先设置个页目录，连TM一个物理内存页面也不给，等到真正执行的时候，当通过段页式映射到真正的物理内存需要访问相应的数据时，发现通过页错误机制来真正分配物理内存页面，并在分配过后将虚拟内存地址到物理内存地址的映射关系给建立起来(即相应的页表项)。</li>
+<li>读取可执行文件头，并且建立虚拟空间与可执行文件的映射关系。我们知道，当程序执行发生页错误时，操作系统将从物理内存中分配一个物理页，然后将该”缺页”从磁盘中读取到内存中，再设置缺页的虚拟页和物理页的映射关系，这样程序才得以正常运行。但是当缺页时，OS它得知道程序当前所需要的页在可执行文件中的哪个位置，这就是虚拟空间与可执行文件之间的映射关系。从某种角度来看，这一步即如何建立这个映射关系是整个装载过程中最重要的一步，也是传统意义上的装载。因为你想，只要完成了这一步，也就是说只要建立了这个映射关系，然后我们把运行权就可以交给程序了，然后段页式访存以及页错误机制就可以照班进行了，然后由于在装载的时候已经建立好映射关系，所以当页错误需要从文件中拿相应的东西时，就可以根据这个在装载时建立的映射关系将相应的页装入内存中，然后接下来的一切就顺其自然了。这个映射存储在内存中，在操作系统内部保存着，当程序执行发生段错误时，它可以通过查找这样的数据结构来定位错误页在可执行文件中的位置。关于这个映射关系是如何建立的，这是本质，也是比较有意思的东西，我们一定不能放过，我们会在后面详细讨论。</li>
+<li>将CPU指令寄存器设置成可执行文件入口，启动运行，涉及内核堆栈和用户堆栈的切换，CPU运行权限的切换等等，还记得ljmp吗(算比较底层的分析了)？可以将这一步简单的认为操作系统执行了一个跳转，跳转到可执行文件的入口地址，还记得ELF文件头中保存的入口地址吗？就是那个地址。</li>
+</ol>
+<p>其实上面啰嗦了一大堆都是老姿势，但没有啰嗦就没有进步，接着啰嗦。。。</p>
+<p><img src="/img/写着玩-狂艹装载/1.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/2.PNG" alt=""></p>
+<p>好吧，关键问题还是那个可执行文件到虚拟地址映射的数据结构，别急。。。</p>
+<h1 id="0x03_进程虚存空间分布">0x03 进程虚存空间分布</h1><h2 id="1-_ELF文件链接视图和执行视图">1. ELF文件链接视图和执行视图</h2><p>从前面的介绍中，我们可以发现一个问题，那就是OS并不是像链接器那样关心各个段的名字以及具体的数据含义等，OS它只关心一些跟装载相关的问题，最主要的就是段的权限。所以，这就存在两个视角，一个是链接视角，与之相对应的是Section，一个是OS视角(执行视角)，与之相对应的是Segment。而我们是上帝视角。一个Segment包含一个或多个属性类似的Section，对于相同权限的段，把它们合并到一起当做一个段进行映射。</p>
+<p><img src="/img/写着玩-狂艹装载/3.PNG" alt=""></p>
+<p>Segment的概念实际上是从装载的角度重新划分了ELF的各个段。ELF可执行文件中有一个专门的数据结构叫做程序头表用来保存Segment的信息。因为ELF目标文件不需要被装载，所以它没有程序头表，而ELF的可执行文件和共享库文件都有，跟段表结构一样，程序头表也是一个结构体数组，它的结构体为：</p>
+<p><img src="/img/写着玩-狂艹装载/4.PNG" alt=""></p>
+<p>各成员含义：</p>
+<p><img src="/img/写着玩-狂艹装载/5.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/6.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/7.PNG" alt=""></p>
+<p>VMA还是蛮重要的一个概念。linux中将<strong>进程虚拟空间</strong>中的一个段叫做虚拟内存区域(VMA)；在windows中将这个叫做虚拟段。就是文件中相应段的偏移与虚拟地址的映射，就是我们说的那个很重要的映射关系。球都麻袋，好像解决了什么问题，没错，VMA就是我们要找的那个描述可执行文件与虚拟地址的映射关系的数据结构，它存储在进程中的某个地方，这样就清楚了。</p>
+<p>根据程序头表，OS知道什么该把什么映射到内存中，并根据程序头表中的信息建立相应的VMA，用于描述文件物理偏移与内存虚址的关系，存储在该进程的内存空间中，这样在页错误的时候就可以根据VMA找到需要载入内存的页在文件中的偏移了。</p>
+<h2 id="2-_堆和栈">2. 堆和栈</h2><p><img src="/img/写着玩-狂艹装载/8.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/9.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/10.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/11.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/12.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/13.PNG" alt=""></p>
+<h2 id="3-_段地址对齐">3. 段地址对齐</h2><p>这小节来探讨具体的物理内存与进程虚拟空间是如何映射的。我们都知道，不论是物理内存还是虚存，都是以页为单位的，一般为4096字节，但是这样如果不考虑优化的话，在映射的时候就会出现物理内存的浪费问题。举个例子：假设我们有一个ELF可执行文件，它有三个段(Segment)需要装载，我们将它们命名为SEG0、SEG1、SEG2。如表：</p>
+<p><img src="/img/写着玩-狂艹装载/14.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/15.PNG" alt=""></p>
+<p>Unix采用了一个取巧的方法，就是让那些各个段接壤的部分共享一个物理页面，具体的映射情景为：</p>
+<p><img src="/img/写着玩-狂艹装载/16.PNG" alt=""></p>
+<p>附一张我笔记图：</p>
+<p><img src="/img/写着玩-狂艹装载/17.PNG" alt=""></p>
+<p>可以看出，3个物理页面在虚存中映射成5个页面。在虚存中，各个段并不是整页整页的占有空间，而在物理内存中，它占有页面的整数倍，但在物存中，每个页面的内容并不是仅有一个段，而可能有多个段，这样就需要物理页面到许村的多次映射，这样看过去的话，虚存就是一段连续的空间。</p>
+<p><img src="/img/写着玩-狂艹装载/18.PNG" alt=""></p>
+<p>VMA0的起始地址是0x08048000，长度是0x709e5，所以它的结束地址是0x080B89E5，而VMA1因为跟VMA0的最后一个虚拟页面共享一个物理页面，并且映射两遍，所以它的虚拟地址应该是0x080B99E5，又因为段必须是4字节的倍数，则向上取整至0x080B99E8。从上面的映射图我们可以看到，只有共享的那个页面才需要被映射两次，一个进程的虚拟内存空间布局中，最多只多映射2个页面(开始的和结尾的，中间部分只映射一次)，所以这也解释了0x080B99E5=0x080B89E5+0x1000(一个页帧)。可以看到Process Virtual Space是一块连续的空间，且页内容是可重叠的，段内容只遵循了4字节对齐原则以及整个进程虚存空间的页对齐原则。总之呢，原则就是虚存浪费无所谓，毕竟虚存，而且多一次映射的话只是浪费一个存储映射关系的数据结构的空间而已，不浪费物存就OK，划算又粗暴。</p>
+<h2 id="4-_进程栈初始化">4. 进程栈初始化</h2><p><img src="/img/写着玩-狂艹装载/19.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/20.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/21.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/22.PNG" alt=""></p>
+<h1 id="0x04_linux内核装载ELF过程简介">0x04 linux内核装载ELF过程简介</h1><p>当我们在bash下输入一个命令执行某个ELF程序时，linux系统是怎样装载并执行它的呢？</p>
+<p>还是熟悉的fork()。大家应该对fork有印象吧，OS里面详细介绍过。</p>
+<p><img src="/img/写着玩-狂艹装载/23.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/24.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/25.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/26.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/27.PNG" alt=""></p>
+<p>简单来说就是先用fork在bash中创建一个一模一样的进程，然后用execve进行把进程内容用文件进行覆盖，结合fork和execve函数的具体实现细节，我们可以清楚的了解到ELF文件装载的一个较为详细的过程。</p>
+<h1 id="0x05_Windows_PE的装载">0x05 Windows PE的装载</h1><p><img src="/img/写着玩-狂艹装载/28.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/29.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/30.PNG" alt=""><br><img src="/img/写着玩-狂艹装载/31.PNG" alt="">    </p>
+<h1 id="0x06_拿来的总结">0x06 拿来的总结</h1><p>一张图完事：</p>
+<p><img src="/img/写着玩-狂艹装载/32.PNG" alt=""></p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -144,6 +215,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2016/02/12/写着玩-怒干动态链接/" title="写着玩-怒干动态链接">
+  <strong>上一篇：</strong><br/>
+  <span>
+  写着玩-怒干动态链接</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2016/01/19/写着玩-回顾以前的PE岁月/"  title="写着玩-回顾以前的PE岁月">
@@ -163,7 +242,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_开艹-一些杂七杂八的东西"><span class="toc-number">2.</span> <span class="toc-text">0x01 开艹-一些杂七杂八的东西</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_从OS角度看可执行文件的装载"><span class="toc-number">3.</span> <span class="toc-text">0x02 从OS角度看可执行文件的装载</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x00_口胡"><span class="toc-number">1.</span> <span class="toc-text">0x00 口胡</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01_开艹-一些杂七杂八的东西"><span class="toc-number">2.</span> <span class="toc-text">0x01 开艹-一些杂七杂八的东西</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02_从OS角度看可执行文件的装载"><span class="toc-number">3.</span> <span class="toc-text">0x02 从OS角度看可执行文件的装载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03_进程虚存空间分布"><span class="toc-number">4.</span> <span class="toc-text">0x03 进程虚存空间分布</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-_ELF文件链接视图和执行视图"><span class="toc-number">4.1.</span> <span class="toc-text">1. ELF文件链接视图和执行视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-_堆和栈"><span class="toc-number">4.2.</span> <span class="toc-text">2. 堆和栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-_段地址对齐"><span class="toc-number">4.3.</span> <span class="toc-text">3. 段地址对齐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-_进程栈初始化"><span class="toc-number">4.4.</span> <span class="toc-text">4. 进程栈初始化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04_linux内核装载ELF过程简介"><span class="toc-number">5.</span> <span class="toc-text">0x04 linux内核装载ELF过程简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x05_Windows_PE的装载"><span class="toc-number">6.</span> <span class="toc-text">0x05 Windows PE的装载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x06_拿来的总结"><span class="toc-number">7.</span> <span class="toc-text">0x06 拿来的总结</span></a></li></ol>
  
   </div>
 
@@ -184,7 +263,7 @@
 		  
 		
 		  
-			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>10</sup></a></li>
+			<li><a href="/categories/reverse-related/" title="reverse related">reverse related<sup>17</sup></a></li>
 		  
 		
 		  
@@ -201,11 +280,11 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
+				<li><a href="/tags/人丑就要多读书/" title="人丑就要多读书">人丑就要多读书<sup>12</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/人丑就要多读书/" title="人丑就要多读书">人丑就要多读书<sup>6</sup></a></li>
+				<li><a href="/tags/密码学/" title="密码学">密码学<sup>12</sup></a></li>
 			
 		
 			
@@ -214,6 +293,10 @@
 		
 			
 				<li><a href="/tags/随想/" title="随想">随想<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/源码说明一切/" title="源码说明一切">源码说明一切<sup>1</sup></a></li>
 			
 		
 			
